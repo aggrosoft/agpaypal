@@ -1,0 +1,25 @@
+<?php
+
+$aLang = array(
+    'charset'                                   => 'UTF-8',
+    'SHOP_MODULE_GROUP_paypal_main' => 'Zugangsdaten',
+    'SHOP_MODULE_sPayPalEmailAddress' => 'PayPal Händler E-Mail Adresse',
+    'SHOP_MODULE_sPayPalClientId' => 'Rest Client ID',
+    'SHOP_MODULE_sPayPalClientSecret' => 'Rest Client Secret',
+    'SHOP_MODULE_sPayPalWebhookId' => 'Webhook ID',
+    'SHOP_MODULE_blPayPalSandboxMode' => 'PayPal Sandbox nutzen',
+    'PAYMENT_MAIN_PAYPAL_PAYMENT_METHOD' => 'PayPal Zahlungsmethode',
+    'HELP_PAYMENT_MAIN_PAYPAL_PAYMENT_METHOD' => 'Wählen Sie hier eine Zahlungsmethode aus die über PayPal abgewickelt werden soll. Leer lassen wenn es sich bei dieser Zahlungsart nicht um eine PayPal Zahlungsart handelt.',
+    'PAYPAL_PAYMENT_METHOD_PAYPAL' => 'PayPal',
+    'PAYPAL_PAYMENT_METHOD_BANCONTACT' => 'Bankcontact',
+    'PAYPAL_PAYMENT_METHOD_BLIK' => 'Blik',
+    'PAYPAL_PAYMENT_METHOD_EPS' => 'EPS',
+    'PAYPAL_PAYMENT_METHOD_GIROPAY' => 'GiroPay',
+    'PAYPAL_PAYMENT_METHOD_IDEAL' => 'iDeal',
+    'PAYPAL_PAYMENT_METHOD_MYBANK' => 'MyBank',
+    'PAYPAL_PAYMENT_METHOD_P24' => 'P24',
+    'PAYPAL_PAYMENT_METHOD_SOFORT' => 'Sofort',
+    'PAYPAL_PAYMENT_METHOD_TRUSTLY' => 'Trustly',
+    'PAYPAL_PAYMENT_METHOD_PAY_UPON_INVOICE' => 'Kauf auf Rechnung (Ratepay)',
+    'PAYPAL_PAYMENT_METHOD_CARD' => 'Kredit/Debit Karte',
+);

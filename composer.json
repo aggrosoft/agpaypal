@@ -1,0 +1,34 @@
+{
+  "name": "aggrosoft/oxid-agpaypal",
+  "type": "oxideshop-module",
+  "description": "PayPal Commerce Platform payment module for Oxid eShop",
+  "license": "Commercial",
+  "authors": [
+    {
+      "name": "Alexander Kludt",
+      "homepage": "https://github.com/aggrosoft"
+    }
+  ],
+  "require": {
+    "ext-curl": "*",
+    "guzzlehttp/guzzle": "^7.3",
+    "megastruktur/phone-country-codes": "^0.4"
+  },
+  "extra": {
+    "oxideshop": {
+      "target-directory": "agpaypal"
+    },
+    "encoder": {
+      "include": [
+        "Application/Controller/AccountProductReviews.php",
+        "Application/Controller/ProductReviewEmailCron.php"
+      ]
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Aggrosoft\\PayPal\\": "../../../source/modules/agpaypal"
+    }
+  },
+  "version": "0.0.0"
+}

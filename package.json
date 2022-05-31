@@ -1,0 +1,45 @@
+{
+  "name": "oxid-agpaypal",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "release": "release-it",
+    "test-release": "release-it --dry-run",
+    "release-alpha": "release-it --preRelease=alpha",
+    "release-beta": "release-it  --preRelease=beta"
+  },
+  "devDependencies": {
+    "release-it": "^14.0.3",
+    "@release-it/bumper": "^2.0.0",
+    "auto-changelog": "^2.2.1"
+  },
+  "release-it": {
+    "git": {
+      "tagName": "${version}",
+      "commitMessage": "chore: release v${version}"
+    },
+    "npm": {
+      "publish": false
+    },
+    "hooks": {
+      "after:bump": "npx auto-changelog -p --commit-url {id} --issue-url {id} --merge-url {id} --compare-url {from}/{to}",
+      "after:release": [
+        "echo Successfully released ${name} v${version} to ${repo.repository}."
+      ]
+    },
+    "plugins": {
+      "@release-it/bumper": {
+        "out": [
+          {
+            "file": "metadata.php",
+            "type": "text/php"
+          },
+          {
+            "file": "composer.json",
+            "type": "application/json"
+          }
+        ]
+      }
+    }
+  }
+}

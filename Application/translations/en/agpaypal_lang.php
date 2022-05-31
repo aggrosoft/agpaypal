@@ -1,0 +1,9 @@
+<?php
+
+$aLang = array(
+    'charset'                                   => 'UTF-8',
+    'PAYPAL_RATEPAY_LEGAL' => 'By clicking on the button, you agree to the <a target="_blank" href="https://www.ratepay.com/legal-payment-terms" rel="noopener noreferrer">terms of payment</a> and <a target="_blank" href="https://www.ratepay.com/legal-payment-dataprivacy" rel="noopener noreferrer">performance of a risk check</a> from the payment partner, Ratepay. You also agree to PayPal’s <a target="_blank" href="https://www.paypal.com/us/webapps/mpp/ua/privacy-full" rel="noopener noreferrer">privacy statement</a>. If your request to purchase upon invoice is accepted, the purchase price claim will be assigned to Ratepay, and you may only pay Ratepay, not the merchant.',
+    'PAYPAL_ERROR_PAYEE_NOT_ENABLED_FOR_PUI_PROCESSING' => 'Pay upon invoice is currently disabled due to technical reasons, please choose another payment method. (PUI_NOT_ENABLED)',
+    'PAYPAL_ERROR_PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED' => 'The combination of your name and address could not be validated. Please correct your data and try again. You can find further information in the <a href="https://www.ratepay.com/en/ratepay-data-privacy-statement/" target="_blank" rel="noopener noreferrer">Ratepay Data Privacy Statement</a> or you can contact Ratepay using this <a href="https://www.ratepay.com/en/contact/" target="_blank" rel="noopener noreferrer">contact form</a>.',
+    'PAYPAL_ERROR_PAYMENT_SOURCE_DECLINED_BY_PROCESSOR' => 'It is not possible to use the selected payment method. This decision is based on automated data processing. You can find further information in the <a href="https://www.ratepay.com/en/ratepay-data-privacy-statement/" target="_blank" rel="noopener noreferrer">Ratepay Data Privacy Statement</a> or you can contact Ratepay using this <a href="https://www.ratepay.com/en/contact/" target="_blank" rel="noopener noreferrer">contact form</a>.'
+);

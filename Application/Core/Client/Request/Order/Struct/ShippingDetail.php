@@ -12,6 +12,8 @@ class ShippingDetail extends RequestObject
     public $type;
     /** @var ShippingDetailAddress */
     public $address;
+    /** @var array<ShippingDetailOption> */
+    public $options;
 
     /**
      * @return ShippingDetailName
@@ -61,5 +63,26 @@ class ShippingDetail extends RequestObject
         $this->address = $address;
     }
 
+    /**
+     * @return ShippingDetailOption[]
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param ShippingDetailOption[] $options
+     */
+    public function setOptions(array $options): void
+    {
+        $this->options = $options;
+
+        // Force one option to be selected
+        $selectedOptions = array_filter($this->options, function($option){ return $option->selected; });
+        if (count($this->options) && !count($selectedOptions)){
+            $this->options[0]->setSelected(true);
+        }
+    }
 
 }

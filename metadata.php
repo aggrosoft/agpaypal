@@ -23,7 +23,8 @@ $aModule = array(
         \OxidEsales\Eshop\Application\Controller\Admin\ModuleConfiguration::class => \Aggrosoft\PayPal\Application\Controller\Admin\ModuleConfiguration::class,
         \OxidEsales\Eshop\Application\Model\UserBasket::class => \Aggrosoft\PayPal\Application\Model\UserBasket::class,
         \OxidEsales\Eshop\Application\Model\PaymentGateway::class => \Aggrosoft\PayPal\Application\Model\PaymentGateway::class,
-        \OxidEsales\Eshop\Application\Model\Order::class => \Aggrosoft\PayPal\Application\Model\Order::class
+        \OxidEsales\Eshop\Application\Model\Order::class => \Aggrosoft\PayPal\Application\Model\Order::class,
+        \OxidEsales\Eshop\Application\Model\Basket::class => \Aggrosoft\PayPal\Application\Model\Basket::class
     ],
     'events'       => array(
         'onActivate'   => '\Aggrosoft\PayPal\Application\Core\Events::onActivate'
@@ -41,6 +42,11 @@ $aModule = array(
             'template' => 'layout/base.tpl',
             'block' => 'base_js',
             'file' => '/Application/views/blocks/base_js.tpl',
+        ],
+        [
+            'template' => 'page/checkout/basket.tpl',
+            'block' => 'basket_btn_next_top',
+            'file' => '/Application/views/blocks/basket_btn_next_top.tpl',
         ],
         [
             'template' => 'email/html/order_cust.tpl',

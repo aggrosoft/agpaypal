@@ -13,8 +13,8 @@ class PayPalInitiator
      */
     public function initiate ($returnUrl = '', $noRedirect = false)
     {
-        $returnToken = bin2hex(random_bytes(64));
-        $this->savePayPalBasket($returnToken);
+        $returnToken = $this->generateReturnToken();
+        $savedBasket = $this->savePayPalBasket($returnToken);
 
         $session = \OxidEsales\Eshop\Core\Registry::getSession();
         $basket = $session->getBasket();
@@ -26,7 +26,7 @@ class PayPalInitiator
 
         $response = $client->execute($request);
 
-        $redirectUrl = OrderResponseHandler::handle($response, $user, $returnToken);
+        $redirectUrl = OrderResponseHandler::handle($response, $savedBasket);
 
         if ($redirectUrl && !$noRedirect) {
             \OxidEsales\Eshop\Core\Registry::getUtils()->redirect($redirectUrl, false, 303);
@@ -34,7 +34,10 @@ class PayPalInitiator
             \OxidEsales\Eshop\Core\Registry::getSession()->setVariable('pptoken', $response->id);
         }
 
-        return $response;
+        return [
+            'orderId' => $response->id,
+            'returnToken' => $returnToken
+        ];
     }
 
     /**
@@ -47,8 +50,15 @@ class PayPalInitiator
         $basket = $session->getBasket();
         $user = $basket->getBasketUser();
 
-        $savedBasket = $user->getBasket('paypalbasket');
-        $savedBasket->delete();
+        if ($user) {
+            $savedBasket = $user->getBasket('paypalbasket');
+            $savedBasket->delete();
+        } else {
+            $savedBasket = oxNew(\OxidEsales\Eshop\Application\Model\UserBasket::class);
+            $savedBasket->oxuserbaskets__oxtitle = new \OxidEsales\Eshop\Core\Field('paypalbasket');
+            $savedBasket->setIsNewBasket();
+        }
+
         $contents = $basket->getContents();
 
         if (!($deliveryAddressId = \OxidEsales\Eshop\Core\Registry::getRequest()->getRequestEscapedParameter('deladrid'))) {
@@ -63,13 +73,13 @@ class PayPalInitiator
         $savedBasket->oxuserbaskets__agpaypalcardid = new \OxidEsales\Eshop\Core\Field($basket->getCardId());
         $savedBasket->oxuserbaskets__agpaypalcardtext = new \OxidEsales\Eshop\Core\Field($basket->getCardMessage());
 
-        /** @var \oxBasketItem $basketItem */
         foreach ($contents as $basketItem) {
-            // discount or bundled products will be added automatically if available
             if (!$basketItem->isBundle() && !$basketItem->isDiscountArticle()) {
                 $savedBasket->addPayPalItemToBasket($basketItem->getProductId(), $basketItem->getAmount(), $basketItem->getSelList(), true, $basketItem->getPersParams(), $basketItem->getWrappingId());
             }
         }
+
+        return $savedBasket;
     }
 
     protected function getPayPalPaymentMethod ()
@@ -100,5 +110,10 @@ class PayPalInitiator
             }
         }
         return $this->payment;
+    }
+
+    protected function generateReturnToken ()
+    {
+        return bin2hex(random_bytes(64));
     }
 }

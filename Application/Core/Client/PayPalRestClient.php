@@ -66,6 +66,7 @@ class PayPalRestClient
         $result = json_decode($response->getBody()->getContents());
 
         if ($response->getStatusCode() > 299) {
+            $this->log($request, $result);
             throw new RestException('PAYPAL_ERROR_'.$result->details[0]->issue, $response->getStatusCode(), null, ['request' => $request->getBody(), 'response' => $result]);
         }
 
@@ -137,5 +138,15 @@ class PayPalRestClient
     private function getApiUrl ()
     {
         return $this->sandbox ? self::SANDBOX_API_URL : self::LIVE_API_URL;
+    }
+
+    private function log ($request, $result) {
+
+        $log = "Error: [" . date("d/M/Y H:i:s") . "]\n";
+        $log .= "Request: \n\n " . json_encode($request->getBody(), JSON_PRETTY_PRINT) . "\n\n";
+        $log .= "Response: \n\n " . json_encode($result, JSON_PRETTY_PRINT) . "\n\n";
+        $log .= "########################################################################\n\n";
+
+        file_put_contents(getShopBasePath().'/log/paypal.log', $log, FILE_APPEND);
     }
 }

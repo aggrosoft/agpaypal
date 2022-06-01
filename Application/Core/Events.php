@@ -20,6 +20,7 @@ class Events
             'ALTER TABLE oxuserbasketitems ADD COLUMN AGPAYPALWRAPID char(32) default NULL',
             'ALTER TABLE oxorder ADD COLUMN AGPAYPALCAPTUREID char(32) default NULL',
             'ALTER TABLE oxorder ADD COLUMN AGPAYPALTRANSSTATUS char(32) default NULL',
+            'ALTER TABLE oxuser ADD COLUMN AGPAYPALPAYERID char(13) default NULL',
             'CREATE TABLE `agpaypalbankdata` (
               `OXID` char(32) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
               `OXORDERID` char(32) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,

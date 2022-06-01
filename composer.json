@@ -12,7 +12,8 @@
   "require": {
     "ext-curl": "*",
     "guzzlehttp/guzzle": "^7.3",
-    "megastruktur/phone-country-codes": "^0.4"
+    "megastruktur/phone-country-codes": "^0.4",
+    "viison/address-splitter": "^0.3.4"
   },
   "extra": {
     "oxideshop": {

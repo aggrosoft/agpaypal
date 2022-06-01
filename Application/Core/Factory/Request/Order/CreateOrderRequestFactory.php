@@ -20,12 +20,16 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PurchaseUnitRe
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ShippingDetail;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ShippingDetailAddress;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ShippingDetailName;
+use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ShippingDetailOption;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\StoredPaymentSource;
 use Aggrosoft\PayPal\Application\Core\FraudNet;
 use OxidEsales\Eshop\Core\Registry;
 
 class CreateOrderRequestFactory
 {
+
+    private static $shippingOptions;
+
     /**
      * @param $user
      * @param $basket
@@ -35,12 +39,17 @@ class CreateOrderRequestFactory
      */
     public static function create($user, $basket, $payment, $returnUrl)
     {
+        //Cache this, used multiple times
+        self::$shippingOptions = null;
+
         $request = new CreateOrderRequest();
         $request->setIntent(CreateOrderRequest::INTENT_CAPTURE);
         $request->setProcessingInstruction(self::isPayUponInvoice($payment) ? CreateOrderRequest::PROCESSING_INSTRUCTION_ORDER_COMPLETE_ON_PAYMENT_APPROVAL : CreateOrderRequest::PROCESSING_INSTRUCTION_NO_INSTRUCTION);
-        $request->setPayer(self::createPayer($user));
+        if ($user) {
+            $request->setPayer(self::createPayer($user));
+        }
         $request->addPurchaseUnit(self::createPurchaseUnitRequest($user, $basket));
-        $request->setApplicationContext(self::createApplicationContext($returnUrl));
+        $request->setApplicationContext(self::createApplicationContext($user, $returnUrl));
         $request->setPaymentSource(self::createPaymentSource($user, $payment));
         if (self::isPayUponInvoice($payment)) {
             $request->setMetadataId(FraudNet::getSessionIdentifier());
@@ -48,11 +57,17 @@ class CreateOrderRequestFactory
         return $request;
     }
 
-    private static function createPurchaseUnitRequest($user, $basket)
+    public static function createPurchaseUnitRequest($user, $basket, $countryId = null)
     {
         $config = Registry::getConfig();
         $currencyName = $basket->getBasketCurrency()->name;
         $vats = $basket->getProductVats(false);
+
+        $shippingOption = self::getSelectedShippingOption($user, $basket, $countryId);
+
+        $basket->setShipping($shippingOption->id);
+        $basket->calculateBasket(true);
+
         $deliveryCosts = $basket->getDeliveryCost();
 
         $amountBreakDown = new AmountBreakdown();
@@ -62,9 +77,9 @@ class CreateOrderRequestFactory
         $amountBreakDown->discount = new Money($currencyName, $basket->getTotalDiscountSum());
 
         $unit = new PurchaseUnitRequest();
-        $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getBruttoSum(), $amountBreakDown));
+        $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice(), $amountBreakDown));
         $unit->setPayee(new Payee($config->getShopConfVar("sPayPalEmailAddress", null, "module:agpaypal")));
-        $unit->setShipping(self::createShipping($user));
+        $unit->setShipping(self::createShipping($user, $basket, $countryId));
 
         $items = [];
 
@@ -85,7 +100,7 @@ class CreateOrderRequestFactory
         return $unit;
     }
 
-    private static function createPayer($user)
+    public static function createPayer($user)
     {
         $address = new AddressPortable();
         $deliveryAddress = self::getDelAddressInfo(); //I would rather not get this from a global, but this is oxid style
@@ -131,7 +146,7 @@ class CreateOrderRequestFactory
         return $oDelAdress;
     }
 
-    private static function createApplicationContext($returnUrl)
+    public static function createApplicationContext($user, $returnUrl)
     {
         $config = Registry::getConfig();
         $shop = $config->getActiveShop();
@@ -139,7 +154,7 @@ class CreateOrderRequestFactory
         $context = new ApplicationContext();
         $context->setBrandName($shop->oxshops__oxname->value);
         $context->setLandingPage(ApplicationContext::LANDING_PAGE_NO_PREFERENCE);
-        $context->setShippingPreference(ApplicationContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS);
+        $context->setShippingPreference($user ? ApplicationContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS : ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE);
         $context->setUserAction(ApplicationContext::USER_ACTION_CONTINUE);
         $context->setPaymentMethod(new PaymentMethod(PaymentMethod::PAYEE_PREFERRED_UNRESTRICTED));
         $context->setReturnUrl($returnUrl);
@@ -149,7 +164,7 @@ class CreateOrderRequestFactory
         return $context;
     }
 
-    private static function createPaymentSource($user, $payment)
+    public static function createPaymentSource($user, $payment)
     {
         $method = $payment->oxpayments__agpaypalpaymentmethod->value;
 
@@ -204,33 +219,39 @@ class CreateOrderRequestFactory
         }
     }
 
-    private static function createShipping ($user)
+    public static function createShipping ($user, $basket, $countryId = null)
     {
-        $deliveryAddress = self::getDelAddressInfo(); //I would rather not get this from a global, but this is oxid style
         $shipping = new ShippingDetail();
-        $address = new ShippingDetailAddress();
 
-        if ($deliveryAddress) {
-            $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
-            $country->load($deliveryAddress->oxaddress__oxcountryid->value);
+        if ($user) {
+            $deliveryAddress = self::getDelAddressInfo(); //I would rather not get this from a global, but this is oxid style
+            $address = new ShippingDetailAddress();
 
-            $shipping->setName(new ShippingDetailName($deliveryAddress->oxaddress__oxfname->value. ' ' . $deliveryAddress->oxaddress__oxlname->value));
-            $address->country_code = $country->oxcountry__oxisoalpha2->value;
-            $address->address_line_1 = $deliveryAddress->oxaddress__oxstreet->value . ' ' . $deliveryAddress->oxaddress__oxstreetnr->value;
-            $address->postal_code = $deliveryAddress->oxaddress__oxzip->value;
-            $address->admin_area_2 = $deliveryAddress->oxaddress__oxcity->value;
-        }else{
-            $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
-            $country->load($user->oxuser__oxcountryid->value);
+            if ($deliveryAddress) {
+                $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
+                $country->load($deliveryAddress->oxaddress__oxcountryid->value);
 
-            $shipping->setName(new ShippingDetailName($user->oxuser__oxfname->value. ' ' . $user->oxuser__oxlname->value));
-            $address->country_code = $country->oxcountry__oxisoalpha2->value;
-            $address->address_line_1 = $user->oxuser__oxstreet->value . ' ' . $user->oxuser__oxstreetnr->value;
-            $address->postal_code = $user->oxuser__oxzip->value;
-            $address->admin_area_2 = $user->oxuser__oxcity->value;
+                $shipping->setName(new ShippingDetailName($deliveryAddress->oxaddress__oxfname->value. ' ' . $deliveryAddress->oxaddress__oxlname->value));
+                $address->country_code = $country->oxcountry__oxisoalpha2->value;
+                $address->address_line_1 = $deliveryAddress->oxaddress__oxstreet->value . ' ' . $deliveryAddress->oxaddress__oxstreetnr->value;
+                $address->postal_code = $deliveryAddress->oxaddress__oxzip->value;
+                $address->admin_area_2 = $deliveryAddress->oxaddress__oxcity->value;
+            }else{
+                $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
+                $country->load($user->oxuser__oxcountryid->value);
+
+                $shipping->setName(new ShippingDetailName($user->oxuser__oxfname->value. ' ' . $user->oxuser__oxlname->value));
+                $address->country_code = $country->oxcountry__oxisoalpha2->value;
+                $address->address_line_1 = $user->oxuser__oxstreet->value . ' ' . $user->oxuser__oxstreetnr->value;
+                $address->postal_code = $user->oxuser__oxzip->value;
+                $address->admin_area_2 = $user->oxuser__oxcity->value;
+            }
+
+            $shipping->setAddress($address);
         }
 
-        $shipping->setAddress($address);
+        $shipping->setOptions(self::getShippingOptions($user, $basket, $countryId));
+
         return $shipping;
     }
 
@@ -238,5 +259,41 @@ class CreateOrderRequestFactory
     {
         $method = $payment->oxpayments__agpaypalpaymentmethod->value;
         return $method === PaymentSource::PAY_UPON_INVOICE;
+    }
+
+    private static function getShippingOptions ($user, $basket, $countryId = null)
+    {
+        if (!self::$shippingOptions) {
+            $options = [];
+
+            $currencyName = $basket->getBasketCurrency()->name;
+
+            $sActShipSet = Registry::getConfig()->getRequestParameter('sShipSet');
+            if (!$sActShipSet) {
+                $sActShipSet = Registry::getSession()->getVariable('sShipSet');
+            }
+            // load sets, active set, and active set payment list
+            $aAllSets = Registry::get(\OxidEsales\Eshop\Application\Model\DeliverySetList::class)->getDeliverySetList($user, $countryId, $sActShipSet);
+
+            foreach($aAllSets as $deliverySet) {
+                $costs = $basket->getDeliveryCostForShipset($deliverySet->getId());
+                $option = new ShippingDetailOption();
+                $option->setAmount(new Money($currencyName,$costs->getBruttoPrice()));
+                $option->setId($deliverySet->getId());
+                $option->setLabel($deliverySet->oxdeliveryset__oxtitle->value);
+                $option->setType('SHIPPING');
+                $option->setSelected($deliverySet->getId() === $sActShipSet);
+                $options[] = $option;
+            }
+
+            self::$shippingOptions = $options;
+        }
+        return self::$shippingOptions;
+    }
+
+    private static function getSelectedShippingOption($user, $basket, $countryId = null)
+    {
+        $options = self::getShippingOptions($user, $basket, $countryId);
+        return current(array_filter($options, function($option){ return $option->selected; }));
     }
 }

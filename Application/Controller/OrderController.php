@@ -96,6 +96,8 @@ class OrderController extends OrderController_parent
 
         $basket->calculateBasket();
 
+        $this->_oShipSet = $this->_oBasket = $this->_oPayment = null;
+
         return $basket;
     }
 

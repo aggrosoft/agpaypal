@@ -268,12 +268,22 @@ class CreateOrderRequestFactory
 
             $currencyName = $basket->getBasketCurrency()->name;
 
+            if (!$countryId) {
+                $countryId = current(Registry::getConfig()->getConfigParam('aHomeCountry'));
+            }
+
+            if (!$user) {
+                $user = oxNew(\OxidEsales\Eshop\Application\Model\User::class);
+                $user->setId();
+                $user->oxuser__oxcountryid = new \OxidEsales\Eshop\Core\Field($countryId);
+            }
+
             $sActShipSet = Registry::getConfig()->getRequestParameter('sShipSet');
             if (!$sActShipSet) {
                 $sActShipSet = Registry::getSession()->getVariable('sShipSet');
             }
             // load sets, active set, and active set payment list
-            $aAllSets = Registry::get(\OxidEsales\Eshop\Application\Model\DeliverySetList::class)->getDeliverySetList($user, $countryId, $sActShipSet);
+            list($aAllSets, $sActShipSet, $aActPaymentList) = Registry::get(\OxidEsales\Eshop\Application\Model\DeliverySetList::class)->getDeliverySetData($sActShipSet, $user, $basket);
 
             foreach($aAllSets as $deliverySet) {
                 $costs = $basket->getDeliveryCostForShipset($deliverySet->getId());

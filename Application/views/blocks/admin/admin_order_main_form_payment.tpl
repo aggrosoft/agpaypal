@@ -1,4 +1,5 @@
 [{$smarty.block.parent}]
+aaa
 [{if $paymentType->oxpayments__agpaypalpaymentmethod->value && $edit->blIsPaid}]
     <tr>
         <td class="edittext" colspan="2">
@@ -17,3 +18,4 @@
         </td>
     </tr>
 [{/if}]
+bbb

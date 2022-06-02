@@ -52,6 +52,11 @@ $aModule = array(
             'file' => '/Application/views/blocks/basket_btn_next_top.tpl',
         ],
         [
+            'template' => 'page/checkout/basket.tpl',
+            'block' => 'basket_btn_next_bottom',
+            'file' => '/Application/views/blocks/basket_btn_next_bottom.tpl',
+        ],
+        [
             'template' => 'email/html/order_cust.tpl',
             'block' => 'email_html_order_cust_paymentinfo',
             'file' => '/Application/views/blocks/email_html_order_cust_paymentinfo.tpl',

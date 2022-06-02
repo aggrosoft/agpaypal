@@ -279,6 +279,9 @@ class CreateOrderRequestFactory
             if (!$user) {
                 $user = oxNew(\OxidEsales\Eshop\Application\Model\User::class);
                 $user->setId();
+            }
+
+            if ($countryId){
                 $user->oxuser__oxcountryid = new \OxidEsales\Eshop\Core\Field($countryId);
             }
 
@@ -287,7 +290,7 @@ class CreateOrderRequestFactory
                 $sActShipSet = Registry::getSession()->getVariable('sShipSet');
             }
             // load sets, active set, and active set payment list
-            list($aAllSets, $sActShipSet, $aActPaymentList) = Registry::get(\OxidEsales\Eshop\Application\Model\DeliverySetList::class)->getDeliverySetData($sActShipSet, $user, $basket);
+            list($aAllSets, $sActShipSet) = Registry::get(\OxidEsales\Eshop\Application\Model\DeliverySetList::class)->getDeliverySetData($sActShipSet, $user, $basket);
 
             foreach($aAllSets as $deliverySet) {
                 $costs = $basket->getDeliveryCostForShipset($deliverySet->getId());

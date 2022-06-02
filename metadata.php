@@ -17,14 +17,17 @@ $aModule = array(
     ],
     'extend'      => [
         \OxidEsales\Eshop\Core\ViewConfig::class => \Aggrosoft\PayPal\Application\Core\ViewConfig::class,
+        \OxidEsales\Eshop\Application\Controller\BasketController::class => \Aggrosoft\PayPal\Application\Controller\BasketController::class,
         \OxidEsales\Eshop\Application\Controller\OrderController::class => \Aggrosoft\PayPal\Application\Controller\OrderController::class,
         \OxidEsales\Eshop\Application\Controller\PaymentController::class => \Aggrosoft\PayPal\Application\Controller\PaymentController::class,
         \OxidEsales\Eshop\Application\Controller\Admin\PaymentMain::class => \Aggrosoft\PayPal\Application\Controller\Admin\PaymentMain::class,
         \OxidEsales\Eshop\Application\Controller\Admin\ModuleConfiguration::class => \Aggrosoft\PayPal\Application\Controller\Admin\ModuleConfiguration::class,
+        \OxidEsales\Eshop\Application\Controller\Admin\OrderArticle::class => \Aggrosoft\PayPal\Application\Controller\Admin\OrderArticle::class,
         \OxidEsales\Eshop\Application\Model\UserBasket::class => \Aggrosoft\PayPal\Application\Model\UserBasket::class,
         \OxidEsales\Eshop\Application\Model\PaymentGateway::class => \Aggrosoft\PayPal\Application\Model\PaymentGateway::class,
         \OxidEsales\Eshop\Application\Model\Order::class => \Aggrosoft\PayPal\Application\Model\Order::class,
-        \OxidEsales\Eshop\Application\Model\Basket::class => \Aggrosoft\PayPal\Application\Model\Basket::class
+        \OxidEsales\Eshop\Application\Model\OrderArticle::class => \Aggrosoft\PayPal\Application\Model\OrderArticle::class,
+        \OxidEsales\Eshop\Application\Model\Basket::class => \Aggrosoft\PayPal\Application\Model\Basket::class,
     ],
     'events'       => array(
         'onActivate'   => '\Aggrosoft\PayPal\Application\Core\Events::onActivate'

@@ -143,7 +143,7 @@ class PayPalRestClient
     private function log ($request, $result) {
 
         $log = "Error: [" . date("d/M/Y H:i:s") . "]\n";
-        $log .= "Request: \n\n " . json_encode($request->getBody(), JSON_PRETTY_PRINT) . "\n\n";
+        $log .= "Request: \n\n " . json_encode($request, JSON_PRETTY_PRINT) . "\n\n";
         $log .= "Response: \n\n " . json_encode($result, JSON_PRETTY_PRINT) . "\n\n";
         $log .= "########################################################################\n\n";
 

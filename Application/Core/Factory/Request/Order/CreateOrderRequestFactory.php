@@ -21,7 +21,6 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ShippingDetail
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ShippingDetailAddress;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ShippingDetailName;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ShippingDetailOption;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\StoredPaymentSource;
 use Aggrosoft\PayPal\Application\Core\FraudNet;
 use OxidEsales\Eshop\Core\Registry;
 
@@ -37,7 +36,7 @@ class CreateOrderRequestFactory
      * @param $returnUrl
      * @return CreateOrderRequest
      */
-    public static function create($user, $basket, $payment, $returnUrl)
+    public static function create($user, $basket, $payment, $returnUrl, $shippingPreference = ApplicationContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS)
     {
         //Cache this, used multiple times
         self::$shippingOptions = null;
@@ -48,8 +47,8 @@ class CreateOrderRequestFactory
         if ($user) {
             $request->setPayer(self::createPayer($user));
         }
-        $request->addPurchaseUnit(self::createPurchaseUnitRequest($user, $basket));
-        $request->setApplicationContext(self::createApplicationContext($user, $returnUrl));
+        $request->addPurchaseUnit(self::createPurchaseUnitRequest($user, $basket, $shippingPreference));
+        $request->setApplicationContext(self::createApplicationContext($user, $returnUrl, $shippingPreference));
         $request->setPaymentSource(self::createPaymentSource($user, $payment));
         if (self::isPayUponInvoice($payment)) {
             $request->setMetadataId(FraudNet::getSessionIdentifier());
@@ -57,31 +56,23 @@ class CreateOrderRequestFactory
         return $request;
     }
 
-    public static function createPurchaseUnitRequest($user, $basket, $countryId = null)
+    public static function createPurchaseUnitRequest($user, $basket, $shippingPreference, $countryId = null)
     {
         $config = Registry::getConfig();
         $currencyName = $basket->getBasketCurrency()->name;
-        $vats = $basket->getProductVats(false);
 
         $shippingOption = self::getSelectedShippingOption($user, $basket, $countryId);
 
         $basket->setShipping($shippingOption->id);
         $basket->calculateBasket(true);
 
-        $deliveryCosts = $basket->getDeliveryCost();
-
-        $amountBreakDown = new AmountBreakdown();
-        $amountBreakDown->item_total = new Money($currencyName, $basket->getNettoSum());
-        $amountBreakDown->tax_total = new Money($currencyName, array_sum($vats));
-        $amountBreakDown->shipping = new Money($currencyName, $deliveryCosts->getBruttoPrice());
-        $amountBreakDown->discount = new Money($currencyName, $basket->getTotalDiscountSum());
-
         $unit = new PurchaseUnitRequest();
-        $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice(), $amountBreakDown));
         $unit->setPayee(new Payee($config->getShopConfVar("sPayPalEmailAddress", null, "module:agpaypal")));
-        $unit->setShipping(self::createShipping($user, $basket, $countryId));
+        $unit->setShipping(self::createShipping($user, $basket, $shippingPreference, $countryId));
 
         $items = [];
+        $itemTotal = 0;
+        $taxTotal = 0;
 
         foreach ($basket->getContents() as $basketItem) {
             $article = $basketItem->getArticle();
@@ -93,9 +84,20 @@ class CreateOrderRequestFactory
             $item->tax = new Money($currencyName, $basketItem->getUnitPrice()->getVatValue());
             $item->tax_rate = $basketItem->getUnitPrice()->getVat();
             $items[] = $item;
+            $itemTotal += $item->quantity * $item->unit_amount->value;
+            $taxTotal += $item->quantity * $item->tax->value;
         }
 
         $unit->setItems($items);
+
+        $deliveryCosts = $basket->getDeliveryCost();
+
+        $amountBreakDown = new AmountBreakdown();
+        $amountBreakDown->item_total = new Money($currencyName, $itemTotal);
+        $amountBreakDown->tax_total = new Money($currencyName, $taxTotal);
+        $amountBreakDown->shipping = new Money($currencyName, $deliveryCosts->getBruttoPrice());
+        $amountBreakDown->discount = new Money($currencyName, $basket->getTotalDiscountSum());
+        $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice(), $amountBreakDown));
 
         return $unit;
     }
@@ -146,7 +148,7 @@ class CreateOrderRequestFactory
         return $oDelAdress;
     }
 
-    public static function createApplicationContext($user, $returnUrl)
+    public static function createApplicationContext($user, $returnUrl, $shippingPreference)
     {
         $config = Registry::getConfig();
         $shop = $config->getActiveShop();
@@ -154,7 +156,7 @@ class CreateOrderRequestFactory
         $context = new ApplicationContext();
         $context->setBrandName($shop->oxshops__oxname->value);
         $context->setLandingPage(ApplicationContext::LANDING_PAGE_NO_PREFERENCE);
-        $context->setShippingPreference($user ? ApplicationContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS : ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE);
+        $context->setShippingPreference($shippingPreference);
         $context->setUserAction(ApplicationContext::USER_ACTION_CONTINUE);
         $context->setPaymentMethod(new PaymentMethod(PaymentMethod::PAYEE_PREFERRED_UNRESTRICTED));
         $context->setReturnUrl($returnUrl);
@@ -219,7 +221,7 @@ class CreateOrderRequestFactory
         }
     }
 
-    public static function createShipping ($user, $basket, $countryId = null)
+    public static function createShipping ($user, $basket, $shippingPreference, $countryId = null)
     {
         $shipping = new ShippingDetail();
 
@@ -250,7 +252,9 @@ class CreateOrderRequestFactory
             $shipping->setAddress($address);
         }
 
-        $shipping->setOptions(self::getShippingOptions($user, $basket, $countryId));
+        if ($shippingPreference === ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE){
+            $shipping->setOptions(self::getShippingOptions($user, $basket, $countryId));
+        }
 
         return $shipping;
     }

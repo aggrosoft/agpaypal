@@ -43,11 +43,13 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
             $client = new PayPalRestClient();
             $response = $client->execute(new GetOrderRequest($orderId));
 
-            $bankData = oxNew(\Aggrosoft\PayPal\Application\Model\PayPalBankData::class);
-            $bankData->assignPayPalPUIData($order->getId(), $response->payment_source->pay_upon_invoice);
-            $bankData->save();
+            if ($response->payment_source->pay_upon_invoice) {
+                $bankData = oxNew(\Aggrosoft\PayPal\Application\Model\PayPalBankData::class);
+                $bankData->assignPayPalPUIData($order->getId(), $response->payment_source->pay_upon_invoice);
+                $bankData->save();
 
-            $order->sendOrderByEmailForPayPalPUI();
+                $order->sendOrderByEmailForPayPalPUI();
+            }
 
             $capture = $response->purchase_units[0]->payments->captures[0];
             $order->oxorder__oxpaid = new \OxidEsales\Eshop\Core\Field(date("Y-m-d H:i:s"));

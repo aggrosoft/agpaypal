@@ -30,33 +30,6 @@ class ViewConfig extends ViewConfig_parent
         return Registry::getConfig()->getConfigParam('sPayPalClientId', null, 'module:agpaypal');
     }
 
-    public function getPayPalPayer ()
-    {
-        $session = Registry::getSession();
-        $basket = $session->getBasket();
-        $user = $basket->getBasketUser();
-
-        return json_encode(CreateOrderRequestFactory::createPayer($user));
-    }
-
-    public function getPayPalPurchaseUnits ()
-    {
-        $session = Registry::getSession();
-        $basket = $session->getBasket();
-        $user = $basket->getBasketUser();
-
-        return json_encode(CreateOrderRequestFactory::createPurchaseUnitRequest($user, $basket));
-    }
-
-    public function getPayPalApplicationContext ()
-    {
-        $session = Registry::getSession();
-        $basket = $session->getBasket();
-        $user = $basket->getBasketUser();
-
-        return json_encode(CreateOrderRequestFactory::createApplicationContext($user, Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=ppreturn'));
-    }
-
     public function getPayPalPaymentId ()
     {
         $container = ContainerFactory::getInstance()->getContainer();

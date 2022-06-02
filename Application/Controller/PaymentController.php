@@ -4,7 +4,9 @@ namespace Aggrosoft\PayPal\Application\Controller;
 
 use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Identity\GenerateTokenRequest;
+use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
+use Aggrosoft\PayPal\Application\Core\Client\Request\Order\UpdateOrderPurchaseUnitsRequest;
 use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CreateOrderRequestFactory;
 use Aggrosoft\PayPal\Application\Core\PayPalInitiator;
 use OxidEsales\Eshop\Core\Registry;
@@ -37,19 +39,6 @@ class PaymentController extends PaymentController_parent
         $response = $paypal->initiate(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=execute', true);
         header('Content-Type: application/json');
         echo json_encode($response);
-        exit();
-    }
-
-    public function getpaypalpurchaseunits ()
-    {
-        $session = Registry::getSession();
-        $basket = $session->getBasket();
-        $user = $basket->getBasketUser();
-
-        $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
-
-        header('Content-Type: application/json');
-        echo json_encode(CreateOrderRequestFactory::createPurchaseUnitRequest($user, $basket, $country->getIdByCode(Registry::getRequest()->getRequestEscapedParameter('ppcountryid'))));
         exit();
     }
 

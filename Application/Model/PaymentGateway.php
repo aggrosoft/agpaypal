@@ -54,7 +54,7 @@ class PaymentGateway extends PaymentGateway_parent
                 }
 
                 // Now capture payment if needed
-                if ($payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::PAY_UPON_INVOICE) {
+                if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::PAYPAL || $payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::CARD ) {
                     $request = CapturePaymentRequestFactory::create($token);
 
                     try {

@@ -2,7 +2,9 @@
 
 namespace Aggrosoft\PayPal\Application\Model;
 
+use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
+use Aggrosoft\PayPal\Application\Core\Client\Request\Payments\Captures\RefundCapturedPaymentRequest;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 
@@ -11,6 +13,23 @@ class Order extends Order_parent
     public function setOrderNumber ()
     {
         $this->_setNumber();
+    }
+
+    public function cancelOrder () {
+        parent::cancelOrder();
+
+        $payment = oxNew(\OxidEsales\Eshop\Application\Model\Payment::class);
+        $payment->load($this->oxorder__oxpaymenttype->value);
+
+        if ( $payment->oxpayments__agpaypalpaymentmethod->value && $this->oxorder__agpaypalcaptureid->value ) {
+            $client = new PayPalRestClient();
+            $request = new RefundCapturedPaymentRequest($this->oxorder__agpaypalcaptureid->value);
+            $response = $client->execute($request);
+
+            $this->oxorder__agpaypalrefundid = new \OxidEsales\Eshop\Core\Field($response->id);
+            $this->oxorder__agpaypaltransstatus = new \OxidEsales\Eshop\Core\Field('REFUNDED');
+            $this->save();
+        }
     }
 
     protected function _sendOrderByEmail($oUser = null, $oBasket = null, $oPayment = null)

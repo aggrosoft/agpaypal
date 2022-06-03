@@ -7,9 +7,9 @@
 [{capture assign=pageScript}]
   let topPayPalButton = new AggrosoftPayPalButton({
     baseUrl: '[{$oViewConf->getSelfActionLink()}]',
-    paymentId: '[{$oViewConf->getPayPalPaymentId()}]',
     redirectUrl: '[{$oViewConf->getSelfActionLink()|html_entity_decode}]&cl=order&fnc=ppreturn',
-    container: '#paypal-button-container-top'
+    container: '#paypal-button-container-top',
+    controller: 'basket'
   })
 
   topPayPalButton.render();

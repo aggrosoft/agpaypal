@@ -6,33 +6,43 @@ use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
 use Aggrosoft\PayPal\Application\Core\Client\Response\Order\OrderResponseHandler;
 use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CreateOrderRequestFactory;
+use OxidEsales\Eshop\Core\Registry;
 
 class PayPalInitiator
 {
+
+    protected $returnUrl = '';
+    protected $redirect = true;
+    protected $shippingPreference = ApplicationContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS;
+    protected $products;
+
+    public function __construct ($returnUrl)
+    {
+        $this->returnUrl = $returnUrl;
+    }
+
     /**
      * Create PayPal order and redirect
      */
-    public function initiate ($returnUrl = '', $noRedirect = false, $shippingPreference = ApplicationContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS)
+    public function initiate ()
     {
         $returnToken = $this->generateReturnToken();
-        $savedBasket = PayPalBasketHandler::savePayPalBasket($returnToken);
-
-        $session = \OxidEsales\Eshop\Core\Registry::getSession();
-        $basket = $session->getBasket();
+        $savedBasket = PayPalBasketHandler::savePayPalBasket($returnToken, $this->products);
+        $basket = PayPalBasketHandler::restoreBasketFromUserBasket($savedBasket, Registry::getConfig()->getUser());
         $user = $basket->getBasketUser();
         $payment = $this->getPayment();
 
-        $request = CreateOrderRequestFactory::create($user, $basket, $payment, $returnUrl . '&pptoken='.$returnToken, $shippingPreference);
+        $request = CreateOrderRequestFactory::create($user, $basket, $payment, $this->returnUrl . '&pptoken='.$returnToken, $this->shippingPreference);
         $client = $this->getPayPalClient();
 
         $response = $client->execute($request);
 
         $redirectUrl = OrderResponseHandler::handle($response, $savedBasket);
 
-        if ($redirectUrl && !$noRedirect) {
-            \OxidEsales\Eshop\Core\Registry::getUtils()->redirect($redirectUrl, false, 303);
+        if ($redirectUrl && $this->redirect) {
+            Registry::getUtils()->redirect($redirectUrl, false, 303);
         } else {
-            \OxidEsales\Eshop\Core\Registry::getSession()->setVariable('pptoken', $response->id);
+            Registry::getSession()->setVariable('pptoken', $response->id);
         }
 
         return [
@@ -52,8 +62,8 @@ class PayPalInitiator
     protected function getPayment ()
     {
         if(!$this->payment) {
-            $session = \OxidEsales\Eshop\Core\Registry::getSession();
-            if (!($paymentId = \OxidEsales\Eshop\Core\Registry::getRequest()->getRequestEscapedParameter('paymentid'))) {
+            $session = Registry::getSession();
+            if (!($paymentId = Registry::getRequest()->getRequestEscapedParameter('paymentid'))) {
                 $paymentId = $session->getVariable('paymentid');
             }
 
@@ -69,4 +79,70 @@ class PayPalInitiator
     {
         return bin2hex(random_bytes(64));
     }
+
+    /**
+     * @return string
+     */
+    public function getReturnUrl(): string
+    {
+        return $this->returnUrl;
+    }
+
+    /**
+     * @param string $returnUrl
+     */
+    public function setReturnUrl(string $returnUrl): void
+    {
+        $this->returnUrl = $returnUrl;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRedirect(): bool
+    {
+        return $this->redirect;
+    }
+
+    /**
+     * @param bool $redirect
+     */
+    public function setRedirect(bool $redirect): void
+    {
+        $this->redirect = $redirect;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShippingPreference(): string
+    {
+        return $this->shippingPreference;
+    }
+
+    /**
+     * @param string $shippingPreference
+     */
+    public function setShippingPreference(string $shippingPreference): void
+    {
+        $this->shippingPreference = $shippingPreference;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProducts(): array
+    {
+        return $this->products;
+    }
+
+    /**
+     * @param array $products
+     */
+    public function setProducts(array $products): void
+    {
+        $this->products = $products;
+    }
+
+
 }

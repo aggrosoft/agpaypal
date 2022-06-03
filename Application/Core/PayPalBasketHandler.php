@@ -13,7 +13,7 @@ class PayPalBasketHandler
      * Save current user basket to database
      * @return void
      */
-    public static function savePayPalBasket ($returnToken)
+    public static function savePayPalBasket ($returnToken, $products = null)
     {
         $session = Registry::getSession();
         $basket = $session->getBasket();
@@ -28,8 +28,6 @@ class PayPalBasketHandler
             $savedBasket->setIsNewBasket();
         }
 
-        $contents = $basket->getContents();
-
         if (!($deliveryAddressId = Registry::getRequest()->getRequestEscapedParameter('deladrid'))) {
             $deliveryAddressId = Registry::getSession()->getVariable('deladrid');
         }
@@ -42,9 +40,17 @@ class PayPalBasketHandler
         $savedBasket->oxuserbaskets__agpaypalcardid = new Field($basket->getCardId());
         $savedBasket->oxuserbaskets__agpaypalcardtext = new Field($basket->getCardMessage());
 
-        foreach ($contents as $basketItem) {
-            if (!$basketItem->isBundle() && !$basketItem->isDiscountArticle()) {
-                $savedBasket->addPayPalItemToBasket($basketItem->getProductId(), $basketItem->getAmount(), $basketItem->getSelList(), true, $basketItem->getPersParams(), $basketItem->getWrappingId());
+        if ($products) {
+            foreach ($products as $product) {
+                $savedBasket->addPayPalItemToBasket($product['id'], $product['amount'], $product['sellists'], true, $product['persparam'], $product['wrapping']);
+            }
+        }else{
+            $contents = $basket->getContents();
+
+            foreach ($contents as $basketItem) {
+                if (!$basketItem->isBundle() && !$basketItem->isDiscountArticle()) {
+                    $savedBasket->addPayPalItemToBasket($basketItem->getProductId(), $basketItem->getAmount(), $basketItem->getSelList(), true, $basketItem->getPersParams(), $basketItem->getWrappingId());
+                }
             }
         }
 

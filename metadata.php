@@ -20,6 +20,7 @@ $aModule = array(
         \OxidEsales\Eshop\Application\Controller\BasketController::class => \Aggrosoft\PayPal\Application\Controller\BasketController::class,
         \OxidEsales\Eshop\Application\Controller\OrderController::class => \Aggrosoft\PayPal\Application\Controller\OrderController::class,
         \OxidEsales\Eshop\Application\Controller\PaymentController::class => \Aggrosoft\PayPal\Application\Controller\PaymentController::class,
+        \OxidEsales\Eshop\Application\Controller\ArticleDetailsController::class => \Aggrosoft\PayPal\Application\Controller\ArticleDetailsController::class,
         \OxidEsales\Eshop\Application\Controller\Admin\PaymentMain::class => \Aggrosoft\PayPal\Application\Controller\Admin\PaymentMain::class,
         \OxidEsales\Eshop\Application\Controller\Admin\ModuleConfiguration::class => \Aggrosoft\PayPal\Application\Controller\Admin\ModuleConfiguration::class,
         \OxidEsales\Eshop\Application\Controller\Admin\OrderArticle::class => \Aggrosoft\PayPal\Application\Controller\Admin\OrderArticle::class,
@@ -55,6 +56,11 @@ $aModule = array(
             'template' => 'page/checkout/basket.tpl',
             'block' => 'basket_btn_next_bottom',
             'file' => '/Application/views/blocks/basket_btn_next_bottom.tpl',
+        ],
+        [
+            'template' => 'page/details/inc/productmain.tpl',
+            'block' => 'details_productmain_tobasket',
+            'file' => '/Application/views/blocks/details_productmain_tobasket.tpl',
         ],
         [
             'template' => 'email/html/order_cust.tpl',

@@ -3,9 +3,7 @@
 namespace Aggrosoft\PayPal\Application\Controller;
 
 use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Identity\GenerateTokenRequest;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\UpdateOrderPurchaseUnitsRequest;
 use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CreateOrderRequestFactory;
 use Aggrosoft\PayPal\Application\Core\PayPalBasketHandler;
@@ -13,7 +11,7 @@ use Aggrosoft\PayPal\Application\Core\PayPalHelper;
 use Aggrosoft\PayPal\Application\Core\PayPalInitiator;
 use OxidEsales\Eshop\Core\Registry;
 
-class BasketController extends BasketController_parent
+class ArticleDetailsController extends ArticleDetailsController_parent
 {
     // Used for express checkout
     public function createpaypalorder ()
@@ -23,6 +21,7 @@ class BasketController extends BasketController_parent
         $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=ppreturn');
         $paypal->setShippingPreference(ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE);
         $paypal->setRedirect(false);
+        $paypal->setProducts(Registry::getRequest()->getRequestEscapedParameter('products'));
         $response = $paypal->initiate();
         header('Content-Type: application/json');
         echo json_encode($response);

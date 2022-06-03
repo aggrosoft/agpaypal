@@ -30,13 +30,25 @@ class PaymentController extends PaymentController_parent
         return $result;
     }
 
+    public function getPayPalCreditCardPaymentMethod ()
+    {
+        $payments = $this->getPaymentList();
+
+        foreach($payments as $payment) {
+            if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::CARD){
+                return $payment;
+            }
+        }
+    }
+
     // Used for custom hosted fields
     public function createpaypalorder ()
     {
         $session = Registry::getSession();
         $session->setVariable('paymentid', Registry::getRequest()->getRequestEscapedParameter('paymentid'));
-        $paypal = new PayPalInitiator();
-        $response = $paypal->initiate(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=execute', true);
+        $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=execute');
+        $paypal->setRedirect(false);
+        $response = $paypal->initiate();
         header('Content-Type: application/json');
         echo json_encode($response);
         exit();
@@ -110,11 +122,6 @@ class PaymentController extends PaymentController_parent
         $request = new  GenerateTokenRequest();
         $response = $client->execute($request);
         return $response->client_token;
-    }
-
-    public function getPayPalClientId ()
-    {
-        return Registry::getConfig()->getConfigParam('sPayPalClientId', null, 'module:agpaypal');
     }
 
     protected function getPayment ()

@@ -96,9 +96,7 @@
       });
     });
   } else {
-
-    // Hides card fields if the merchant isn't eligible
-    document.querySelector("#card-form").style = 'display: none';
+    $('#card-form').closest('.well').hide();
   }
 </script>
 [{/if}]

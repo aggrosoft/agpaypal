@@ -20,9 +20,10 @@ class PaymentGateway extends PaymentGateway_parent
         if ($payment->oxpayments__agpaypalpaymentmethod->value) {
 
             if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::PAY_UPON_INVOICE) {
-                $paypal = new PayPalInitiator();
+                $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=execute');
+                $paypal->setRedirect(false);
                 try {
-                    $paypal->initiate(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=execute');
+                    $paypal->initiate();
                 } catch(RestException $re) {
                     $this->_iLastErrorNo = null; // $re->getCode();
                     $this->_sLastError = null; // Registry::getLang()->translateString($re->getMessage());

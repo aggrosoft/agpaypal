@@ -27,6 +27,12 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
                 case 'CHECKOUT.PAYMENT-APPROVAL.REVERSED':
                     $this->handlePaymentApprovalReversed($data);
                     break;
+                case 'PAYMENT.CAPTURE.REVERSED':
+                    $this->handlePaymentCaptureReversed($data);
+                    break;
+                case 'PAYMENT.CAPTURE.REFUNDED':
+                    $this->handlePaymentCaptureRefunded($data);
+                    break;
             }
 
             \OxidEsales\Eshop\Core\Registry::getUtils()->showMessageAndExit('');
@@ -45,10 +51,10 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
             if ($response->payment_source->pay_upon_invoice) {
                 $bankData = oxNew(\Aggrosoft\PayPal\Application\Model\PayPalBankData::class);
-                $bankData->assignPayPalPUIData($order->getId(), $response->payment_source->pay_upon_invoice);
-                $bankData->save();
-
-                $order->sendOrderByEmailForPayPalPUI();
+                if ($bankData->assignPayPalPUIData($order->getId(), $response->payment_source->pay_upon_invoice) ) {
+                    $bankData->save();
+                    $order->sendOrderByEmailForPayPalPUI();
+                }
             }
 
             $capture = $response->purchase_units[0]->payments->captures[0];
@@ -93,5 +99,15 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
             $order->load($orderId);
             return $order;
         }
+    }
+
+    protected function handlePaymentCaptureReversed($data)
+    {
+        //@TODO: Check if needed
+    }
+
+    protected function handlePaymentCaptureRefunded($data)
+    {
+        //@TODO: Check if needed
     }
 }

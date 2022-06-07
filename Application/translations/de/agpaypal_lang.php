@@ -6,5 +6,5 @@ $aLang = array(
     'PAYPAL_ERROR_PAYEE_NOT_ENABLED_FOR_PUI_PROCESSING' => 'Aus technischen Gründen können wir im Moment leider keinen Rechnungskauf anbieten, bitte wählen Sie eine andere Zahlungsart. (PUI_NOT_ENABLED)',
     'PAYPAL_ERROR_PAYMENT_SOURCE_INFO_CANNOT_BE_VERIFIED' => 'Die Kombination aus Ihrem Namen und Ihrer Anschrift konnte nicht validiert werden. Bitte korrigieren Sie Ihre Daten und versuchen Sie es erneut. Weitere Informationen finden Sie in den Ratepay <a href="https://www.ratepay.com/legal-payment-dataprivacy/?lang=de" target="_blank" rel="noopener noreferrer" >Datenschutzbestimmungen</a> oder nutzen Sie das Ratepay <a href="https://www.ratepay.com/kontakt/" target="_blank" rel="noopener noreferrer">Kontaktformular</a>.',
     'PAYPAL_ERROR_PAYMENT_SOURCE_DECLINED_BY_PROCESSOR' => 'Die gewählte Zahlungsart kann nicht genutzt werden. Diese Entscheidung basiert auf einem automatisierten Datenverarbeitungsverfahren. Weitere Informationen finden Sie in den Ratepay <a href="https://www.ratepay.com/legal-payment-dataprivacy/?lang=de" target="_blank" rel="noopener noreferrer" >Datenschutzbestimmungen</a> oder nutzen Sie das Ratepay <a href="https://www.ratepay.com/kontakt/" target="_blank" rel="noopener noreferrer">Kontaktformular</a>.',
-    'PAYPAL_PUI_REFERENCE' => 'Verwendungszweck'
+    'PAYPAL_PUI_REFERENCE' => 'Verwendungszweck',
 );

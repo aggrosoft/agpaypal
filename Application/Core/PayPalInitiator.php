@@ -14,6 +14,7 @@ class PayPalInitiator
     protected $returnUrl = '';
     protected $redirect = true;
     protected $shippingPreference = ApplicationContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS;
+    protected $userAction = ApplicationContext::USER_ACTION_CONTINUE;
     protected $products;
 
     public function __construct ($returnUrl)
@@ -32,7 +33,7 @@ class PayPalInitiator
         $user = $basket->getBasketUser();
         $payment = $this->getPayment();
 
-        $request = CreateOrderRequestFactory::create($user, $basket, $payment, $this->returnUrl . '&pptoken='.$returnToken, $this->shippingPreference);
+        $request = CreateOrderRequestFactory::create($user, $basket, $payment, $this->returnUrl . '&pptoken='.$returnToken, $this->shippingPreference, $this->userAction);
         $client = $this->getPayPalClient();
 
         $response = $client->execute($request);
@@ -143,6 +144,23 @@ class PayPalInitiator
     {
         $this->products = $products;
     }
+
+    /**
+     * @return string
+     */
+    public function getUserAction(): string
+    {
+        return $this->userAction;
+    }
+
+    /**
+     * @param string $userAction
+     */
+    public function setUserAction(string $userAction): void
+    {
+        $this->userAction = $userAction;
+    }
+
 
 
 }

@@ -36,7 +36,7 @@ class CreateOrderRequestFactory
      * @param $returnUrl
      * @return CreateOrderRequest
      */
-    public static function create($user, $basket, $payment, $returnUrl, $shippingPreference = ApplicationContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS)
+    public static function create($user, $basket, $payment, $returnUrl, $shippingPreference = ApplicationContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS, $userAction = ApplicationContext::USER_ACTION_CONTINUE)
     {
         //Cache this, used multiple times
         self::$shippingOptions = null;
@@ -48,7 +48,7 @@ class CreateOrderRequestFactory
             $request->setPayer(self::createPayer($user));
         }
         $request->addPurchaseUnit(self::createPurchaseUnitRequest($user, $basket, $shippingPreference));
-        $request->setApplicationContext(self::createApplicationContext($user, $returnUrl, $shippingPreference));
+        $request->setApplicationContext(self::createApplicationContext($returnUrl, $shippingPreference, $userAction));
         $request->setPaymentSource(self::createPaymentSource($user, $payment));
         if (self::isPayUponInvoice($payment)) {
             $request->setMetadataId(FraudNet::getSessionIdentifier());
@@ -148,7 +148,7 @@ class CreateOrderRequestFactory
         return $oDelAdress;
     }
 
-    public static function createApplicationContext($user, $returnUrl, $shippingPreference)
+    public static function createApplicationContext($returnUrl, $shippingPreference, $userAction)
     {
         $config = Registry::getConfig();
         $shop = $config->getActiveShop();
@@ -157,7 +157,7 @@ class CreateOrderRequestFactory
         $context->setBrandName($shop->oxshops__oxname->value);
         $context->setLandingPage(ApplicationContext::LANDING_PAGE_NO_PREFERENCE);
         $context->setShippingPreference($shippingPreference);
-        $context->setUserAction(ApplicationContext::USER_ACTION_CONTINUE);
+        $context->setUserAction($userAction);
         $context->setPaymentMethod(new PaymentMethod(PaymentMethod::PAYEE_PREFERRED_UNRESTRICTED));
         $context->setReturnUrl($returnUrl);
         $context->setCancelUrl(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=payment');

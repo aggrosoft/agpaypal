@@ -2,7 +2,10 @@
 
 namespace Aggrosoft\PayPal\Application\Controller;
 
+use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
+use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
 use Aggrosoft\PayPal\Application\Core\PayPalBasketHandler;
+use Aggrosoft\PayPal\Application\Core\PayPalInitiator;
 use Aggrosoft\PayPal\Application\Core\PayPalUserHandler;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
@@ -45,7 +48,47 @@ class OrderController extends OrderController_parent
 
             // store paypal token for capturing on execute
             Registry::getSession()->setVariable('pptoken', $token);
+
+            if(Registry::getRequest()->getRequestEscapedParameter('execute')) {
+                try {
+                    $oOrder = oxNew(\OxidEsales\Eshop\Application\Model\Order::class);
+
+                    //finalizing ordering process (validating, storing order into DB, executing payment, setting status ...)
+                    $iSuccess = $oOrder->finalizeOrder($basket, $user);
+
+                    // performing special actions after user finishes order (assignment to special user groups)
+                    $user->onOrderExecute($basket, $iSuccess);
+
+                    // proceeding to next view
+                    return $this->_getNextStep($iSuccess);
+                } catch (\OxidEsales\Eshop\Core\Exception\OutOfStockException $oEx) {
+                    $oEx->setDestination('basket');
+                    Registry::getUtilsView()->addErrorToDisplay($oEx, false, true, 'basket');
+                } catch (\OxidEsales\Eshop\Core\Exception\NoArticleException $oEx) {
+                    Registry::getUtilsView()->addErrorToDisplay($oEx);
+                } catch (\OxidEsales\Eshop\Core\Exception\ArticleInputException $oEx) {
+                    Registry::getUtilsView()->addErrorToDisplay($oEx);
+                }
+            }
         }
+    }
+
+    public function executepaypal ()
+    {
+        $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=ppreturn&execute=1&sDeliveryAddressMD5='.$this->getDeliveryAddressMD5());
+        $paypal->setUserAction(ApplicationContext::USER_ACTION_PAY_NOW);
+        $paypal->initiate();
+    }
+
+    public function getExecuteFnc()
+    {
+        $payment = $this->getPayment();
+        if ($payment && $payment->oxpayments__agpaypalpaymentmethod->value){
+            if ($payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::CARD && $payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::PAY_UPON_INVOICE){
+                return 'executepaypal';
+            }
+        }
+        return parent::getExecuteFnc();
     }
 
 }

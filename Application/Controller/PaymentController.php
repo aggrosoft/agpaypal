@@ -4,10 +4,7 @@ namespace Aggrosoft\PayPal\Application\Controller;
 
 use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Identity\GenerateTokenRequest;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\UpdateOrderPurchaseUnitsRequest;
-use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CreateOrderRequestFactory;
 use Aggrosoft\PayPal\Application\Core\PayPalInitiator;
 use OxidEsales\Eshop\Core\Registry;
 
@@ -78,10 +75,10 @@ class PaymentController extends PaymentController_parent
                         return;
                     }
 
-                } elseif ($payment->oxpayments__agpaypalpaymentmethod->value != PaymentSource::CARD) {
-                    $paypal = new PayPalInitiator();
-                    $paypal->initiate(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=ppreturn');
-                }
+                }/* elseif ($payment->oxpayments__agpaypalpaymentmethod->value != PaymentSource::CARD) {
+                    $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=ppreturn');
+                    $paypal->initiate();
+                }*/
 
             }
         }

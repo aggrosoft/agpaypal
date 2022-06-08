@@ -32,7 +32,6 @@ class PayPalInitiator
         $basket = PayPalBasketHandler::restoreBasketFromUserBasket($savedBasket, Registry::getConfig()->getUser());
         $user = $basket->getBasketUser();
         $payment = $this->getPayment();
-
         $request = CreateOrderRequestFactory::create($user, $basket, $payment, $this->returnUrl . '&pptoken='.$returnToken, $this->shippingPreference, $this->userAction);
         $client = $this->getPayPalClient();
 

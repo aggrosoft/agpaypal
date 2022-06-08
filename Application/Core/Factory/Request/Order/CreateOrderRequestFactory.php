@@ -272,13 +272,16 @@ class CreateOrderRequestFactory
 
             $currencyName = $basket->getBasketCurrency()->name;
 
-            if (!$countryId) {
+            /*if (!$countryId) {
                 $countryId = current(Registry::getConfig()->getConfigParam('aHomeCountry'));
-            }
+            }*/
 
             if (!$user) {
                 $user = oxNew(\OxidEsales\Eshop\Application\Model\User::class);
                 $user->setId();
+                if (!$countryId) {
+                    $countryId = current(Registry::getConfig()->getConfigParam('aHomeCountry'));
+                }
             }
 
             if ($countryId){

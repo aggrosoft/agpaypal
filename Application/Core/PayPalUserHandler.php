@@ -39,7 +39,7 @@ class PayPalUserHandler
         //@TODO: this really needs to be properly checked with test data
         $address = \VIISON\AddressSplitter\AddressSplitter::splitAddress($shipping->address->address_line_1);
 
-        $user->oxuser__oxcity = new \OxidEsales\Eshop\Core\Field($shipping->address->admin_area_1);
+        $user->oxuser__oxcity = new \OxidEsales\Eshop\Core\Field($shipping->address->admin_area_1 . ($shipping->address->admin_area_1 ? ' ' : '') . $shipping->address->admin_area_2 );
         $user->oxuser__oxzip = new \OxidEsales\Eshop\Core\Field($shipping->address->postal_code);
         $user->oxuser__oxstreet = new \OxidEsales\Eshop\Core\Field($address['additionToAddress1'] . $address['streetName']);
         $user->oxuser__oxstreetnr = new \OxidEsales\Eshop\Core\Field($address['houseNumber']);

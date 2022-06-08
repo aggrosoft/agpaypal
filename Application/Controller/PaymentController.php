@@ -71,7 +71,8 @@ class PaymentController extends PaymentController_parent
                     $session->setVariable('pp_phone_country_code', $phoneCountryCode);
 
                     if (!$birthDate || !$phoneCode || !$phoneCountryCode) {
-                        Registry::getUtilsView()->addErrorToDisplay('ERR_PAYPAL_ORDER_PUI_DATA_MISSING');
+                        Registry::getUtilsView()->addErrorToDisplay('PAYPAL_ERROR_ORDER_PUI_DATA_MISSING');
+                        $this->_aViewData['pp_pui_error'] = true;
                         return;
                     }
 

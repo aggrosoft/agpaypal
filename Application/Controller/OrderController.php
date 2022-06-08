@@ -2,6 +2,7 @@
 
 namespace Aggrosoft\PayPal\Application\Controller;
 
+use Aggrosoft\PayPal\Application\Core\Client\Exception\RestException;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
 use Aggrosoft\PayPal\Application\Core\PayPalBasketHandler;
@@ -77,14 +78,20 @@ class OrderController extends OrderController_parent
     {
         $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=ppreturn&execute=1&sDeliveryAddressMD5='.$this->getDeliveryAddressMD5());
         $paypal->setUserAction(ApplicationContext::USER_ACTION_PAY_NOW);
-        $paypal->initiate();
+        try {
+            $paypal->initiate();
+        }catch(RestException $ex){
+            Registry::getUtilsView()->addErrorToDisplay($ex);
+            return 'payment';
+        }
+
     }
 
     public function getExecuteFnc()
     {
         $payment = $this->getPayment();
         if ($payment && $payment->oxpayments__agpaypalpaymentmethod->value){
-            if ($payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::CARD && $payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::PAY_UPON_INVOICE){
+            if (!Registry::getSession()->getVariable('pptoken') && $payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::CARD && $payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::PAY_UPON_INVOICE){
                 return 'executepaypal';
             }
         }

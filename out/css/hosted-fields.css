@@ -1,0 +1,75 @@
+.card-number-container {
+    position: relative;
+}
+#card-form.visa .card-display .invalid-feedback,
+#card-form.master-card .card-display .invalid-feedback,
+#card-form.maestro .card-display .invalid-feedback,
+#card-form.american-express .card-display .invalid-feedback,
+#card-form.discover .card-display .invalid-feedback,
+#card-form.unionpay .card-display .invalid-feedback,
+#card-form.jcb .card-display .invalid-feedback,
+#card-form.diners-club .card-display .invalid-feedback {
+    color: #fff;
+}
+
+#card-form.visa .card-display {
+     color: #fff;
+     background-color: #0D4AA2;
+}
+#card-form.master-card .card-display {
+    color: #fff;
+     background-color: #363636;
+     background: linear-gradient(115deg,#d82332, #d82332 50%, #f1ad3d 50%, #f1ad3d);
+}
+#card-form.maestro .card-display {
+    color: #fff;
+     background-color: #363636;
+     background: linear-gradient(115deg,#009ddd, #009ddd 50%, #ed1c2e 50%, #ed1c2e);
+}
+#card-form.american-express .card-display {
+    color: #fff;
+     background-color: #007CC3;
+}
+#card-form.discover .card-display {
+    color: #fff;
+     background-color: #ff6000;
+     background: linear-gradient(#d14310, #f7961e);
+}
+#card-form.unionpay .card-display, #card-form.jcb .card-display, #card-form.diners-club .card-display{
+    color: #fff;
+    background-color: #363636;
+}
+#card-image {
+    position: absolute;
+    top: 2.4em;
+    right: 3em;
+    width: 44px;
+    height: 28px;
+    background-image: url(../image/card_sprite.png);
+    background-size: 86px 458px;
+    border-radius: 5px;
+    background-position: -100px 0;
+    background-repeat: no-repeat;
+    margin-bottom: 1em;
+}
+#card-image.visa {
+     background-position: 0 -398px;
+}
+#card-image.master-card {
+     background-position: 0 -281px;
+}
+#card-image.american-express {
+     background-position: 0 -370px;
+}
+#card-image.discover {
+     background-position: 0 -163px;
+}
+#card-image.maestro {
+     background-position: 0 -251px;
+}
+#card-image.jcb {
+     background-position: 0 -221px;
+}
+#card-image.diners-club {
+     background-position: 0 -133px;
+}

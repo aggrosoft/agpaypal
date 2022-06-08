@@ -108,4 +108,25 @@ class PayPalBasketHandler
             return $basket;
         }
     }
+
+    public static function destroyUserBasketForToken ($token)
+    {
+        $container = ContainerFactory::getInstance()->getContainer();
+        $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
+        $queryBuilder = $queryBuilderFactory->create();
+
+        $data = $queryBuilder->select('oxid')
+            ->from('oxuserbaskets')
+            ->where('oxuserbaskets.agpaypaltoken = :token')
+            ->setParameter('token', $token)
+            ->execute();
+
+        $basketId = $data->fetchColumn();
+
+        if ($basketId) {
+            $basket = oxNew(\OxidEsales\Eshop\Application\Model\UserBasket::class);
+            $basket->load($basketId);
+            $basket->delete();
+        }
+    }
 }

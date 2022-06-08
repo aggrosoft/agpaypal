@@ -2,7 +2,7 @@
 [{if $oViewConf->getTopActiveClassName() == 'payment'}]
 [{assign var=paymentmethod value=$oView->getPayPalCreditCardPaymentMethod()}]
 [{if $paymentmethod}]
-    <script type="application/json" fncls="fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99">
+<script type="application/json" fncls="fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99">
 {
     "f":"[{$oViewConf->getFraudNetSessionIdentifier()}]",
     "s":"[{$oViewConf->getFraudNetSourceWebsiteIdentifier()}]",
@@ -52,19 +52,102 @@
         }
       }
     }).then((cardFields) => {
+
+
+      cardFields.on('cardTypeChange', function (event) {
+        // Change card bg depending on card type
+        if (event.cards.length === 1) {
+          $('#card-form, #card-image').removeClass('visa master-card maestro american-express discover unionpay jcb diners-club').addClass(event.cards[0].type);
+
+          // Change the CVV length for AmericanExpress cards
+          if (event.cards[0].code.size === 4) {
+            cardFields.setAttribute({
+              field: 'cvv',
+              attribute: 'placeholder',
+              value: '1234'
+            });
+          }
+        } else {
+          cardFields.setAttribute({
+            field: 'cvv',
+            attribute: 'placeholder',
+            value: '123'
+          });
+        }
+      });
+
+      cardFields.on('validityChange', function(event) {
+        var field = event.fields[event.emittedBy];
+
+        // Remove any previously applied error or warning classes
+        $(field.container).removeClass('is-valid');
+        $(field.container).removeClass('is-invalid');
+
+        if (field.isValid) {
+          $(field.container).addClass('is-valid');
+        } else if (field.isPotentiallyValid) {
+          // skip adding classes if the field is
+          // not valid, but is potentially valid
+        } else {
+          $(field.container).addClass('is-invalid');
+        }
+      });
+
+      $('#card-holder-name').keyup(function() {
+        $(this).removeClass('is-valid is-invalid');
+        if(this.checkValidity()){
+          $(this).addClass('is-valid');
+        }else{
+          $(this).addClass('is-invalid');
+        }
+      })
+
+
       document.querySelector("#payment").addEventListener("submit", (event) => {
         if ($('#payment input[name="paymentid"]:checked').val() === '[{$paymentmethod->getId()}]') {
           let state = cardFields.getState();
           event.preventDefault();
 
-          if(!state.fields.number.isValid || !state.fields.cvv.isValid || !state.fields.expirationDate.isValid) {
+          let allValid = true;
+
+          if(!state.fields.number.isValid){
+            $(state.fields.number.container).addClass('is-invalid');
+            allValid = false;
+          }else{
+            $(state.fields.number.container).addClass('is-valid');
+          }
+
+          if(!state.fields.cvv.isValid){
+            $(state.fields.cvv.container).addClass('is-invalid');
+            allValid = false;
+          }else{
+            $(state.fields.cvv.container).addClass('is-valid');
+          }
+
+          if(!state.fields.expirationDate.isValid){
+            $(state.fields.expirationDate.container).addClass('is-invalid');
+            allValid = false;
+          }else{
+            $(state.fields.expirationDate.container).addClass('is-valid');
+          }
+
+          if(!$('#card-holder-name').val()){
+            $('#card-holder-name').addClass('is-invalid');
+            allValid = false;
+          }else{
+            $('#card-holder-name').addClass('is-valid');
+          }
+
+          if (!allValid) {
             return false;
           }
 
-          console.log('submit card fields')
+          $('#paymentNextStepBottom').data('original-text', $('#paymentNextStepBottom').html());
+          $('#paymentNextStepBottom').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">[{oxmultilang ident="PAYPAL_LOADING"}]...</span>').prop('disabled', true);
+
           cardFields
             .submit({
-              contingencies: ['3D_SECURE'],
+              [{if !$oViewConf->isPayPalSandbox()}]contingencies: ['3D_SECURE'],[{/if}]
               // Cardholder's first and last name
               cardholderName: document.getElementById("card-holder-name").value,
               // Billing Address
@@ -84,13 +167,17 @@
               },
             })
             .then((payload) => {
-              console.log('3d secure', payload)
+            [{if $oViewConf->isPayPalSandbox()}]
+            document.querySelector("#payment").submit();
+            [{else}]
               if (payload.liabilityShift === "POSSIBLE") {
                 document.querySelector("#payment").submit();
               }
+            [{/if}]
             })
             .catch((err) => {
-              alert("Payment could not be captured! " + JSON.stringify(err));
+              $('#paypalErrorModal').modal('show');
+              $('#paymentNextStepBottom').html($('#paymentNextStepBottom').data('original-text')).prop('disabled', false);
             });
         }
       });
@@ -99,5 +186,24 @@
     $('#card-form').closest('.well').hide();
   }
 </script>
+
+<div class="modal fade" id="paypalErrorModal" tabindex="-1" aria-labelledby="paypalErrorModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="paypalErrorModalLabel">[{oxmultilang ident="PAYPAL_ERROR_MODAL_TITLE"}]</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="[{oxmultilang ident="CLOSE"}]">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        [{oxmultilang ident="PAYPAL_CC_VALIDATION_ERROR"}]
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">[{oxmultilang ident="PAYPAL_ERROR_MODAL_CONFIRM"}]</button>
+      </div>
+    </div>
+  </div>
+</div>
 [{/if}]
 [{/if}]

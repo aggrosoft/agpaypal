@@ -67,11 +67,13 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
     protected function handlePaymentCaptureDenied ($data)
     {
-        $orderId = $data->resource->supplementary_data->related_ids->order_id;
-        $order = $this->loadOrderByPayPalToken($orderId);
+        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blAutoCancelOrders', null, 'module:agpaypal')) {
+            $orderId = $data->resource->supplementary_data->related_ids->order_id;
+            $order = $this->loadOrderByPayPalToken($orderId);
 
-        if ($order) {
-            $order->cancelOrder();
+            if ($order) {
+                $order->cancelOrder();
+            }
         }
     }
 

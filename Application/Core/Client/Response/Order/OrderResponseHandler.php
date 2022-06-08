@@ -2,9 +2,6 @@
 
 namespace Aggrosoft\PayPal\Application\Core\Client\Response\Order;
 
-use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
-
 class OrderResponseHandler
 {
     public static function handle ($response, $savedBasket) {

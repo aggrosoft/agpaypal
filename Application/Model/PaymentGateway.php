@@ -4,9 +4,11 @@ namespace Aggrosoft\PayPal\Application\Model;
 
 use Aggrosoft\PayPal\Application\Core\Client\Exception\RestException;
 use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
+use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\UpdateOrderInvoiceNumberRequest;
 use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CapturePaymentRequestFactory;
+use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CreateOrderRequestFactory;
 use Aggrosoft\PayPal\Application\Core\PayPalInitiator;
 use OxidEsales\Eshop\Core\Registry;
 
@@ -44,6 +46,7 @@ class PaymentGateway extends PaymentGateway_parent
 
                 // Send order number to paypal
                 $oOrder->setOrderNumber();
+
                 $request = new UpdateOrderInvoiceNumberRequest($token, $oOrder->oxorder__oxordernr->value);
 
                 try {
@@ -55,7 +58,7 @@ class PaymentGateway extends PaymentGateway_parent
                 }
 
                 // Now capture payment if needed
-                if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::PAYPAL || $payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::CARD ) {
+                if ($payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::PAY_UPON_INVOICE) {
                     $request = CapturePaymentRequestFactory::create($token);
 
                     try {

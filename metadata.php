@@ -29,6 +29,7 @@ $aModule = array(
         \OxidEsales\Eshop\Application\Model\Order::class => \Aggrosoft\PayPal\Application\Model\Order::class,
         \OxidEsales\Eshop\Application\Model\OrderArticle::class => \Aggrosoft\PayPal\Application\Model\OrderArticle::class,
         \OxidEsales\Eshop\Application\Model\Basket::class => \Aggrosoft\PayPal\Application\Model\Basket::class,
+        \OxidEsales\Eshop\Application\Component\BasketComponent::class => \Aggrosoft\PayPal\Application\Component\BasketComponent::class,
         \InvoicepdfArticleSummary::class => \Aggrosoft\PayPal\Application\Model\InvoicepdfArticleSummary::class,
     ],
     'events'       => array(
@@ -84,6 +85,8 @@ $aModule = array(
         ['group' => 'paypal_main', 'name' => 'sPayPalClientId', 'type' => 'str', 'value' => ''],
         ['group' => 'paypal_main', 'name' => 'sPayPalClientSecret', 'type' => 'str', 'value' => ''],
         ['group' => 'paypal_main', 'name' => 'sPayPalWebhookId', 'type' => 'str', 'value' => ''],
-        ['group' => 'paypal_main', 'name' => 'blPayPalSandboxMode', 'type' => 'bool', 'value' => false],
+        ['group' => 'paypal_settings', 'name' => 'blPayPalSandboxMode', 'type' => 'bool', 'value' => false],
+        ['group' => 'paypal_settings', 'name' => 'blAutoCancelOrders', 'type' => 'bool', 'value' => false],
+        ['group' => 'paypal_settings', 'name' => 'sPayPalLogLevel', 'type' => 'select', 'value' => 'off', 'constraints' => 'off|error|all'],
     ],
 );

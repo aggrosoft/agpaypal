@@ -37,6 +37,10 @@ class PayPalRestClient
      */
     private $token;
     /**
+     * @var string
+     */
+    private $logLevel;
+    /**
      * @var \GuzzleHttp\Client
      */
     private $client;
@@ -48,6 +52,7 @@ class PayPalRestClient
         $this->clientSecret = $config->getConfigParam('sPayPalClientSecret', null, 'module:agpaypal');
         $this->mailAddress = $config->getConfigParam('sPayPalEmailAddress', null, 'module:agpaypal');
         $this->sandbox = (bool) $config->getConfigParam('blPayPalSandboxMode', null, 'module:agpaypal');
+        $this->logLevel = $config->getConfigParam('sPayPalLogLevel', null, 'module:agpaypal');
         $this->client = new \GuzzleHttp\Client();
     }
 
@@ -64,29 +69,10 @@ class PayPalRestClient
         ]);
 
         $result = json_decode($response->getBody()->getContents());
+        $this->log($request, $result, $response->getStatusCode());
 
         if ($response->getStatusCode() > 299) {
-            $this->log($request, $result);
             throw new RestException('PAYPAL_ERROR_'.$result->details[0]->issue, $response->getStatusCode(), null, ['request' => $request->getBody(), 'response' => $result]);
-        }
-
-        return $result;
-    }
-
-    public function get ($endpoint)
-    {
-        $response = $this->client->request('GET', $this->getApiUrl().$endpoint, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->getToken(),
-                'Content-Type' => 'application/json'
-            ],
-            'http_errors' => false
-        ]);
-
-        $result = json_decode($response->getBody()->getContents());
-
-        if ($response->getStatusCode() > 299) {
-            throw new RestException($result->message);
         }
 
         return $result;
@@ -140,13 +126,15 @@ class PayPalRestClient
         return $this->sandbox ? self::SANDBOX_API_URL : self::LIVE_API_URL;
     }
 
-    private function log ($request, $result) {
+    private function log ($request, $result, $code) {
+        if ($this->logLevel === 'all' || $this->logLevel === 'error' && $code > 299) {
+            $log = "#$code [" . date("d/M/Y H:i:s") . "]\n";
+            $log .= "Request: \n\n " . json_encode($request, JSON_PRETTY_PRINT) . "\n\n";
+            $log .= "Response: \n\n " . json_encode($result, JSON_PRETTY_PRINT) . "\n\n";
+            $log .= "########################################################################\n\n";
 
-        $log = "Error: [" . date("d/M/Y H:i:s") . "]\n";
-        $log .= "Request: \n\n " . json_encode($request, JSON_PRETTY_PRINT) . "\n\n";
-        $log .= "Response: \n\n " . json_encode($result, JSON_PRETTY_PRINT) . "\n\n";
-        $log .= "########################################################################\n\n";
+            file_put_contents(getShopBasePath().'/log/paypal.log', $log, FILE_APPEND);
+        }
 
-        file_put_contents(getShopBasePath().'/log/paypal.log', $log, FILE_APPEND);
     }
 }

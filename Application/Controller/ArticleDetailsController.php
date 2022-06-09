@@ -21,7 +21,7 @@ class ArticleDetailsController extends ArticleDetailsController_parent
         $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=ppreturn');
         $paypal->setShippingPreference(ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE);
         $paypal->setRedirect(false);
-        $paypal->setProducts(Registry::getRequest()->getRequestEscapedParameter('products'));
+        $paypal->setProducts(json_decode(Registry::getRequest()->getRequestParameter('products'), true));
         $response = $paypal->initiate();
         header('Content-Type: application/json');
         echo json_encode($response);

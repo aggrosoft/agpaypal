@@ -2,7 +2,10 @@ function AggrosoftPayPalButton(config) {
   this.config = config;
   this.returnToken = undefined;
   this.shippingId = undefined;
-  this.products = undefined;
+}
+
+AggrosoftPayPalButton.prototype.setConfigValue = function(key, value) {
+  this.config[key] = value;
 }
 
 AggrosoftPayPalButton.prototype.render = function() {
@@ -17,6 +20,8 @@ AggrosoftPayPalButton.prototype.render = function() {
       height: 38
     }, that.config.style || {}),
     createOrder: function(data, actions) {
+      that.config.beforeCheckout && that.config.beforeCheckout();
+
       // Set up the transaction
       return new Promise(function(resolve, reject) {
         $.ajax({
@@ -25,7 +30,7 @@ AggrosoftPayPalButton.prototype.render = function() {
           data: {
             cl: that.config.controller,
             fnc: 'createpaypalorder',
-            products: that.config.products
+            products: JSON.stringify(that.config.products)
           }
         }).then(function(result) {
           that.returnToken = result.returnToken;

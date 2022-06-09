@@ -27,6 +27,8 @@ class PayPalInitiator
      */
     public function initiate ()
     {
+        \Ecomponents\License\LicenseManager::getInstance()->validate('agpaypal');
+
         $returnToken = $this->generateReturnToken();
         $savedBasket = PayPalBasketHandler::savePayPalBasket($returnToken, $this->products);
         $basket = PayPalBasketHandler::restoreBasketFromUserBasket($savedBasket, Registry::getConfig()->getUser());

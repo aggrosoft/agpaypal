@@ -13,7 +13,8 @@
     "ext-curl": "*",
     "guzzlehttp/guzzle": "^7.3",
     "megastruktur/phone-country-codes": "^0.4",
-    "viison/address-splitter": "^0.3.4"
+    "viison/address-splitter": "^0.3.4",
+    "aggrosoft/ecomponents-lib": ">=1.2.0"
   },
   "extra": {
     "oxideshop": {
@@ -21,8 +22,13 @@
     },
     "encoder": {
       "include": [
-        "Application/Controller/AccountProductReviews.php",
-        "Application/Controller/ProductReviewEmailCron.php"
+        "Application/Controller/WebhookController.php",
+        "Application/Core/Request/Order/CreateOrderRequestFactory.php",
+        "Application/Core/Request/Order/CapturePaymentRequestFactory.php",
+        "Application/Core/Request/Webhook/WebhookInitiator.php",
+        "Application/Core/PayPalBasketHandler.php",
+        "Application/Core/PayPalInitiator.php",
+        "Application/Core/PayPalUserHandler.php"
       ]
     }
   },

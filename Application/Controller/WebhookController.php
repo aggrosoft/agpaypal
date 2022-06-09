@@ -12,6 +12,8 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
 {
     public function render ()
     {
+        \Ecomponents\License\LicenseManager::getInstance()->validate('agpaypal');
+
         $verifier = new WebhookVerifier();
         $data = $verifier->verifyIncomingWebhook();
 

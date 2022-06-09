@@ -1,4 +1,5 @@
 [{$smarty.block.parent}]
+[{if $oViewConf->showPayPalButtonInDetails()}]
 <hr/>
 <div id="paypal-button-container-details"></div>
 
@@ -60,3 +61,4 @@
     detailsPayPalButton.render();
 [{/capture}]
 [{oxscript add=$pageScript}]
+[{/if}]

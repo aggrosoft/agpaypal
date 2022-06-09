@@ -88,5 +88,7 @@ $aModule = array(
         ['group' => 'paypal_settings', 'name' => 'blPayPalSandboxMode', 'type' => 'bool', 'value' => false],
         ['group' => 'paypal_settings', 'name' => 'blAutoCancelOrders', 'type' => 'bool', 'value' => false],
         ['group' => 'paypal_settings', 'name' => 'sPayPalLogLevel', 'type' => 'select', 'value' => 'off', 'constraints' => 'off|error|all'],
+        ['group' => 'paypal_settings', 'name' => 'blPayPalExpressDetails', 'type' => 'bool', 'value' => false],
+        ['group' => 'paypal_settings', 'name' => 'blPayPalExpressBasket', 'type' => 'bool', 'value' => false],
     ],
 );

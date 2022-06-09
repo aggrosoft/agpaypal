@@ -1,3 +1,4 @@
+[{if $oViewConf->showPayPalButtonInBasket()}]
 <div id="paypal-button-container-bottom" class="float-left"></div>
 
 [{assign var="currency" value=$oView->getActCurrency()}]
@@ -15,4 +16,5 @@
   bottomPayPalButton.render();
 [{/capture}]
 [{oxscript add=$pageScript}]
+  [{/if}]
 [{$smarty.block.parent}]

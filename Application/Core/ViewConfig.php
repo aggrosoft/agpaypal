@@ -28,4 +28,14 @@ class ViewConfig extends ViewConfig_parent
     {
         return PayPalHelper::getPayPalPaymentId();
     }
+
+    public function showPayPalButtonInDetails ()
+    {
+        return PayPalHelper::showPayPalButtonInDetails();
+    }
+
+    public function showPayPalButtonInBasket ()
+    {
+        return PayPalHelper::showPayPalButtonInBasket();
+    }
 }

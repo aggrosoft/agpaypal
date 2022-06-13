@@ -21,6 +21,7 @@
   if (paypal.HostedFields.isEligible()) {
     // Renders card fields
     paypal.HostedFields.render({
+      [{if $oViewConf->isPayPalSandbox()}]env: 'sandbox',[{/if}]
       // Call your server to set up the transaction
       createOrder: () => {
         return $.ajax({
@@ -50,7 +51,10 @@
           selector: "#expiration-date",
           placeholder: "MM/JJJJ"
         }
-      }
+      },
+    onShippingChange: function(data,actions){
+      return actions.resolve();
+    }
     }).then((cardFields) => {
 
 
@@ -147,7 +151,7 @@
 
           cardFields
             .submit({
-              [{if !$oViewConf->isPayPalSandbox()}]contingencies: ['3D_SECURE'],[{/if}]
+              contingencies: ['3D_SECURE'],
               // Cardholder's first and last name
               cardholderName: document.getElementById("card-holder-name").value,
               // Billing Address
@@ -167,13 +171,12 @@
               },
             })
             .then((payload) => {
-            [{if $oViewConf->isPayPalSandbox()}]
-            document.querySelector("#payment").submit();
-            [{else}]
               if (payload.liabilityShift === "POSSIBLE") {
                 document.querySelector("#payment").submit();
+              }else{
+                $('#paypalErrorModal').modal('show');
+                $('#paymentNextStepBottom').html($('#paymentNextStepBottom').data('original-text')).prop('disabled', false);
               }
-            [{/if}]
             })
             .catch((err) => {
               $('#paypalErrorModal').modal('show');

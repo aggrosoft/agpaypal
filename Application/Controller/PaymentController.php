@@ -5,6 +5,7 @@ namespace Aggrosoft\PayPal\Application\Controller;
 use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Identity\GenerateTokenRequest;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
+use Aggrosoft\PayPal\Application\Core\PayPalBasketHandler;
 use Aggrosoft\PayPal\Application\Core\PayPalInitiator;
 use OxidEsales\Eshop\Core\Registry;
 
@@ -18,6 +19,13 @@ class PaymentController extends PaymentController_parent
     public function render()
     {
         $result = parent::render();
+
+        // Maybe there is an old token, destroy this
+        $token = Registry::getSession()->getVariable('pptoken');
+        if ($token) {
+            PayPalBasketHandler::destroyUserBasketForToken($token);
+            Registry::getSession()->setVariable('pptoken', '');
+        }
 
         $session = Registry::getSession();
         $this->_aViewData['pp_birth_date'] = $session->getVariable('pp_birth_date');

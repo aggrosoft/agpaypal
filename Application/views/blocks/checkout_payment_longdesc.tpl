@@ -1,8 +1,0 @@
-[{oxscript add="$('.payment-option.activePayment').show()"}]
-[{if $paymentmethod->oxpayments__agpaypalpaymentmethod->value == 'PAY_UPON_INVOICE'}]
-[{include file="page/checkout/inc/payment_description_paypal_pui.tpl"}]
-[{elseif $paymentmethod->oxpayments__agpaypalpaymentmethod->value == 'CARD'}]
-[{include file="page/checkout/inc/payment_description_paypal_card.tpl"}]
-[{else}]
-[{$smarty.block.parent}]
-[{/if}]

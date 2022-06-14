@@ -1,0 +1,5 @@
+[{if $paymentmethod->oxpayments__agpaypalpaymentmethod->value}]
+    [{include file="page/checkout/inc/select_payment_paypal.tpl"}]
+[{else}]
+    [{$smarty.block.parent}]
+[{/if}]

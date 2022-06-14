@@ -29,6 +29,7 @@ $aModule = array(
         \OxidEsales\Eshop\Application\Model\Order::class => \Aggrosoft\PayPal\Application\Model\Order::class,
         \OxidEsales\Eshop\Application\Model\OrderArticle::class => \Aggrosoft\PayPal\Application\Model\OrderArticle::class,
         \OxidEsales\Eshop\Application\Model\Basket::class => \Aggrosoft\PayPal\Application\Model\Basket::class,
+        \OxidEsales\Eshop\Application\Model\Payment::class => \Aggrosoft\PayPal\Application\Model\Payment::class,
         \OxidEsales\Eshop\Application\Component\BasketComponent::class => \Aggrosoft\PayPal\Application\Component\BasketComponent::class,
         \InvoicepdfArticleSummary::class => \Aggrosoft\PayPal\Application\Model\InvoicepdfArticleSummary::class,
     ],
@@ -42,15 +43,17 @@ $aModule = array(
         'page/checkout/inc/payment_description_paypal_pui.tpl'    => 'agpaypal/Application/views/wave/tpl/page/checkout/inc/payment_description_paypal_pui.tpl',
         'page/checkout/inc/payment_description_paypal_card.tpl'    => 'agpaypal/Application/views/wave/tpl/page/checkout/inc/payment_description_paypal_card.tpl',
         'page/checkout/inc/paypal_express_button.tpl'    => 'agpaypal/Application/views/wave/tpl/page/checkout/inc/paypal_express_button.tpl',
+        'page/checkout/inc/select_payment_paypal.tpl'    => 'agpaypal/Application/views/wave/tpl/page/checkout/inc/select_payment_paypal.tpl',
+        'page/checkout/inc/payment_paypal.tpl'    => 'agpaypal/Application/views/wave/tpl/page/checkout/inc/payment_paypal.tpl',
         'paypal/components_script.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/components_script.tpl',
         'paypal/fraudnet_script.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/fraudnet_script.tpl',
         'paypal/hosted_fields.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/hosted_fields.tpl',
     ],
     'blocks' => [
         [
-            'template' => 'page/checkout/inc/payment_other.tpl',
-            'block' => 'checkout_payment_longdesc',
-            'file' => '/Application/views/blocks/checkout_payment_longdesc.tpl',
+            'template' => 'page/checkout/payment.tpl',
+            'block' => 'select_payment',
+            'file' => '/Application/views/blocks/select_payment.tpl',
         ],
         [
             'template' => 'layout/base.tpl',

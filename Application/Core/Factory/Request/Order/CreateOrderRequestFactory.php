@@ -49,7 +49,7 @@ class CreateOrderRequestFactory
             $request->setPayer(self::createPayer($user));
         }
         $request->addPurchaseUnit(self::createPurchaseUnitRequest($user, $basket, $shippingPreference));
-        $request->setApplicationContext(self::createApplicationContext($returnUrl, $shippingPreference, $userAction));
+        $request->setApplicationContext(self::createApplicationContext($returnUrl, $shippingPreference, $userAction, $payment->oxpayments__agpaypallandingpage->value));
         $request->setPaymentSource(self::createPaymentSource($user, $payment));
         if (self::isPayUponInvoice($payment)) {
             $request->setMetadataId(FraudNet::getSessionIdentifier());
@@ -149,14 +149,14 @@ class CreateOrderRequestFactory
         return $oDelAdress;
     }
 
-    public static function createApplicationContext($returnUrl, $shippingPreference, $userAction)
+    public static function createApplicationContext($returnUrl, $shippingPreference, $userAction, $landingPage)
     {
         $config = Registry::getConfig();
         $shop = $config->getActiveShop();
 
         $context = new ApplicationContext();
         $context->setBrandName($shop->oxshops__oxname->value);
-        $context->setLandingPage(ApplicationContext::LANDING_PAGE_NO_PREFERENCE);
+        $context->setLandingPage($landingPage ?: ApplicationContext::LANDING_PAGE_NO_PREFERENCE);
         $context->setShippingPreference($shippingPreference);
         $context->setUserAction($userAction);
         $context->setPaymentMethod(new PaymentMethod(PaymentMethod::PAYEE_PREFERRED_UNRESTRICTED));

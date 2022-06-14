@@ -9,6 +9,7 @@ class Events
         // DB Queries
         $queries = [
             'ALTER TABLE oxpayments ADD COLUMN AGPAYPALPAYMENTMETHOD varchar(30) default NULL',
+            'ALTER TABLE oxpayments ADD COLUMN AGPAYPALLANDINGPAGE varchar(30) default NULL',
             'ALTER TABLE oxuserbaskets ADD COLUMN AGPAYPALTOKEN char(32) default NULL',
             'ALTER TABLE oxuserbaskets ADD COLUMN AGPAYPALRETURNTOKEN char(128) default NULL',
             'ALTER TABLE oxuserbaskets ADD COLUMN AGPAYPALPAYMENTID char(32) default NULL',

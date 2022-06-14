@@ -36,7 +36,15 @@ $aModule = array(
         'onActivate'   => '\Aggrosoft\PayPal\Application\Core\Events::onActivate'
     ),
     'templates'   => [
-
+        'email/html/paypal_paymentinfo.tpl'    => 'agpaypal/Application/views/wave/tpl/email/html/paypal_paymentinfo.tpl',
+        'page/details/inc/paypal_button.tpl'    => 'agpaypal/Application/views/wave/tpl/page/details/inc/paypal_button.tpl',
+        'page/details/inc/paypal_message.tpl'    => 'agpaypal/Application/views/wave/tpl/page/details/inc/paypal_message.tpl',
+        'page/checkout/inc/payment_description_paypal_pui.tpl'    => 'agpaypal/Application/views/wave/tpl/page/checkout/inc/payment_description_paypal_pui.tpl',
+        'page/checkout/inc/payment_description_paypal_card.tpl'    => 'agpaypal/Application/views/wave/tpl/page/checkout/inc/payment_description_paypal_card.tpl',
+        'page/checkout/inc/paypal_express_button.tpl'    => 'agpaypal/Application/views/wave/tpl/page/checkout/inc/paypal_express_button.tpl',
+        'paypal/components_script.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/components_script.tpl',
+        'paypal/fraudnet_script.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/fraudnet_script.tpl',
+        'paypal/hosted_fields.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/hosted_fields.tpl',
     ],
     'blocks' => [
         [

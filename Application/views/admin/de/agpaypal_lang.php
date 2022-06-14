@@ -16,6 +16,7 @@ $aLang = array(
     'SHOP_MODULE_blAutoCancelOrders' => 'Bestellungen die nicht authorisiert werden konnten automatisch stornieren',
     'SHOP_MODULE_blPayPalExpressDetails' => 'Express Button in Detailseite anzeigen',
     'SHOP_MODULE_blPayPalExpressBasket' => 'Express Button im Warenkorb anzeigen',
+    'SHOP_MODULE_blPayPalMessagesDetails' => 'Ratenkauf Infos in Detailseite anzeigen',
     'PAYMENT_MAIN_PAYPAL_PAYMENT_METHOD' => 'PayPal Zahlungsmethode',
     'HELP_PAYMENT_MAIN_PAYPAL_PAYMENT_METHOD' => 'Wählen Sie hier eine Zahlungsmethode aus die über PayPal abgewickelt werden soll. Leer lassen wenn es sich bei dieser Zahlungsart nicht um eine PayPal Zahlungsart handelt.',
     'PAYPAL_PAYMENT_METHOD_PAYPAL' => 'PayPal',

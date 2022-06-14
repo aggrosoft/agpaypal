@@ -65,6 +65,11 @@ $aModule = array(
             'file' => '/Application/views/blocks/details_productmain_tobasket.tpl',
         ],
         [
+            'template' => 'page/details/inc/productmain.tpl',
+            'block' => 'details_productmain_price_value',
+            'file' => '/Application/views/blocks/details_productmain_price_value.tpl',
+        ],
+        [
             'template' => 'email/html/order_cust.tpl',
             'block' => 'email_html_order_cust_paymentinfo',
             'file' => '/Application/views/blocks/email_html_order_cust_paymentinfo.tpl',
@@ -90,5 +95,6 @@ $aModule = array(
         ['group' => 'paypal_settings', 'name' => 'sPayPalLogLevel', 'type' => 'select', 'value' => 'off', 'constraints' => 'off|error|all'],
         ['group' => 'paypal_settings', 'name' => 'blPayPalExpressDetails', 'type' => 'bool', 'value' => false],
         ['group' => 'paypal_settings', 'name' => 'blPayPalExpressBasket', 'type' => 'bool', 'value' => false],
+        ['group' => 'paypal_settings', 'name' => 'blPayPalMessagesDetails', 'type' => 'bool', 'value' => false],
     ],
 );

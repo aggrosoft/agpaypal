@@ -39,6 +39,11 @@ class PayPalHelper
         return Registry::getConfig()->getConfigParam('blPayPalExpressBasket', null, 'module:agpaypal');
     }
 
+    public static function showPayPalMessageInDetails ()
+    {
+        return Registry::getConfig()->getConfigParam('blPayPalMessagesDetails', null, 'module:agpaypal');
+    }
+
     public static function getPayPalPaymentId ()
     {
         $container = ContainerFactory::getInstance()->getContainer();

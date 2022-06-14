@@ -21,6 +21,7 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ShippingDetail
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ShippingDetailAddress;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ShippingDetailName;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ShippingDetailOption;
+use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\StoredPaymentSource;
 use Aggrosoft\PayPal\Application\Core\FraudNet;
 use OxidEsales\Eshop\Core\Registry;
 

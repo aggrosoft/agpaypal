@@ -1,8 +1,6 @@
 [{if $oViewConf->showPayPalButtonInBasket()}]
 <div id="paypal-button-container-top" class="float-left"></div>
 
-[{assign var="currency" value=$oView->getActCurrency()}]
-[{oxscript include="https://www.paypal.com/sdk/js?components=buttons&commit=false&client-id="|cat:$oViewConf->getPayPalClientId()|cat:"&currency="|cat:$currency->name}]
 [{oxscript include=$oViewConf->getModuleUrl('agpaypal', 'out/js/paypal-button.js')}]
 
 [{capture assign=pageScript}]

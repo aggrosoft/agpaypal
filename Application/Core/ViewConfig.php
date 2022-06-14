@@ -38,4 +38,9 @@ class ViewConfig extends ViewConfig_parent
     {
         return PayPalHelper::showPayPalButtonInBasket();
     }
+
+    public function showPayPalMessageInDetails ()
+    {
+        return PayPalHelper::showPayPalMessageInDetails();
+    }
 }

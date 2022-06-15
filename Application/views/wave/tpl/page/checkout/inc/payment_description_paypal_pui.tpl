@@ -19,12 +19,12 @@
                         [{/foreach}]
                     </select>
                 </div>
-                <input type="text" class="form-control" name="pp_phone_number" required value="[{$pp_phone_number}]" pattern="[0-9]{1,14}?">
+                <input type="tel" class="form-control" id="pp_phone_number" name="pp_phone_number" required value="[{$pp_phone_number}]" pattern="[0-9]{1,14}?">
             </div>
         </div>
         <div class="col">
             <label>Geburtsdatum</label>
-            <input type="date" class="form-control" name="pp_birth_date" required value="[{$pp_birth_date}]">
+            <input type="date" class="form-control" id="pp_birth_date" name="pp_birth_date" required value="[{$pp_birth_date}]">
         </div>
     </div>
 </div>

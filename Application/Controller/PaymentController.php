@@ -46,6 +46,17 @@ class PaymentController extends PaymentController_parent
         }
     }
 
+    public function getPayPalPayUponInvoicePaymentMethod ()
+    {
+        $payments = $this->getPaymentList();
+
+        foreach($payments as $payment) {
+            if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::PAY_UPON_INVOICE){
+                return $payment;
+            }
+        }
+    }
+
     // Used for custom hosted fields
     public function createpaypalorder ()
     {

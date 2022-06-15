@@ -54,6 +54,7 @@ class CreateOrderRequestFactory
         if (self::isPayUponInvoice($payment)) {
             $request->setMetadataId(FraudNet::getSessionIdentifier());
         }
+
         return $request;
     }
 

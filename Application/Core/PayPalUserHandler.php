@@ -64,16 +64,22 @@ class PayPalUserHandler
 
     public static function getUserIdByPayPalPayerId($payerId)
     {
-        $container = ContainerFactory::getInstance()->getContainer();
-        $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
-        $queryBuilder = $queryBuilderFactory->create();
+        if(class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')){
+            $container = ContainerFactory::getInstance()->getContainer();
+            $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
+            $queryBuilder = $queryBuilderFactory->create();
 
-        $data = $queryBuilder->select('oxid')
-            ->from('oxuser')
-            ->where('oxuser.agpaypalpayerid = :payerid')
-            ->setParameter('payerid', $payerId)
-            ->execute();
+            $data = $queryBuilder->select('oxid')
+                ->from('oxuser')
+                ->where('oxuser.agpaypalpayerid = :payerid')
+                ->setParameter('payerid', $payerId)
+                ->execute();
 
-        return $data->fetchColumn();
+            return $data->fetchColumn();
+        }else{
+            $rs = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->select('SELECT oxid FROM oxuser WHERE oxuser.agpaypalpayerid = :payerid', ['payerid' => $payerId]);
+            return current($rs->getFields());
+        }
+
     }
 }

@@ -46,17 +46,24 @@ class PayPalHelper
 
     public static function getPayPalPaymentId ()
     {
-        $container = ContainerFactory::getInstance()->getContainer();
-        $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
-        $queryBuilder = $queryBuilderFactory->create();
+        if(class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')){
+            $container = ContainerFactory::getInstance()->getContainer();
+            $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
+            $queryBuilder = $queryBuilderFactory->create();
 
-        $data = $queryBuilder->select('oxid')
-            ->from('oxpayments')
-            ->where('oxpayments.agpaypalpaymentmethod = :method')
-            ->andWhere('oxpayments.oxactive = 1')
-            ->setParameter('method', PaymentSource::PAYPAL)
-            ->execute();
+            $data = $queryBuilder->select('oxid')
+                ->from('oxpayments')
+                ->where('oxpayments.agpaypalpaymentmethod = :method')
+                ->andWhere('oxpayments.oxactive = 1')
+                ->setParameter('method', PaymentSource::PAYPAL)
+                ->execute();
 
-        return $data->fetchColumn();
+            return $data->fetchColumn();
+        }else{
+            $rs = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->select('SELECT oxid FROM oxpayments WHERE oxpayments.agpaypalpaymentmethod = :method AND oxpayments.oxactive = 1', ['method' => PaymentSource::PAYPAL]);
+            return current($rs->getFields());
+        }
+
     }
+
 }

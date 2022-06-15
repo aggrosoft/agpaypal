@@ -86,17 +86,23 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
     protected function loadOrderByPayPalToken ($token)
     {
-        $container = ContainerFactory::getInstance()->getContainer();
-        $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
-        $queryBuilder = $queryBuilderFactory->create();
+        if(class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')){
+            $container = ContainerFactory::getInstance()->getContainer();
+            $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
+            $queryBuilder = $queryBuilderFactory->create();
 
-        $data = $queryBuilder->select('oxid')
-            ->from('oxorder')
-            ->where('oxorder.oxtransid = :token')
-            ->setParameter('token', $token)
-            ->execute();
+            $data = $queryBuilder->select('oxid')
+                ->from('oxorder')
+                ->where('oxorder.oxtransid = :token')
+                ->setParameter('token', $token)
+                ->execute();
 
-        $orderId = $data->fetchColumn();
+            $orderId = $data->fetchColumn();
+        }else {
+            $rs = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->select('SELECT oxid FROM oxorder WHERE oxorder.oxtransid = :token', ['token' => $token]);
+            $orderId = current($rs->getFields());
+        }
+
 
         if ($orderId) {
             $order = oxNew(\OxidEsales\Eshop\Application\Model\Order::class);

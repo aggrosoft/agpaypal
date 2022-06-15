@@ -78,6 +78,14 @@ class PayPalRestClient
         return $result;
     }
 
+    public function invalidateToken ()
+    {
+        $cacheKey = 'pptoken_'.intval($this->sandbox).'_'.\OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
+        $utils = \OxidEsales\Eshop\Core\Registry::getUtils();
+        $utils->toFileCache($cacheKey, '', 0);
+        $this->token = null;
+    }
+
     private function getToken ()
     {
         if (!$this->token) {
@@ -101,6 +109,7 @@ class PayPalRestClient
                     'form_params' => [
                         'grant_type' => 'client_credentials'
                     ],
+                    'http_errors' => false
                 ]);
                 $result = json_decode($response->getBody()->getContents());
 

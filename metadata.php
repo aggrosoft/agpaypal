@@ -30,6 +30,7 @@ $aModule = array(
         \OxidEsales\Eshop\Application\Model\OrderArticle::class => \Aggrosoft\PayPal\Application\Model\OrderArticle::class,
         \OxidEsales\Eshop\Application\Model\Basket::class => \Aggrosoft\PayPal\Application\Model\Basket::class,
         \OxidEsales\Eshop\Application\Model\Payment::class => \Aggrosoft\PayPal\Application\Model\Payment::class,
+        \OxidEsales\Eshop\Application\Model\DeliveryList::class => \Aggrosoft\PayPal\Application\Model\DeliveryList::class,
         \OxidEsales\Eshop\Application\Component\BasketComponent::class => \Aggrosoft\PayPal\Application\Component\BasketComponent::class,
         \InvoicepdfArticleSummary::class => \Aggrosoft\PayPal\Application\Model\InvoicepdfArticleSummary::class,
     ],
@@ -48,6 +49,7 @@ $aModule = array(
         'paypal/components_script.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/components_script.tpl',
         'paypal/fraudnet_script.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/fraudnet_script.tpl',
         'paypal/hosted_fields.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/hosted_fields.tpl',
+        'paypal/pui.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/pui.tpl',
     ],
     'blocks' => [
         [
@@ -101,7 +103,7 @@ $aModule = array(
         ['group' => 'paypal_main', 'name' => 'sPayPalClientId', 'type' => 'str', 'value' => ''],
         ['group' => 'paypal_main', 'name' => 'sPayPalClientSecret', 'type' => 'str', 'value' => ''],
         ['group' => 'paypal_main', 'name' => 'sPayPalWebhookId', 'type' => 'str', 'value' => ''],
-        ['group' => 'paypal_settings', 'name' => 'blPayPalSandboxMode', 'type' => 'bool', 'value' => false],
+        ['group' => 'paypal_main', 'name' => 'blPayPalSandboxMode', 'type' => 'bool', 'value' => false],
         ['group' => 'paypal_settings', 'name' => 'blAutoCancelOrders', 'type' => 'bool', 'value' => false],
         ['group' => 'paypal_settings', 'name' => 'sPayPalLogLevel', 'type' => 'select', 'value' => 'off', 'constraints' => 'off|error|all'],
         ['group' => 'paypal_settings', 'name' => 'blPayPalExpressDetails', 'type' => 'bool', 'value' => false],

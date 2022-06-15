@@ -128,7 +128,7 @@
           }
 
           $('#paymentNextStepBottom').data('original-text', $('#paymentNextStepBottom').html());
-          $('#paymentNextStepBottom').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">[{oxmultilang ident="PAYPAL_LOADING"}]...</span>').prop('disabled', true);
+          $('#paymentNextStepBottom').html('<i class="fa fa-spinner fa-spin"></i><span> [{oxmultilang ident="PAYPAL_LOADING"}]...</span>').prop('disabled', true);
 
           cardFields
             .submit({

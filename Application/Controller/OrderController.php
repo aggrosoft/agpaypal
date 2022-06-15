@@ -9,8 +9,6 @@ use Aggrosoft\PayPal\Application\Core\PayPalBasketHandler;
 use Aggrosoft\PayPal\Application\Core\PayPalInitiator;
 use Aggrosoft\PayPal\Application\Core\PayPalUserHandler;
 use OxidEsales\Eshop\Core\Registry;
-use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 
 class OrderController extends OrderController_parent
 {

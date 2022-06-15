@@ -4,6 +4,7 @@ namespace Aggrosoft\PayPal\Application\Controller\Admin;
 
 use Aggrosoft\PayPal\Application\Core\Client\Exception\AuthenticationException;
 use Aggrosoft\PayPal\Application\Core\Client\Exception\RestException;
+use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
 use Aggrosoft\PayPal\Application\Core\Webhook\WebhookInitiator;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface;
@@ -26,19 +27,29 @@ class ModuleConfiguration extends ModuleConfiguration_parent
             $initiator = new WebhookInitiator();
             $webhookId = '';
 
+            $client = new PayPalRestClient();
+            $client->invalidateToken();
+
             try {
-                $webhookId = $initiator->initiate($config->getConfigParam('sPayPalWebhookId', null, 'module:agpaypal'));
-            }catch(AuthenticationException|RestException $e) {
                 if ($config->getConfigParam('sPayPalClientId', null, 'module:agpaypal') && $config->getConfigParam('sPayPalClientId', null, 'module:agpaypal')) {
-                    \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay(print_r($e, true));
+                    $webhookId = $initiator->initiate($config->getConfigParam('sPayPalWebhookId', null, 'module:agpaypal'));
                 }
+            }catch(AuthenticationException $e) {
+                \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('ERR_PAYPAL_AUTHENTICATION_FAILED');
+            }catch(RestException $e) {
+                \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($e);
             }
 
-            $moduleSettingBridge = ContainerFactory::getInstance()
-                ->getContainer()
-                ->get(ModuleSettingBridgeInterface::class);
+            if(class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')){
+                $moduleSettingBridge = ContainerFactory::getInstance()
+                    ->getContainer()
+                    ->get(ModuleSettingBridgeInterface::class);
 
-            $moduleSettingBridge->save('sPayPalWebhookId', $webhookId, 'agpaypal');
+                $moduleSettingBridge->save('sPayPalWebhookId', $webhookId, 'agpaypal');
+            } else {
+                $config->saveShopConfVar('str', 'sPayPalWebhookId', $webhookId, null, 'module:agpaypal');
+            }
+
 
         }
     }

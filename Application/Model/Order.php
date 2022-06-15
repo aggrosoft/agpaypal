@@ -70,17 +70,22 @@ class Order extends Order_parent
 
         if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::PAY_UPON_INVOICE) {
 
-            $container = ContainerFactory::getInstance()->getContainer();
-            $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
-            $queryBuilder = $queryBuilderFactory->create();
+            if(class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')){
+                $container = ContainerFactory::getInstance()->getContainer();
+                $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
+                $queryBuilder = $queryBuilderFactory->create();
 
-            $data = $queryBuilder->select('oxid')
-                ->from('agpaypalbankdata')
-                ->where('agpaypalbankdata.oxorderid = :orderId')
-                ->setParameter('orderId', $this->getId())
-                ->execute();
+                $data = $queryBuilder->select('oxid')
+                    ->from('agpaypalbankdata')
+                    ->where('agpaypalbankdata.oxorderid = :orderId')
+                    ->setParameter('orderId', $this->getId())
+                    ->execute();
 
-            $bankDataId = $data->fetchColumn();
+                $bankDataId = $data->fetchColumn();
+            }else{
+                $rs = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->select('SELECT oxid FROM agpaypalbankdata WHERE agpaypalbankdata.oxorderid = :orderId', ['orderId' => $this->getId()]);
+                $bankDataId = current($rs->getFields());
+            }
 
             if ($bankDataId) {
                 $bankData = oxNew(\Aggrosoft\PayPal\Application\Model\PayPalBankData::class);

@@ -88,19 +88,24 @@ class PayPalBasketHandler
 
     public static function getUserBasketForToken ($token, $pptoken)
     {
-        $container = ContainerFactory::getInstance()->getContainer();
-        $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
-        $queryBuilder = $queryBuilderFactory->create();
+        if(class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')){
+            $container = ContainerFactory::getInstance()->getContainer();
+            $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
+            $queryBuilder = $queryBuilderFactory->create();
 
-        $data = $queryBuilder->select('oxid')
-            ->from('oxuserbaskets')
-            ->where('oxuserbaskets.agpaypaltoken = :token')
-            ->andWhere('oxuserbaskets.agpaypalreturntoken = :pptoken')
-            ->setParameter('token', $token)
-            ->setParameter('pptoken', $pptoken)
-            ->execute();
+            $data = $queryBuilder->select('oxid')
+                ->from('oxuserbaskets')
+                ->where('oxuserbaskets.agpaypaltoken = :token')
+                ->andWhere('oxuserbaskets.agpaypalreturntoken = :pptoken')
+                ->setParameter('token', $token)
+                ->setParameter('pptoken', $pptoken)
+                ->execute();
 
-        $basketId = $data->fetchColumn();
+            $basketId = $data->fetchColumn();
+        }else{
+            $rs = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->select('SELECT oxid FROM oxuserbaskets WHERE oxuserbaskets.agpaypaltoken = :token AND oxuserbaskets.agpaypalreturntoken = :pptoken', ['token' => $token, 'pptoken' => $pptoken]);
+            $basketId = current($rs->getFields());
+        }
 
         if ($basketId) {
             $basket = oxNew(\OxidEsales\Eshop\Application\Model\UserBasket::class);
@@ -111,17 +116,23 @@ class PayPalBasketHandler
 
     public static function destroyUserBasketForToken ($token)
     {
-        $container = ContainerFactory::getInstance()->getContainer();
-        $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
-        $queryBuilder = $queryBuilderFactory->create();
+        if(class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')){
+            $container = ContainerFactory::getInstance()->getContainer();
+            $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
+            $queryBuilder = $queryBuilderFactory->create();
 
-        $data = $queryBuilder->select('oxid')
-            ->from('oxuserbaskets')
-            ->where('oxuserbaskets.agpaypaltoken = :token')
-            ->setParameter('token', $token)
-            ->execute();
+            $data = $queryBuilder->select('oxid')
+                ->from('oxuserbaskets')
+                ->where('oxuserbaskets.agpaypaltoken = :token')
+                ->setParameter('token', $token)
+                ->execute();
 
-        $basketId = $data->fetchColumn();
+            $basketId = $data->fetchColumn();
+        }else{
+            $rs = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->select('SELECT oxid FROM oxuserbaskets WHERE oxuserbaskets.agpaypaltoken = :token', ['token' => $token]);
+            $basketId = current($rs->getFields());
+        }
+
 
         if ($basketId) {
             $basket = oxNew(\OxidEsales\Eshop\Application\Model\UserBasket::class);

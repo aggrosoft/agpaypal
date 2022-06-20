@@ -72,7 +72,7 @@ class PayPalRestClient
         $this->log($request, $result, $response->getStatusCode());
 
         if ($response->getStatusCode() > 299) {
-            throw new RestException('PAYPAL_ERROR_'.$result->details[0]->issue, $response->getStatusCode(), null, ['request' => $request->getBody(), 'response' => $result]);
+            throw new RestException('PAYPAL_ERROR_'.strtoupper(str_replace(' ', '_', $result->details[0]->issue)), $response->getStatusCode(), null, ['request' => $request->getBody(), 'response' => $result]);
         }
 
         return $result;

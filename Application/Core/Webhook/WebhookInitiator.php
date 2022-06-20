@@ -60,7 +60,7 @@ class WebhookInitiator
 
     public function getWebhookUrl (): string
     {
-        $url = \OxidEsales\Eshop\Core\Registry::getConfig()->getSslShopUrl();
+        $url = \OxidEsales\Eshop\Core\Registry::getConfig()->getSslShopUrl() ?: \OxidEsales\Eshop\Core\Registry::getConfig()->getShopUrl();
         return $url . 'index.php?cl=aggrosoft_paypal_webhook';
     }
 

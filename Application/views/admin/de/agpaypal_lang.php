@@ -49,5 +49,6 @@ $aLang = array(
     'ORDER_MAIN_PAYPAL_CAPTURE_ID' => 'PayPal Zahlungs ID:',
     'ORDER_MAIN_PAYPAL_TRANSACTION_STATUS' => 'PayPal Transaktions Status:',
     'ORDER_MAIN_PAYPAL_SHOW_TRANSACTION_DETAILS' => 'Details ansehen',
-    'ERR_PAYPAL_AUTHENTICATION_FAILED' => 'Die eingegebenen Zugangsdaten sind nicht korrekt, achten Sie darauf die jeweiligen Zugänge für Live bzw. Sandbox App zu verwenden!'
+    'ERR_PAYPAL_AUTHENTICATION_FAILED' => 'Die eingegebenen Zugangsdaten sind nicht korrekt, achten Sie darauf die jeweiligen Zugänge für Live bzw. Sandbox App zu verwenden!',
+    'ERR_PAYPAL_NOT_A_VALID_WEBHOOK_URL' => 'Die Shop Url ist keine gültige Webhook Url, sollte es sich um ein lokales Testsystem handeln können Webhooks nicht ausgeführt werden.'
 );

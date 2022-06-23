@@ -3,8 +3,6 @@
 
 [{assign var="currency" value=$oView->getActCurrency()}]
 
-[{oxscript include=$oViewConf->getModuleUrl('agpaypal', 'out/js/paypal-button.js')}]
-
 [{capture assign=pageScript}]
     let detailsPayPalButton = new AggrosoftPayPalButton({
         baseUrl: '[{$oViewConf->getSelfActionLink()}]',

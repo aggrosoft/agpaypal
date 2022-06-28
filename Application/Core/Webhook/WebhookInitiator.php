@@ -34,6 +34,7 @@ class WebhookInitiator
         $request = new ListWebhooksRequest();
         $response = $client->execute($request);
         $webhooks = $response->webhooks;
+        
         $url = $this->getWebhookUrl();
 
         // Check if there is already a good webhook

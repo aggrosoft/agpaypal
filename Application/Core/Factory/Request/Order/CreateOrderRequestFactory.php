@@ -156,7 +156,7 @@ class CreateOrderRequestFactory
         $shop = $config->getActiveShop();
 
         $context = new ApplicationContext();
-        $context->setBrandName($shop->oxshops__oxname->value);
+        $context->setBrandName($shop->oxshops__oxname->rawValue);
         $context->setLandingPage($landingPage ?: ApplicationContext::LANDING_PAGE_NO_PREFERENCE);
         $context->setShippingPreference($shippingPreference);
         $context->setUserAction($userAction);

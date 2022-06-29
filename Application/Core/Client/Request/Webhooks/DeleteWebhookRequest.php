@@ -7,13 +7,12 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\RequestObject;
 
 class DeleteWebhookRequest extends RequestObject implements IPayPalRequest
 {
-
     /**
      * @var string
      */
     protected $webhookId;
 
-    public function __construct ($webhookId)
+    public function __construct($webhookId)
     {
         $this->webhookId = $webhookId;
     }
@@ -37,5 +36,4 @@ class DeleteWebhookRequest extends RequestObject implements IPayPalRequest
     {
         return '';
     }
-
 }

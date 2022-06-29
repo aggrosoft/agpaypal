@@ -9,12 +9,11 @@ use OxidEsales\Eshop\Core\Registry;
 
 class PayPalRestClient
 {
+    public const LIVE_API_URL = 'https://api-m.paypal.com/';
+    public const SANDBOX_API_URL = 'https://api-m.sandbox.paypal.com/';
 
-    const LIVE_API_URL = 'https://api-m.paypal.com/';
-    const SANDBOX_API_URL = 'https://api-m.sandbox.paypal.com/';
-
-    const LIVE_TOKEN_URL = 'https://api-m.paypal.com/v1/oauth2/token';
-    const SANDBOX_TOKEN_URL = 'https://api-m.sandbox.paypal.com/v1/oauth2/token';
+    public const LIVE_TOKEN_URL = 'https://api-m.paypal.com/v1/oauth2/token';
+    public const SANDBOX_TOKEN_URL = 'https://api-m.sandbox.paypal.com/v1/oauth2/token';
 
     /**
      * @var string
@@ -45,7 +44,7 @@ class PayPalRestClient
      */
     private $client;
 
-    public function __construct ()
+    public function __construct()
     {
         $config = Registry::getConfig();
         $this->clientId = $config->getConfigParam('sPayPalClientId', null, 'module:agpaypal');
@@ -56,7 +55,7 @@ class PayPalRestClient
         $this->client = new \GuzzleHttp\Client();
     }
 
-    public function execute (IPayPalRequest $request)
+    public function execute(IPayPalRequest $request)
     {
         $response = $this->client->request($request->getMethod(), $this->getApiUrl().$request->getEndpoint(), [
             'headers' => array_merge([
@@ -78,7 +77,7 @@ class PayPalRestClient
         return $result;
     }
 
-    public function invalidateToken ()
+    public function invalidateToken()
     {
         $cacheKey = 'pptoken_'.intval($this->sandbox).'_'.\OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
         $utils = \OxidEsales\Eshop\Core\Registry::getUtils();
@@ -86,10 +85,9 @@ class PayPalRestClient
         $this->token = null;
     }
 
-    private function getToken ()
+    private function getToken()
     {
         if (!$this->token) {
-
             $cacheKey = 'pptoken_'.intval($this->sandbox).'_'.\OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
             $utils = \OxidEsales\Eshop\Core\Registry::getUtils();
             $cachedToken = $utils->fromFileCache($cacheKey);
@@ -120,22 +118,22 @@ class PayPalRestClient
                     $utils->toFileCache($cacheKey, $this->token, $result->expires_in - 60);
                 }
             }
-
         }
         return $this->token;
     }
 
-    private function getTokenUrl ()
+    private function getTokenUrl()
     {
         return $this->sandbox ? self::SANDBOX_TOKEN_URL : self::LIVE_TOKEN_URL;
     }
 
-    private function getApiUrl ()
+    private function getApiUrl()
     {
         return $this->sandbox ? self::SANDBOX_API_URL : self::LIVE_API_URL;
     }
 
-    private function log ($request, $result, $code) {
+    private function log($request, $result, $code)
+    {
         if ($this->logLevel === 'all' || $this->logLevel === 'error' && $code > 299) {
             $log = "#$code [" . date("d/M/Y H:i:s") . "]\n";
             $log .= "Request: \n\n " . json_encode($request, JSON_PRETTY_PRINT) . "\n\n";
@@ -144,6 +142,5 @@ class PayPalRestClient
 
             file_put_contents(getShopBasePath().'/log/paypal.log', $log, FILE_APPEND);
         }
-
     }
 }

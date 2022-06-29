@@ -9,8 +9,9 @@ class Payment extends Payment_parent
     /*
      * @see: https://developer.paypal.com/docs/checkout/apm/reference/method-icons/
      */
-    public function getPayPalPaymentIcon() {
-        switch($this->oxpayments__agpaypalpaymentmethod->value) {
+    public function getPayPalPaymentIcon()
+    {
+        switch ($this->oxpayments__agpaypalpaymentmethod->value) {
             case PaymentSource::BANCONTACT:
                 return 'https://www.paypalobjects.com/images/checkout/alternative_payments/paypal_bancontact_color.svg';
             case PaymentSource::BLIK:

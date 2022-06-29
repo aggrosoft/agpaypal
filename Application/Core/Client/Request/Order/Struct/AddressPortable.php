@@ -55,5 +55,4 @@ class AddressPortable extends RequestObject
      * @var AddressDetails
      */
     public $address_details;
-
 }

@@ -10,16 +10,15 @@ use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInt
 
 class WebhookController extends \OxidEsales\Eshop\Application\Controller\FrontendController
 {
-    public function render ()
+    public function render()
     {
         \Ecomponents\License\LicenseManager::getInstance()->validate('agpaypal');
 
         $verifier = new WebhookVerifier();
         $data = $verifier->verifyIncomingWebhook();
 
-        if ($data)
-        {
-            switch($data->event_type) {
+        if ($data) {
+            switch ($data->event_type) {
                 case 'PAYMENT.CAPTURE.COMPLETED':
                     $this->handlePaymentCaptureCompleted($data);
                     break;
@@ -39,10 +38,9 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
             \OxidEsales\Eshop\Core\Registry::getUtils()->showMessageAndExit('');
         }
-
     }
 
-    protected function handlePaymentCaptureCompleted ($data)
+    protected function handlePaymentCaptureCompleted($data)
     {
         $orderId = $data->resource->supplementary_data->related_ids->order_id;
         $order = $this->loadOrderByPayPalToken($orderId);
@@ -53,7 +51,7 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
             if ($response->payment_source->pay_upon_invoice) {
                 $bankData = oxNew(\Aggrosoft\PayPal\Application\Model\PayPalBankData::class);
-                if ($bankData->assignPayPalPUIData($order->getId(), $response->payment_source->pay_upon_invoice) ) {
+                if ($bankData->assignPayPalPUIData($order->getId(), $response->payment_source->pay_upon_invoice)) {
                     $bankData->save();
                     $order->sendOrderByEmailForPayPalPUI();
                 }
@@ -67,7 +65,7 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
         }
     }
 
-    protected function handlePaymentCaptureDenied ($data)
+    protected function handlePaymentCaptureDenied($data)
     {
         if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blAutoCancelOrders', null, 'module:agpaypal')) {
             $orderId = $data->resource->supplementary_data->related_ids->order_id;
@@ -79,14 +77,14 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
         }
     }
 
-    protected function handlePaymentApprovalReversed ($data)
+    protected function handlePaymentApprovalReversed($data)
     {
         // this should never happen, keep for later reference
     }
 
-    protected function loadOrderByPayPalToken ($token)
+    protected function loadOrderByPayPalToken($token)
     {
-        if(class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')){
+        if (class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')) {
             $container = ContainerFactory::getInstance()->getContainer();
             $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
             $queryBuilder = $queryBuilderFactory->create();
@@ -98,7 +96,7 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
                 ->execute();
 
             $orderId = $data->fetchColumn();
-        }else {
+        } else {
             $rs = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->select('SELECT oxid FROM oxorder WHERE oxorder.oxtransid = :token', ['token' => $token]);
             $orderId = current($rs->getFields());
         }

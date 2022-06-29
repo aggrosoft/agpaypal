@@ -4,16 +4,12 @@ namespace Aggrosoft\PayPal\Application\Core\Client\Request\Payments\Captures;
 
 use Aggrosoft\PayPal\Application\Core\Client\Request\IPayPalRequest;
 use Aggrosoft\PayPal\Application\Core\Client\Request\JSONBodyTrait;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\Money;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\Payer;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PurchaseUnitRequest;
 use Aggrosoft\PayPal\Application\Core\Client\Request\RequestObject;
 
 class RefundCapturedPaymentRequest extends RequestObject implements IPayPalRequest
 {
-
     use JSONBodyTrait;
 
     /**
@@ -21,7 +17,7 @@ class RefundCapturedPaymentRequest extends RequestObject implements IPayPalReque
      */
     protected $captureId;
 
-    public function __construct ($captureId)
+    public function __construct($captureId)
     {
         $this->captureId = $captureId;
     }
@@ -103,7 +99,4 @@ class RefundCapturedPaymentRequest extends RequestObject implements IPayPalReque
     {
         $this->note_to_payer = $note_to_payer;
     }
-
-
-
 }

@@ -27,7 +27,6 @@ use OxidEsales\Eshop\Core\Registry;
 
 class CreateOrderRequestFactory
 {
-
     private static $shippingOptions;
 
     /**
@@ -117,7 +116,7 @@ class CreateOrderRequestFactory
             $address->postal_code = $deliveryAddress->oxaddress__oxzip->value;
             $address->country_code = $country->oxcountry__oxisoalpha2->value;
             $address->admin_area_2 = $deliveryAddress->oxaddress__oxcity->value;
-        }else{
+        } else {
             $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
             $country->load($user->oxuser__oxcountryid->value);
 
@@ -201,7 +200,7 @@ class CreateOrderRequestFactory
             $invoiceData->experience_context = [
                 'locale' => 'de-DE',
                 'brand_name' => $shop->oxshops__oxname->value,
-                'logo_url' => Registry::getConfig()->getImageUrl(false,true). 'logo_oxid.png',
+                'logo_url' => Registry::getConfig()->getImageUrl(false, true). 'logo_oxid.png',
                 'customer_service_instructions' => [
                     $shop->oxshops__oxtelefon->value
                 ]
@@ -209,7 +208,7 @@ class CreateOrderRequestFactory
 
             $source->pay_upon_invoice = $invoiceData;
             return $source;
-        }elseif ($method && $method !== PaymentSource::PAYPAL && $method !== PaymentSource::CARD){
+        } elseif ($method && $method !== PaymentSource::PAYPAL && $method !== PaymentSource::CARD) {
             $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
             $country->load($user->oxuser__oxcountryid->value);
 
@@ -223,7 +222,7 @@ class CreateOrderRequestFactory
         }
     }
 
-    public static function createShipping ($user, $basket, $shippingPreference, $countryId = null)
+    public static function createShipping($user, $basket, $shippingPreference, $countryId = null)
     {
         $shipping = new ShippingDetail();
 
@@ -240,7 +239,7 @@ class CreateOrderRequestFactory
                 $address->address_line_1 = $deliveryAddress->oxaddress__oxstreet->value . ' ' . $deliveryAddress->oxaddress__oxstreetnr->value;
                 $address->postal_code = $deliveryAddress->oxaddress__oxzip->value;
                 $address->admin_area_2 = $deliveryAddress->oxaddress__oxcity->value;
-            }else{
+            } else {
                 $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
                 $country->load($user->oxuser__oxcountryid->value);
 
@@ -254,20 +253,20 @@ class CreateOrderRequestFactory
             $shipping->setAddress($address);
         }
 
-        if ($shippingPreference === ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE){
+        if ($shippingPreference === ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE) {
             $shipping->setOptions(self::getShippingOptions($user, $basket, $countryId));
         }
 
         return $shipping;
     }
 
-    private static function isPayUponInvoice ($payment)
+    private static function isPayUponInvoice($payment)
     {
         $method = $payment->oxpayments__agpaypalpaymentmethod->value;
         return $method === PaymentSource::PAY_UPON_INVOICE;
     }
 
-    private static function getShippingOptions ($user, $basket, $countryId = null)
+    private static function getShippingOptions($user, $basket, $countryId = null)
     {
         if (!self::$shippingOptions) {
             $options = [];
@@ -286,7 +285,7 @@ class CreateOrderRequestFactory
                 }
             }
 
-            if ($countryId){
+            if ($countryId) {
                 $user->oxuser__oxcountryid = new \OxidEsales\Eshop\Core\Field($countryId);
             }
 
@@ -297,10 +296,10 @@ class CreateOrderRequestFactory
             // load sets, active set, and active set payment list
             list($aAllSets, $sActShipSet) = Registry::get(\OxidEsales\Eshop\Application\Model\DeliverySetList::class)->getDeliverySetData($sActShipSet, $user, $basket);
 
-            foreach($aAllSets as $deliverySet) {
+            foreach ($aAllSets as $deliverySet) {
                 $costs = $basket->getDeliveryCostForShipset($deliverySet->getId());
                 $option = new ShippingDetailOption();
-                $option->setAmount(new Money($currencyName,$costs->getBruttoPrice()));
+                $option->setAmount(new Money($currencyName, $costs->getBruttoPrice()));
                 $option->setId($deliverySet->getId());
                 $option->setLabel($deliverySet->oxdeliveryset__oxtitle->value);
                 $option->setType('SHIPPING');
@@ -316,6 +315,8 @@ class CreateOrderRequestFactory
     private static function getSelectedShippingOption($user, $basket, $countryId = null)
     {
         $options = self::getShippingOptions($user, $basket, $countryId);
-        return current(array_filter($options, function($option){ return $option->selected; }));
+        return current(array_filter($options, function ($option) {
+            return $option->selected;
+        }));
     }
 }

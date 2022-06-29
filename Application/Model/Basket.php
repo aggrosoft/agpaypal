@@ -1,15 +1,15 @@
 <?php
 
 namespace Aggrosoft\PayPal\Application\Model;
+
 use OxidEsales\Eshop\Core\Registry;
 
 class Basket extends Basket_parent
 {
-
     protected $_blDisableArtStockInBasket = false;
 
-    public function getDeliveryCostForShipset($shipsetId) {
-
+    public function getDeliveryCostForShipset($shipsetId)
+    {
         Registry::getConfig()->setConfigParam('blCalculateDelCostIfNotLoggedIn', true);
         Registry::getConfig()->setConfigParam('bl_perfLoadDelivery', true);
 
@@ -26,11 +26,13 @@ class Basket extends Basket_parent
         return $deliveryCosts;
     }
 
-    public function setDisableArtStockInBasket($blDisableArtStockInBasket) {
+    public function setDisableArtStockInBasket($blDisableArtStockInBasket)
+    {
         $this->_blDisableArtStockInBasket = $blDisableArtStockInBasket;
     }
 
-    public function getDisableArtStockInBasket() {
+    public function getDisableArtStockInBasket()
+    {
         return $this->_blDisableArtStockInBasket;
     }
 
@@ -38,7 +40,7 @@ class Basket extends Basket_parent
     {
         if ($this->getDisableArtStockInBasket()) {
             return 0;
-        }else {
+        } else {
             return parent::getArtStockInBasket($sArtId, $sExpiredArtId);
         }
     }

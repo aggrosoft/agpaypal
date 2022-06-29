@@ -3,16 +3,10 @@
 namespace Aggrosoft\PayPal\Application\Core\Client\Request\Order;
 
 use Aggrosoft\PayPal\Application\Core\Client\Request\IPayPalRequest;
-use Aggrosoft\PayPal\Application\Core\Client\Request\JSONBodyTrait;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\Payer;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PurchaseUnitRequest;
 use Aggrosoft\PayPal\Application\Core\Client\Request\RequestObject;
 
 class UpdateOrderInvoiceNumberRequest extends RequestObject implements IPayPalRequest
 {
-
     /**
      * @var string
      */
@@ -23,7 +17,7 @@ class UpdateOrderInvoiceNumberRequest extends RequestObject implements IPayPalRe
      */
     protected $invoiceNumber;
 
-    public function __construct ($orderId, $invoiceNumber)
+    public function __construct($orderId, $invoiceNumber)
     {
         $this->orderId = $orderId;
         $this->invoiceNumber = $invoiceNumber;
@@ -52,5 +46,4 @@ class UpdateOrderInvoiceNumberRequest extends RequestObject implements IPayPalRe
             'value' => strval($this->invoiceNumber)
         ]]);
     }
-
 }

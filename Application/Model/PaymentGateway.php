@@ -4,11 +4,9 @@ namespace Aggrosoft\PayPal\Application\Model;
 
 use Aggrosoft\PayPal\Application\Core\Client\Exception\RestException;
 use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\UpdateOrderInvoiceNumberRequest;
 use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CapturePaymentRequestFactory;
-use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CreateOrderRequestFactory;
 use Aggrosoft\PayPal\Application\Core\PayPalInitiator;
 use OxidEsales\Eshop\Core\Registry;
 
@@ -20,13 +18,12 @@ class PaymentGateway extends PaymentGateway_parent
         $payment->load($this->_oPaymentInfo->oxuserpayments__oxpaymentsid->value);
 
         if ($payment->oxpayments__agpaypalpaymentmethod->value) {
-
             if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::PAY_UPON_INVOICE) {
                 $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=execute');
                 $paypal->setRedirect(false);
                 try {
                     $paypal->initiate();
-                } catch(RestException $re) {
+                } catch (RestException $re) {
                     $this->_iLastErrorNo = null; // $re->getCode();
                     $this->_sLastError = null; // Registry::getLang()->translateString($re->getMessage());
                     \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($re);
@@ -41,7 +38,6 @@ class PaymentGateway extends PaymentGateway_parent
             $token = Registry::getSession()->getVariable('pptoken');
 
             if ($token) {
-
                 $client = new PayPalRestClient();
 
                 // Send order number to paypal
@@ -75,7 +71,7 @@ class PaymentGateway extends PaymentGateway_parent
                         $this->_iLastErrorNo = 903;
                         $this->_sLastError = 'ERR_PAYPAL_CAPTURE_DENIED';
                         return false;
-                    }elseif ($capture->status === 'COMPLETED') {
+                    } elseif ($capture->status === 'COMPLETED') {
                         $oOrder->oxorder__oxpaid = new \OxidEsales\Eshop\Core\Field(date("Y-m-d H:i:s"));
                     }
 
@@ -89,7 +85,6 @@ class PaymentGateway extends PaymentGateway_parent
                 $this->_iLastErrorNo = null;
                 $this->_sLastError = null;
                 return true;
-
             } else {
                 $this->_iLastErrorNo = 901;
                 $this->_sLastError = 'ERR_PAYPAL_TOKEN_MISSING';

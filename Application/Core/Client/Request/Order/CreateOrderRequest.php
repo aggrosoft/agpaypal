@@ -12,14 +12,13 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\RequestObject;
 
 class CreateOrderRequest extends RequestObject implements IPayPalRequest
 {
-
     use JSONBodyTrait;
 
-    const INTENT_CAPTURE = 'CAPTURE';
-    const INTENT_AUTHORIZE = 'AUTHORIZE';
+    public const INTENT_CAPTURE = 'CAPTURE';
+    public const INTENT_AUTHORIZE = 'AUTHORIZE';
 
-    const PROCESSING_INSTRUCTION_ORDER_COMPLETE_ON_PAYMENT_APPROVAL = 'ORDER_COMPLETE_ON_PAYMENT_APPROVAL';
-    const PROCESSING_INSTRUCTION_NO_INSTRUCTION = 'NO_INSTRUCTION';
+    public const PROCESSING_INSTRUCTION_ORDER_COMPLETE_ON_PAYMENT_APPROVAL = 'ORDER_COMPLETE_ON_PAYMENT_APPROVAL';
+    public const PROCESSING_INSTRUCTION_NO_INSTRUCTION = 'NO_INSTRUCTION';
 
     /**
      * @var string
@@ -190,5 +189,4 @@ class CreateOrderRequest extends RequestObject implements IPayPalRequest
     {
         $this->payment_source = $payment_source;
     }
-
 }

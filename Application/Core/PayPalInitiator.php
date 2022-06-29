@@ -10,14 +10,13 @@ use OxidEsales\Eshop\Core\Registry;
 
 class PayPalInitiator
 {
-
     protected $returnUrl = '';
     protected $redirect = true;
     protected $shippingPreference = ApplicationContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS;
     protected $userAction = ApplicationContext::USER_ACTION_CONTINUE;
     protected $products;
 
-    public function __construct ($returnUrl)
+    public function __construct($returnUrl)
     {
         $this->returnUrl = $returnUrl;
     }
@@ -25,7 +24,7 @@ class PayPalInitiator
     /**
      * Create PayPal order and redirect
      */
-    public function initiate ()
+    public function initiate()
     {
         \Ecomponents\License\LicenseManager::getInstance()->validate('agpaypal');
 
@@ -53,7 +52,7 @@ class PayPalInitiator
         ];
     }
 
-    protected function getPayPalClient ()
+    protected function getPayPalClient()
     {
         if (!$this->paypalClient) {
             $this->paypalClient = new PayPalRestClient();
@@ -61,15 +60,15 @@ class PayPalInitiator
         return $this->paypalClient;
     }
 
-    protected function getPayment ()
+    protected function getPayment()
     {
-        if(!$this->payment) {
+        if (!$this->payment) {
             $session = Registry::getSession();
             if (!($paymentId = Registry::getRequest()->getRequestEscapedParameter('paymentid'))) {
                 $paymentId = $session->getVariable('paymentid');
             }
 
-            if($paymentId) {
+            if ($paymentId) {
                 $this->payment = oxNew(\OxidEsales\Eshop\Application\Model\Payment::class);
                 $this->payment->load($paymentId);
             }
@@ -77,7 +76,7 @@ class PayPalInitiator
         return $this->payment;
     }
 
-    protected function generateReturnToken ()
+    protected function generateReturnToken()
     {
         return bin2hex(random_bytes(64));
     }
@@ -161,7 +160,4 @@ class PayPalInitiator
     {
         $this->userAction = $userAction;
     }
-
-
-
 }

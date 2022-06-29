@@ -6,18 +6,18 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\RequestObject;
 
 class PaymentSource extends RequestObject
 {
-    const PAYPAL = 'PAYPAL';
-    const CARD = 'CARD';
-    const BANCONTACT = 'BANCONTACT';
-    const BLIK = 'BLIK';
-    const EPS = 'EPS';
-    const GIROPAY = 'GIROPAY';
-    const IDEAL = 'IDEAL';
-    const MYBANK = 'MYBANK';
-    const P24 = 'P24';
-    const SOFORT = 'SOFORT';
-    const TRUSTLY = 'TRUSTLY';
-    const PAY_UPON_INVOICE = 'PAY_UPON_INVOICE';
+    public const PAYPAL = 'PAYPAL';
+    public const CARD = 'CARD';
+    public const BANCONTACT = 'BANCONTACT';
+    public const BLIK = 'BLIK';
+    public const EPS = 'EPS';
+    public const GIROPAY = 'GIROPAY';
+    public const IDEAL = 'IDEAL';
+    public const MYBANK = 'MYBANK';
+    public const P24 = 'P24';
+    public const SOFORT = 'SOFORT';
+    public const TRUSTLY = 'TRUSTLY';
+    public const PAY_UPON_INVOICE = 'PAY_UPON_INVOICE';
 
     /**
      * @var object
@@ -78,5 +78,4 @@ class PaymentSource extends RequestObject
      * @var object
      */
     public $pay_upon_invoice;
-
 }

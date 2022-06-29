@@ -37,5 +37,12 @@
       "Aggrosoft\\PayPal\\": "../../../source/modules/agpaypal"
     }
   },
-  "version": "1.0.10"
+  "repositories": [{
+    "type": "composer",
+    "url": "https://packages.aggrosoft.de"
+  }],
+  "version": "1.0.10",
+  "require-dev": {
+    "laravel/pint": "^0.2.1"
+  }
 }

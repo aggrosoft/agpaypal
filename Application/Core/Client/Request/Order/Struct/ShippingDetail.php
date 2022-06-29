@@ -79,10 +79,11 @@ class ShippingDetail extends RequestObject
         $this->options = $options;
 
         // Force one option to be selected
-        $selectedOptions = array_filter($this->options, function($option){ return $option->selected; });
-        if (count($this->options) && !count($selectedOptions)){
+        $selectedOptions = array_filter($this->options, function ($option) {
+            return $option->selected;
+        });
+        if (count($this->options) && !count($selectedOptions)) {
             $this->options[0]->setSelected(true);
         }
     }
-
 }

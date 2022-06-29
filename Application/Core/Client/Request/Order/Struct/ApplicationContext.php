@@ -6,17 +6,16 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\RequestObject;
 
 class ApplicationContext extends RequestObject
 {
+    public const LANDING_PAGE_LOGIN = 'LOGIN';
+    public const LANDING_PAGE_BILLING = 'BILLING';
+    public const LANDING_PAGE_NO_PREFERENCE = 'NO_PREFERENCE';
 
-    const LANDING_PAGE_LOGIN = 'LOGIN';
-    const LANDING_PAGE_BILLING = 'BILLING';
-    const LANDING_PAGE_NO_PREFERENCE = 'NO_PREFERENCE';
+    public const SHIPPING_PREFERENCE_GET_FROM_FILE = 'GET_FROM_FILE';
+    public const SHIPPING_PREFERENCE_NO_SHIPPING = 'NO_SHIPPING';
+    public const SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS = 'SET_PROVIDED_ADDRESS';
 
-    const SHIPPING_PREFERENCE_GET_FROM_FILE = 'GET_FROM_FILE';
-    const SHIPPING_PREFERENCE_NO_SHIPPING = 'NO_SHIPPING';
-    const SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS = 'SET_PROVIDED_ADDRESS';
-
-    const USER_ACTION_CONTINUE = 'CONTINUE';
-    const USER_ACTION_PAY_NOW = 'PAY_NOW';
+    public const USER_ACTION_CONTINUE = 'CONTINUE';
+    public const USER_ACTION_PAY_NOW = 'PAY_NOW';
 
     /**
      * @var string
@@ -206,5 +205,4 @@ class ApplicationContext extends RequestObject
     {
         $this->stored_payment_source = $stored_payment_source;
     }
-
 }

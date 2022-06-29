@@ -7,11 +7,10 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\Webhooks\VerifyWebhookSigna
 
 class WebhookVerifier
 {
-
     public const VERIFICATION_STATUS_SUCCESS = 'SUCCESS';
     public const VERIFICATION_STATUS_FAILURE = 'FAILURE';
 
-    public function verifyIncomingWebhook ()
+    public function verifyIncomingWebhook()
     {
         $headers = apache_request_headers();
         $body = file_get_contents('php://input');

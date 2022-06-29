@@ -7,7 +7,6 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\RequestObject;
 
 class GenerateTokenRequest extends RequestObject implements IPayPalRequest
 {
-
     public function getBody()
     {
         return '';
@@ -27,5 +26,4 @@ class GenerateTokenRequest extends RequestObject implements IPayPalRequest
     {
         return 'POST';
     }
-
 }

@@ -10,7 +10,8 @@ class PayPalBankData extends \OxidEsales\Eshop\Core\Model\BaseModel
         $this->init('agpaypalbankdata');
     }
 
-    public function assignPayPalPUIData ($orderId, $data) {
+    public function assignPayPalPUIData($orderId, $data)
+    {
         if ($data->payment_reference) {
             $this->agpaypalbankdata__oxorderid = new \OxidEsales\Eshop\Core\Field($orderId);
             $this->agpaypalbankdata__reference = new \OxidEsales\Eshop\Core\Field($data->payment_reference);

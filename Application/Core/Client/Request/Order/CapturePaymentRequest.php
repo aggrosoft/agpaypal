@@ -4,15 +4,11 @@ namespace Aggrosoft\PayPal\Application\Core\Client\Request\Order;
 
 use Aggrosoft\PayPal\Application\Core\Client\Request\IPayPalRequest;
 use Aggrosoft\PayPal\Application\Core\Client\Request\JSONBodyTrait;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\Payer;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PurchaseUnitRequest;
 use Aggrosoft\PayPal\Application\Core\Client\Request\RequestObject;
 
 class CapturePaymentRequest extends RequestObject implements IPayPalRequest
 {
-
     use JSONBodyTrait;
 
     /**
@@ -20,7 +16,7 @@ class CapturePaymentRequest extends RequestObject implements IPayPalRequest
      */
     protected $orderId;
 
-    public function __construct ($orderId)
+    public function __construct($orderId)
     {
         $this->orderId = $orderId;
     }
@@ -60,5 +56,4 @@ class CapturePaymentRequest extends RequestObject implements IPayPalRequest
     {
         $this->payment_source = $payment_source;
     }
-
 }

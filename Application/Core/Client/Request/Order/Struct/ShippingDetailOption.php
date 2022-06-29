@@ -96,6 +96,4 @@ class ShippingDetailOption extends RequestObject
     {
         $this->amount = $amount;
     }
-
-
 }

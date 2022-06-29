@@ -6,17 +6,16 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\RequestObject;
 
 class StoredPaymentSource extends RequestObject
 {
+    public const PAYMENT_INITIATOR_MERCHANT = 'MERCHANT';
+    public const PAYMENT_INITIATOR_CUSTOMER = 'CUSTOMER';
 
-    const PAYMENT_INITIATOR_MERCHANT = 'MERCHANT';
-    const PAYMENT_INITIATOR_CUSTOMER = 'CUSTOMER';
+    public const PAYMENT_TYPE_UNSCHEDULED = 'UNSCHEDULED';
+    public const PAYMENT_TYPE_RECURRING = 'RECURRING';
+    public const PAYMENT_TYPE_ONE_TIME = 'ONE_TIME';
 
-    const PAYMENT_TYPE_UNSCHEDULED = 'UNSCHEDULED';
-    const PAYMENT_TYPE_RECURRING = 'RECURRING';
-    const PAYMENT_TYPE_ONE_TIME = 'ONE_TIME';
-
-    const USAGE_FIRST = 'FIRST';
-    const USAGE_SUBSEQUENT = 'SUBSEQUENT';
-    const USAGE_DERIVED = 'DERIVED';
+    public const USAGE_FIRST = 'FIRST';
+    public const USAGE_SUBSEQUENT = 'SUBSEQUENT';
+    public const USAGE_DERIVED = 'DERIVED';
 
     /**
      * @var string
@@ -37,5 +36,4 @@ class StoredPaymentSource extends RequestObject
      * @var string
      */
     public $previous_transaction_reference;
-
 }

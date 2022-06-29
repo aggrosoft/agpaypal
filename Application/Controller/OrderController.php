@@ -12,13 +12,12 @@ use OxidEsales\Eshop\Core\Registry;
 
 class OrderController extends OrderController_parent
 {
-
-    public function ppreturn ()
+    public function ppreturn()
     {
         $token = Registry::getRequest()->getRequestEscapedParameter('token');
         $pptoken = Registry::getRequest()->getRequestEscapedParameter('pptoken');
 
-        if(!$pptoken) {
+        if (!$pptoken) {
             $pptoken = Registry::getSession()->getVariable('pptoken');
         }
 
@@ -29,7 +28,7 @@ class OrderController extends OrderController_parent
             // auth user
             if (!$userBasket->oxuserbaskets__oxuserid->value) {
                 $userId = PayPalUserHandler::getUserFromPayPalToken($token);
-            }else{
+            } else {
                 $userId = $userBasket->oxuserbaskets__oxuserid->value;
             }
 
@@ -48,7 +47,7 @@ class OrderController extends OrderController_parent
             // store paypal token for capturing on execute
             Registry::getSession()->setVariable('pptoken', $token);
 
-            if(Registry::getRequest()->getRequestEscapedParameter('execute')) {
+            if (Registry::getRequest()->getRequestEscapedParameter('execute')) {
                 try {
                     $oOrder = oxNew(\OxidEsales\Eshop\Application\Model\Order::class);
 
@@ -72,28 +71,26 @@ class OrderController extends OrderController_parent
         }
     }
 
-    public function executepaypal ()
+    public function executepaypal()
     {
         $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=ppreturn&execute=1&sDeliveryAddressMD5='.$this->getDeliveryAddressMD5());
         $paypal->setUserAction(ApplicationContext::USER_ACTION_PAY_NOW);
         try {
             $paypal->initiate();
-        }catch(RestException $ex){
+        } catch (RestException $ex) {
             Registry::getUtilsView()->addErrorToDisplay($ex);
             return 'payment';
         }
-
     }
 
     public function getExecuteFnc()
     {
         $payment = $this->getPayment();
-        if ($payment && $payment->oxpayments__agpaypalpaymentmethod->value){
-            if (!Registry::getSession()->getVariable('pptoken') && $payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::CARD && $payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::PAY_UPON_INVOICE){
+        if ($payment && $payment->oxpayments__agpaypalpaymentmethod->value) {
+            if (!Registry::getSession()->getVariable('pptoken') && $payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::CARD && $payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::PAY_UPON_INVOICE) {
                 return 'executepaypal';
             }
         }
         return parent::getExecuteFnc();
     }
-
 }

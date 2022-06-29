@@ -4,42 +4,42 @@ namespace Aggrosoft\PayPal\Application\Core;
 
 class ViewConfig extends ViewConfig_parent
 {
-    public function getFraudNetSessionIdentifier ()
+    public function getFraudNetSessionIdentifier()
     {
         return PayPalHelper::getFraudNetSessionIdentifier();
     }
 
-    public function getFraudNetSourceWebsiteIdentifier ()
+    public function getFraudNetSourceWebsiteIdentifier()
     {
         return PayPalHelper::getFraudNetSourceWebsiteIdentifier();
     }
 
-    public function isPayPalSandbox ()
+    public function isPayPalSandbox()
     {
         return PayPalHelper::isPayPalSandbox();
     }
 
-    public function getPayPalClientId ()
+    public function getPayPalClientId()
     {
         return PayPalHelper::getPayPalClientId();
     }
 
-    public function getPayPalPaymentId ()
+    public function getPayPalPaymentId()
     {
         return PayPalHelper::getPayPalPaymentId();
     }
 
-    public function showPayPalButtonInDetails ()
+    public function showPayPalButtonInDetails()
     {
         return PayPalHelper::showPayPalButtonInDetails();
     }
 
-    public function showPayPalButtonInBasket ()
+    public function showPayPalButtonInBasket()
     {
         return PayPalHelper::showPayPalButtonInBasket();
     }
 
-    public function showPayPalMessageInDetails ()
+    public function showPayPalMessageInDetails()
     {
         return PayPalHelper::showPayPalMessageInDetails();
     }

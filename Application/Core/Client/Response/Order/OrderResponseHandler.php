@@ -4,7 +4,8 @@ namespace Aggrosoft\PayPal\Application\Core\Client\Response\Order;
 
 class OrderResponseHandler
 {
-    public static function handle ($response, $savedBasket) {
+    public static function handle($response, $savedBasket)
+    {
 
         //store response id
         $savedBasket->oxuserbaskets__agpaypaltoken = new \OxidEsales\Eshop\Core\Field($response->id);

@@ -22,7 +22,6 @@ class UserBasket extends UserBasket_parent
         }
 
         if (($oUserBasketItem = $this->getItem($sProductId, $aSel, $aPersParam))) {
-
             $oUserBasketItem->oxuserbasketitems__agpaypalwrapid = new \OxidEsales\Eshop\Core\Field($sWrapId);
 
             // updating object info and adding (if not yet added) item into basket items array

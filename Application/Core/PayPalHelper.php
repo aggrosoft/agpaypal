@@ -9,44 +9,44 @@ use OxidEsales\Eshop\Core\Registry;
 
 class PayPalHelper
 {
-    public static function getFraudNetSessionIdentifier ()
+    public static function getFraudNetSessionIdentifier()
     {
         return FraudNet::getSessionIdentifier();
     }
 
-    public static function getFraudNetSourceWebsiteIdentifier ()
+    public static function getFraudNetSourceWebsiteIdentifier()
     {
         return FraudNet::getSourceWebsiteIdentifier();
     }
 
-    public static function isPayPalSandbox ()
+    public static function isPayPalSandbox()
     {
         return Registry::getConfig()->getConfigParam('blPayPalSandboxMode', null, 'module:agpaypal');
     }
 
-    public static function getPayPalClientId ()
+    public static function getPayPalClientId()
     {
         return Registry::getConfig()->getConfigParam('sPayPalClientId', null, 'module:agpaypal');
     }
 
-    public static function showPayPalButtonInDetails ()
+    public static function showPayPalButtonInDetails()
     {
         return Registry::getConfig()->getConfigParam('blPayPalExpressDetails', null, 'module:agpaypal');
     }
 
-    public static function showPayPalButtonInBasket ()
+    public static function showPayPalButtonInBasket()
     {
         return Registry::getConfig()->getConfigParam('blPayPalExpressBasket', null, 'module:agpaypal');
     }
 
-    public static function showPayPalMessageInDetails ()
+    public static function showPayPalMessageInDetails()
     {
         return Registry::getConfig()->getConfigParam('blPayPalMessagesDetails', null, 'module:agpaypal');
     }
 
-    public static function getPayPalPaymentId ()
+    public static function getPayPalPaymentId()
     {
-        if(class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')){
+        if (class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')) {
             $container = ContainerFactory::getInstance()->getContainer();
             $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
             $queryBuilder = $queryBuilderFactory->create();
@@ -59,11 +59,9 @@ class PayPalHelper
                 ->execute();
 
             return $data->fetchColumn();
-        }else{
+        } else {
             $rs = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->select('SELECT oxid FROM oxpayments WHERE oxpayments.agpaypalpaymentmethod = :method AND oxpayments.oxactive = 1', ['method' => PaymentSource::PAYPAL]);
             return current($rs->getFields());
         }
-
     }
-
 }

@@ -9,7 +9,6 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\Webhooks\ListWebhooksReques
 
 class WebhookInitiator
 {
-
     private const NEEDED_EVENTS = [
         [
             'name' => 'PAYMENT.CAPTURE.COMPLETED'
@@ -28,21 +27,21 @@ class WebhookInitiator
         ]
     ];
 
-    public function initiate ($webhookId = null)
+    public function initiate($webhookId = null)
     {
         $client = new PayPalRestClient();
         $request = new ListWebhooksRequest();
         $response = $client->execute($request);
         $webhooks = $response->webhooks;
-        
+
         $url = $this->getWebhookUrl();
 
         // Check if there is already a good webhook
-        foreach($webhooks as $webhook) {
+        foreach ($webhooks as $webhook) {
             if ($webhook->url === $url) {
                 if ($this->webhookContainsAllNeededEvents($webhook)) {
                     return $webhook->id;
-                }else{
+                } else {
                     // delete webhook and recreate later
                     $request = new DeleteWebhookRequest($webhook->id);
                     $client->execute($request);
@@ -56,19 +55,22 @@ class WebhookInitiator
         $request->setEventTypes(self::NEEDED_EVENTS);
         $response = $client->execute($request);
         return $response->id;
-
     }
 
-    public function getWebhookUrl (): string
+    public function getWebhookUrl(): string
     {
         $url = \OxidEsales\Eshop\Core\Registry::getConfig()->getSslShopUrl() ?: \OxidEsales\Eshop\Core\Registry::getConfig()->getShopUrl();
         return $url . 'index.php?cl=aggrosoft_paypal_webhook';
     }
 
-    private function webhookContainsAllNeededEvents ($webhook): bool
+    private function webhookContainsAllNeededEvents($webhook): bool
     {
-        $events = array_map(function($event){ return $event->name; }, $webhook->event_types);
-        $neededEvents = array_map(function($event){ return $event['name']; }, self::NEEDED_EVENTS);
+        $events = array_map(function ($event) {
+            return $event->name;
+        }, $webhook->event_types);
+        $neededEvents = array_map(function ($event) {
+            return $event['name'];
+        }, self::NEEDED_EVENTS);
 
         return count(array_diff($neededEvents, $events)) === 0;
     }

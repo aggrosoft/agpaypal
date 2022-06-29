@@ -12,7 +12,7 @@ class RestException extends \Exception
         $this->details = $details;
     }
 
-    public function getDetails ()
+    public function getDetails()
     {
         return $this->details;
     }

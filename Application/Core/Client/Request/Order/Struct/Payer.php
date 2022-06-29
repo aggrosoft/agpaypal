@@ -152,7 +152,4 @@ class Payer extends RequestObject
     {
         $this->address = $address;
     }
-
-
-
 }

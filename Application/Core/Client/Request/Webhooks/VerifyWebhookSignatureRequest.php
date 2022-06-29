@@ -171,5 +171,4 @@ class VerifyWebhookSignatureRequest extends RequestObject implements IPayPalRequ
     {
         $this->webhook_event = $webhook_event;
     }
-
 }

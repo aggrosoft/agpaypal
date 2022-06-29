@@ -35,30 +35,30 @@ class PaymentController extends PaymentController_parent
         return $result;
     }
 
-    public function getPayPalCreditCardPaymentMethod ()
+    public function getPayPalCreditCardPaymentMethod()
     {
         $payments = $this->getPaymentList();
 
-        foreach($payments as $payment) {
-            if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::CARD){
+        foreach ($payments as $payment) {
+            if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::CARD) {
                 return $payment;
             }
         }
     }
 
-    public function getPayPalPayUponInvoicePaymentMethod ()
+    public function getPayPalPayUponInvoicePaymentMethod()
     {
         $payments = $this->getPaymentList();
 
-        foreach($payments as $payment) {
-            if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::PAY_UPON_INVOICE){
+        foreach ($payments as $payment) {
+            if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::PAY_UPON_INVOICE) {
                 return $payment;
             }
         }
     }
 
     // Used for custom hosted fields
-    public function createpaypalorder ()
+    public function createpaypalorder()
     {
         $session = Registry::getSession();
         $session->setVariable('paymentid', Registry::getRequest()->getRequestEscapedParameter('paymentid'));
@@ -94,26 +94,24 @@ class PaymentController extends PaymentController_parent
                         $this->_aViewData['pp_pui_error'] = true;
                         return;
                     }
-
                 }/* elseif ($payment->oxpayments__agpaypalpaymentmethod->value != PaymentSource::CARD) {
                     $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=ppreturn');
                     $paypal->initiate();
                 }*/
-
             }
         }
 
         return $result;
     }
 
-    public function getPhoneCodes ()
+    public function getPhoneCodes()
     {
         $countryList = oxNew(\OxidEsales\Eshop\Application\Model\CountryList::class);
         $countryList->loadActiveCountries();
         $codesList = \megastruktur\PhoneCountryCodes::getCodesList();
         $phoneCodes = [];
 
-        foreach($countryList as $country) {
+        foreach ($countryList as $country) {
             $phoneCodes[] = [
                 'code' => str_replace('+', '', $codesList[strtoupper($country->oxcountry__oxisoalpha2->value)]),
                 'country' => $country->oxcountry__oxtitle->value
@@ -123,7 +121,7 @@ class PaymentController extends PaymentController_parent
         return $phoneCodes;
     }
 
-    public function getUserCountryIsoAlpha2 ()
+    public function getUserCountryIsoAlpha2()
     {
         $session = \OxidEsales\Eshop\Core\Registry::getSession();
         $basket = $session->getBasket();
@@ -133,7 +131,7 @@ class PaymentController extends PaymentController_parent
         return $country->oxcountry__oxisoalpha2->value;
     }
 
-    public function getPayPalClientToken ()
+    public function getPayPalClientToken()
     {
         $client = new PayPalRestClient();
         $request = new  GenerateTokenRequest();
@@ -141,20 +139,19 @@ class PaymentController extends PaymentController_parent
         return $response->client_token;
     }
 
-    protected function getPayment ()
+    protected function getPayment()
     {
-        if(!$this->payment) {
+        if (!$this->payment) {
             $session = Registry::getSession();
             if (!($paymentId = Registry::getRequest()->getRequestEscapedParameter('paymentid'))) {
                 $paymentId = $session->getVariable('paymentid');
             }
 
-            if($paymentId) {
+            if ($paymentId) {
                 $this->payment = oxNew(\OxidEsales\Eshop\Application\Model\Payment::class);
                 $this->payment->load($paymentId);
             }
         }
         return $this->payment;
     }
-
 }

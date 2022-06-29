@@ -1,7 +1,6 @@
 <?php
 
 namespace Aggrosoft\PayPal\Application\Model;
-use OxidEsales\Eshop\Core\Registry;
 
 class DeliveryList extends DeliveryList_parent
 {

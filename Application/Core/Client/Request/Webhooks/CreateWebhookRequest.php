@@ -8,7 +8,6 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\RequestObject;
 
 class CreateWebhookRequest extends RequestObject implements IPayPalRequest
 {
-
     use JSONBodyTrait;
 
     /**
@@ -67,5 +66,4 @@ class CreateWebhookRequest extends RequestObject implements IPayPalRequest
     {
         $this->event_types = $event_types;
     }
-
 }

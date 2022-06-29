@@ -4,7 +4,7 @@ namespace Aggrosoft\PayPal\Application\Core;
 
 class Events
 {
-    public static function onActivate ()
+    public static function onActivate()
     {
         // DB Queries
         $queries = [
@@ -36,11 +36,10 @@ class Events
               ADD PRIMARY KEY (`OXID`);'
         ];
 
-        foreach($queries as $query){
-            try{
+        foreach ($queries as $query) {
+            try {
                 \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->execute($query);
-            }catch(\Exception $e){
-
+            } catch (\Exception $e) {
             }
         }
     }

@@ -1,14 +1,14 @@
 <?php
 
-class AgPayPalModule{
+class AgPayPalModule
+{
     public function get_paypal_details($orderid)
     {
         $order = oxNew(\OxidEsales\Eshop\Application\Model\Order::class);
         $order->load($orderid);
         $bankData = $order->getPayPalBankData();
 
-        if ($bankData)
-        {
+        if ($bankData) {
             $result = new \stdClass();
             $result->accountHolder = $bankData->agpaypalbankdata__accountholder->value;
             $result->accountNumber = $bankData->agpaypalbankdata__iban->value;
@@ -22,10 +22,10 @@ class AgPayPalModule{
 
     public function get_additional_fields($table, $data, $entity=null)
     {
-      if ($table === 'oxorder' && $entity && $entity->oxorder__agpaypalcaptureid->value) {
-        $data['paymentTransactionId'] = $entity->oxorder__agpaypalcaptureid->value;
-      }
-      return $data;
+        if ($table === 'oxorder' && $entity && $entity->oxorder__agpaypalcaptureid->value) {
+            $data['paymentTransactionId'] = $entity->oxorder__agpaypalcaptureid->value;
+        }
+        return $data;
     }
 
     protected function getPaymentTerm()
@@ -38,5 +38,5 @@ class AgPayPalModule{
     }
 }
 
-$paypalModule = new AgPayPalModule;
-ModuleManager::getInstance()->registerModule( $paypalModule );
+$paypalModule = new AgPayPalModule();
+ModuleManager::getInstance()->registerModule($paypalModule);

@@ -6,13 +6,13 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\RequestObject;
 
 class PaymentMethod extends RequestObject
 {
-    const PAYEE_PREFERRED_UNRESTRICTED = 'UNRESTRICTED';
-    const PAYEE_PREFERRED_IMMEDIATE_PAYMENT = 'IMMEDIATE_PAYMENT_REQUIRED';
+    public const PAYEE_PREFERRED_UNRESTRICTED = 'UNRESTRICTED';
+    public const PAYEE_PREFERRED_IMMEDIATE_PAYMENT = 'IMMEDIATE_PAYMENT_REQUIRED';
 
-    const SEC_TEL = 'TEL';
-    const SEC_WEB = 'WEB';
-    const SEC_CCD = 'CCD';
-    const SEC_PPD = 'PPD';
+    public const SEC_TEL = 'TEL';
+    public const SEC_WEB = 'WEB';
+    public const SEC_CCD = 'CCD';
+    public const SEC_PPD = 'PPD';
 
     /**
      * @var string

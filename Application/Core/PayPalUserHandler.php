@@ -5,13 +5,11 @@ namespace Aggrosoft\PayPal\Application\Core;
 use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\GetOrderRequest;
 
-use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 
 class PayPalUserHandler
 {
-
     public static function getUserFromPayPalToken($token)
     {
         $client = new PayPalRestClient();
@@ -39,7 +37,7 @@ class PayPalUserHandler
         //@TODO: this really needs to be properly checked with test data
         $address = \VIISON\AddressSplitter\AddressSplitter::splitAddress($shipping->address->address_line_1);
 
-        $user->oxuser__oxcity = new \OxidEsales\Eshop\Core\Field($shipping->address->admin_area_1 . ($shipping->address->admin_area_1 ? ' ' : '') . $shipping->address->admin_area_2 );
+        $user->oxuser__oxcity = new \OxidEsales\Eshop\Core\Field($shipping->address->admin_area_1 . ($shipping->address->admin_area_1 ? ' ' : '') . $shipping->address->admin_area_2);
         $user->oxuser__oxzip = new \OxidEsales\Eshop\Core\Field($shipping->address->postal_code);
         $user->oxuser__oxstreet = new \OxidEsales\Eshop\Core\Field($address['additionToAddress1'] . $address['streetName']);
         $user->oxuser__oxstreetnr = new \OxidEsales\Eshop\Core\Field($address['houseNumber']);
@@ -49,7 +47,7 @@ class PayPalUserHandler
         $countryId = $country->getIdByCode($shipping->address->country_code);
         $user->oxuser__oxcountryid = new \OxidEsales\Eshop\Core\Field($countryId);
 
-        if ($payer->phone){
+        if ($payer->phone) {
             $user->oxuser__oxfon = new \OxidEsales\Eshop\Core\Field($payer->phone->phone_number);
         }
 
@@ -64,7 +62,7 @@ class PayPalUserHandler
 
     public static function getUserIdByPayPalPayerId($payerId)
     {
-        if(class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')){
+        if (class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')) {
             $container = ContainerFactory::getInstance()->getContainer();
             $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
             $queryBuilder = $queryBuilderFactory->create();
@@ -76,10 +74,9 @@ class PayPalUserHandler
                 ->execute();
 
             return $data->fetchColumn();
-        }else{
+        } else {
             $rs = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->select('SELECT oxid FROM oxuser WHERE oxuser.agpaypalpayerid = :payerid', ['payerid' => $payerId]);
             return current($rs->getFields());
         }
-
     }
 }

@@ -8,13 +8,13 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\Payments\Captures\RefundCap
 
 class OrderArticle extends OrderArticle_parent
 {
-    public function cancelOrderArticle ()
+    public function cancelOrderArticle()
     {
         parent::cancelOrderArticle();
         $this->cancelPayPalOrderArticle();
     }
 
-    public function cancelPayPalOrderArticle ()
+    public function cancelPayPalOrderArticle()
     {
         $order = $this->getOrder();
 
@@ -22,7 +22,7 @@ class OrderArticle extends OrderArticle_parent
             $payment = oxNew(\OxidEsales\Eshop\Application\Model\Payment::class);
             $payment->load($order->oxorder__oxpaymenttype->value);
 
-            if ( $payment->oxpayments__agpaypalpaymentmethod->value && $order->oxorder__agpaypalcaptureid->value ) {
+            if ($payment->oxpayments__agpaypalpaymentmethod->value && $order->oxorder__agpaypalcaptureid->value) {
                 $client = new PayPalRestClient();
                 $request = new RefundCapturedPaymentRequest($order->oxorder__agpaypalcaptureid->value);
                 $request->setAmount(new Money($order->oxorder__oxcurrency->value, $this->oxorderarticles__oxbrutprice->value));

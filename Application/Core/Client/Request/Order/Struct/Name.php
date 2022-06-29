@@ -38,10 +38,9 @@ class Name extends RequestObject
      */
     public $full_name;
 
-    public function __construct ($given_name, $surname)
+    public function __construct($given_name, $surname)
     {
         $this->given_name = $given_name;
         $this->surname = $surname;
     }
-
 }

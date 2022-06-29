@@ -3,9 +3,7 @@
 namespace Aggrosoft\PayPal\Application\Controller;
 
 use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Identity\GenerateTokenRequest;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\UpdateOrderPurchaseUnitsRequest;
 use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CreateOrderRequestFactory;
 use Aggrosoft\PayPal\Application\Core\PayPalBasketHandler;
@@ -16,7 +14,7 @@ use OxidEsales\Eshop\Core\Registry;
 class BasketController extends BasketController_parent
 {
     // Used for express checkout
-    public function createpaypalorder ()
+    public function createpaypalorder()
     {
         $session = Registry::getSession();
         $session->setVariable('paymentid', PayPalHelper::getPayPalPaymentId());
@@ -30,7 +28,7 @@ class BasketController extends BasketController_parent
     }
 
     // Called when user changes shipping address in paypal frame
-    public function updatepaypalpurchaseunits ()
+    public function updatepaypalpurchaseunits()
     {
         $userBasket = PayPalBasketHandler::getUserBasketForToken(Registry::getRequest()->getRequestEscapedParameter('token'), Registry::getRequest()->getRequestEscapedParameter('pptoken'));
         $basket = PayPalBasketHandler::restoreBasketFromUserBasket($userBasket, $this->getUser());
@@ -39,12 +37,12 @@ class BasketController extends BasketController_parent
         $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
         $purchaseUnits = CreateOrderRequestFactory::createPurchaseUnitRequest($user, $basket, ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE, $country->getIdByCode(Registry::getRequest()->getRequestEscapedParameter('ppcountryid')));
 
-        if (count($purchaseUnits->shipping->options)){
+        if (count($purchaseUnits->shipping->options)) {
             $client = new PayPalRestClient();
             $request = new UpdateOrderPurchaseUnitsRequest(Registry::getRequest()->getRequestEscapedParameter('token'), $purchaseUnits);
             $client->execute($request);
             $result = true;
-        }else{
+        } else {
             $result = false;
         }
 
@@ -52,5 +50,4 @@ class BasketController extends BasketController_parent
         echo json_encode($result);
         exit();
     }
-
 }

@@ -7,13 +7,12 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\RequestObject;
 
 class GetOrderRequest extends RequestObject implements IPayPalRequest
 {
-
     /**
      * @var string
      */
     protected $orderId;
 
-    public function __construct ($orderId)
+    public function __construct($orderId)
     {
         $this->orderId = $orderId;
     }
@@ -37,5 +36,4 @@ class GetOrderRequest extends RequestObject implements IPayPalRequest
     {
         return '';
     }
-
 }

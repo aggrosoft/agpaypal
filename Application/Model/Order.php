@@ -10,18 +10,19 @@ use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInt
 
 class Order extends Order_parent
 {
-    public function setOrderNumber ()
+    public function setOrderNumber()
     {
         $this->_setNumber();
     }
 
-    public function cancelOrder () {
+    public function cancelOrder()
+    {
         parent::cancelOrder();
 
         $payment = oxNew(\OxidEsales\Eshop\Application\Model\Payment::class);
         $payment->load($this->oxorder__oxpaymenttype->value);
 
-        if ( $payment->oxpayments__agpaypalpaymentmethod->value && $this->oxorder__agpaypalcaptureid->value ) {
+        if ($payment->oxpayments__agpaypalpaymentmethod->value && $this->oxorder__agpaypalcaptureid->value) {
             $client = new PayPalRestClient();
             $request = new RefundCapturedPaymentRequest($this->oxorder__agpaypalcaptureid->value);
             $response = $client->execute($request);
@@ -46,7 +47,7 @@ class Order extends Order_parent
         }
     }
 
-    public function sendOrderByEmailForPayPalPUI ()
+    public function sendOrderByEmailForPayPalPUI()
     {
         // add user, basket and payment to order
         $this->_oUser =  $this->getOrderUser();
@@ -63,14 +64,13 @@ class Order extends Order_parent
         $oxEmail->sendOrderEMailToOwner($this);
     }
 
-    public function getPayPalBankData ()
+    public function getPayPalBankData()
     {
         $payment = oxNew(\OxidEsales\Eshop\Application\Model\Payment::class);
         $payment->load($this->oxorder__oxpaymenttype->value);
 
         if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::PAY_UPON_INVOICE) {
-
-            if(class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')){
+            if (class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')) {
                 $container = ContainerFactory::getInstance()->getContainer();
                 $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
                 $queryBuilder = $queryBuilderFactory->create();
@@ -82,7 +82,7 @@ class Order extends Order_parent
                     ->execute();
 
                 $bankDataId = $data->fetchColumn();
-            }else{
+            } else {
                 $rs = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->select('SELECT oxid FROM agpaypalbankdata WHERE agpaypalbankdata.oxorderid = :orderId', ['orderId' => $this->getId()]);
                 $bankDataId = current($rs->getFields());
             }
@@ -94,5 +94,4 @@ class Order extends Order_parent
             }
         }
     }
-
 }

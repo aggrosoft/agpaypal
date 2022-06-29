@@ -2,12 +2,11 @@
 
 namespace Aggrosoft\PayPal\Application\Controller\Admin;
 
-
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
 
 class PaymentMain extends PaymentMain_parent
 {
-    public function getPayPalPaymentMethods ()
+    public function getPayPalPaymentMethods()
     {
         return [
             PaymentSource::PAYPAL,

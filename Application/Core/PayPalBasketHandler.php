@@ -59,6 +59,8 @@ class PayPalBasketHandler
 
     public static function restoreBasketFromUserBasket ($userBasket, $user)
     {
+        Registry::getSession()->getBasket()->setDisableArtStockInBasket(true);
+
         $basket = oxNew(\OxidEsales\Eshop\Application\Model\Basket::class);
         $basket->setBasketUser($user);
         $basket->setPayment(Registry::getRequest()->getRequestEscapedParameter('paymentid') ?: $userBasket->oxuserbaskets__agpaypalpaymentid->value);
@@ -82,6 +84,8 @@ class PayPalBasketHandler
         }
 
         $basket->calculateBasket();
+
+        Registry::getSession()->getBasket()->setDisableArtStockInBasket(false);
 
         return $basket;
     }

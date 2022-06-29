@@ -22,4 +22,5 @@ $aLang = array(
     'PAYPAL_CC_VALIDATION_ERROR'         => "Die eingegebenen Kreditkarten Daten sind ungültig, bitte prüfen Sie Ihre Angaben",
     'PAYPAL_ERROR_MODAL_TITLE'         => "Es ist ein Fehler aufgetreten",
     'PAYPAL_ERROR_MODAL_CONFIRM'         => "Ok",
+    'PAYPAL_ERROR_CANNOT_BE_ZERO_OR_NEGATIVE'         => "Die Kommunikation mit PayPal ist fehlgeschlagen, bitte verwenden Sie eine andere Zahlungsart oder probieren Sie es später erneut.",
 );

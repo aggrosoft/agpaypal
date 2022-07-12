@@ -280,6 +280,7 @@ class CreateOrderRequestFactory
             if (!$user) {
                 $user = oxNew(\OxidEsales\Eshop\Application\Model\User::class);
                 $user->setId();
+                $basket->setBasketUser($user);
                 if (!$countryId) {
                     $countryId = current(Registry::getConfig()->getConfigParam('aHomeCountry'));
                 }

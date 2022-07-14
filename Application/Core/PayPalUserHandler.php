@@ -52,9 +52,9 @@ class PayPalUserHandler
         }
 
         // random password if none yet, will allow to login later using forgot password
-        if (!$user->oxuser__oxpassword->value) {
-            $user->setPassword(bin2hex(random_bytes(32)));
-        }
+        //if (!$user->oxuser__oxpassword->value) {
+        //    $user->setPassword(bin2hex(random_bytes(32)));
+        //}
 
         $user->save();
         return $user->getId();
@@ -70,12 +70,13 @@ class PayPalUserHandler
             $data = $queryBuilder->select('oxid')
                 ->from('oxuser')
                 ->where('oxuser.agpaypalpayerid = :payerid')
+                ->andWhere('oxuser.oxpassword = "" OR oxuser.oxpassword IS NULL')
                 ->setParameter('payerid', $payerId)
                 ->execute();
 
             return $data->fetchColumn();
         } else {
-            $rs = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->select('SELECT oxid FROM oxuser WHERE oxuser.agpaypalpayerid = :payerid', ['payerid' => $payerId]);
+            $rs = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->select('SELECT oxid FROM oxuser WHERE (oxuser.oxpassword = "" OR oxuser.oxpassword IS NULL) AND oxuser.agpaypalpayerid = :payerid', ['payerid' => $payerId]);
             return current($rs->getFields());
         }
     }

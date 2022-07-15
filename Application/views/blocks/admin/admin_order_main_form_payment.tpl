@@ -42,4 +42,18 @@
             [{$edit->oxorder__agpaypaltransstatus->value}]
         </td>
     </tr>
+    [{assign var=ppBankData value=$edit->getPayPalBankData()}]
+    [{if $ppBankData}]
+    <tr>
+        <td class="edittext">
+            [{oxmultilang ident="ORDER_MAIN_PAYPAL_BANK_DETAILS"}]
+        </td>
+        <td class="edittext">
+            [{oxmultilang ident="ORDER_MAIN_PAYPAL_BANK"}] [{$ppBankData->agpaypalbankdata__bankname->value}]<br>
+            [{oxmultilang ident="ORDER_MAIN_PAYPAL_BIC"}] [{$ppBankData->agpaypalbankdata__bic->value}]<br>
+            [{oxmultilang ident="ORDER_MAIN_PAYPAL_IBAN"}] [{$ppBankData->agpaypalbankdata__iban->value}]<br/>
+            [{oxmultilang ident="ORDER_MAIN_PAYPAL_PUI_REFERENCE"}] [{$ppBankData->agpaypalbankdata__reference->value}]<br/>
+        </td>
+    </tr>
+    [{/if}]
 [{/if}]

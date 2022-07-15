@@ -88,7 +88,7 @@
       })
 
 
-      document.querySelector("#payment").addEventListener("submit", (event) => {
+      $("#payment").on("submit", (event) => {
         if ($('#payment input[name="paymentid"]:checked').val() === '[{$paymentmethod->getId()}]') {
           let state = cardFields.getState();
           event.preventDefault();

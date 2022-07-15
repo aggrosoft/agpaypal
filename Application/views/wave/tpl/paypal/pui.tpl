@@ -1,5 +1,5 @@
 <script type="text/javascript">
-  document.querySelector("#payment").addEventListener("submit", (event) => {
+  $("#payment").on("submit", (event) => {
     if ($('#payment input[name="paymentid"]:checked').val() === '[{$paymentmethod->getId()}]') {
       let allValid = true;
       $('#pp_phone_number').val($('#pp_phone_number').val().replace(/[^0-9]/g, ''))

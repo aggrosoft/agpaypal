@@ -18,7 +18,7 @@ class User extends User_parent
         return $this->_blAnonymousPayPalUser;
     }
 
-    public function getUserGroups()
+    public function getUserGroups($sOXID = null)
     {
         if ($this->getIsAnonymousPayPalUser()) {
             $groups = oxNew('oxList', 'oxgroups');
@@ -27,7 +27,7 @@ class User extends User_parent
             $groups->selectString($sSelect);
             return $groups;
         } else {
-            return parent::getUserGroups();
+            return parent::getUserGroups($sOXID);
         }
     }
 }

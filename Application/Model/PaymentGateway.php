@@ -4,9 +4,12 @@ namespace Aggrosoft\PayPal\Application\Model;
 
 use Aggrosoft\PayPal\Application\Core\Client\Exception\RestException;
 use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
+use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\UpdateOrderInvoiceNumberRequest;
+use Aggrosoft\PayPal\Application\Core\Client\Request\Order\UpdateOrderDetailsRequest;
 use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CapturePaymentRequestFactory;
+use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CreateOrderRequestFactory;
+use Aggrosoft\PayPal\Application\Core\PayPalBasketHandler;
 use Aggrosoft\PayPal\Application\Core\PayPalInitiator;
 use OxidEsales\Eshop\Core\Registry;
 
@@ -43,7 +46,12 @@ class PaymentGateway extends PaymentGateway_parent
                 // Send order number to paypal
                 $oOrder->setOrderNumber();
 
-                $request = new UpdateOrderInvoiceNumberRequest($token, $oOrder->oxorder__oxordernr->value);
+                $basket = Registry::getSession()->getBasket();
+                $user = $basket->getBasketUser();
+
+                $purchaseUnits = CreateOrderRequestFactory::createPurchaseUnitRequest($user, $basket, ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE);
+                $purchaseUnits->getShipping()->resetOptions();
+                $request = new UpdateOrderDetailsRequest($token, $oOrder->oxorder__oxordernr->value, $purchaseUnits);
 
                 try {
                     $client->execute($request);

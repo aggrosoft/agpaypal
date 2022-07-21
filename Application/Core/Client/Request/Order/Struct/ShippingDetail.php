@@ -86,4 +86,9 @@ class ShippingDetail extends RequestObject
             $this->options[0]->setSelected(true);
         }
     }
+
+    public function resetOptions()
+    {
+        $this->options = null;
+    }
 }

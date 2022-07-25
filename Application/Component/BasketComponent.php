@@ -29,7 +29,9 @@ class BasketComponent extends BasketComponent_parent
         $token = Registry::getSession()->getVariable('pptoken');
         if ($token) {
             PayPalBasketHandler::destroyUserBasketForToken($token);
-            Registry::getSession()->setVariable('pptoken', '');
         }
+        Registry::getSession()->setVariable('pptoken', '');
+        Registry::getSession()->setVariable('ppexpresscomplete', 0);
+        PayPalBasketHandler::destroyCurrentPayPalUserBasket();
     }
 }

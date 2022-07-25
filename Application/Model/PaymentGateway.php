@@ -27,6 +27,8 @@ class PaymentGateway extends PaymentGateway_parent
                 try {
                     $paypal->initiate();
                 } catch (RestException $re) {
+                    Registry::getSession()->setVariable('ppexpresscomplete', 0);
+                    Registry::getSession()->setVariable('pptoken', '');
                     $this->_iLastErrorNo = null; // $re->getCode();
                     $this->_sLastError = null; // Registry::getLang()->translateString($re->getMessage());
                     \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($re);

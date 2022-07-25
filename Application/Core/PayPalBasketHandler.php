@@ -144,4 +144,17 @@ class PayPalBasketHandler
             $basket->delete();
         }
     }
+
+    public static function destroyCurrentPayPalUserBasket()
+    {
+        $session = Registry::getSession();
+        $basket = $session->getBasket();
+        $user = $basket->getBasketUser();
+
+        if ($user) {
+            $savedBasket = $user->getBasket('paypalbasket');
+            $savedBasket->delete();
+        }
+    }
+
 }

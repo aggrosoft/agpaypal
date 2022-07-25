@@ -44,6 +44,11 @@ class PayPalHelper
         return Registry::getConfig()->getConfigParam('blPayPalMessagesDetails', null, 'module:agpaypal');
     }
 
+    public static function showPayPalMessageInBasket()
+    {
+        return Registry::getConfig()->getConfigParam('blPayPalMessagesBasket', null, 'module:agpaypal');
+    }
+
     public static function getPayPalPaymentId()
     {
         if (class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')) {

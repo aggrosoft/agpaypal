@@ -27,6 +27,9 @@ class PaymentController extends PaymentController_parent
             Registry::getSession()->setVariable('pptoken', '');
         }
 
+        // Remove ppexpress flag
+        Registry::getSession()->setVariable('ppexpresscomplete', 0);
+
         $session = Registry::getSession();
         $this->_aViewData['pp_birth_date'] = $session->getVariable('pp_birth_date');
         $this->_aViewData['pp_phone_number'] = $session->getVariable('pp_phone_number');

@@ -16,3 +16,6 @@
 [{if $puiPayment}]
   [{include file="paypal/pui.tpl" paymentmethod=$puiPayment}]
 [{/if}]
+[{* if $oViewConf->getTopActiveClassName() == 'payment'}]
+  [{include file="paypal/marks.tpl"}]
+[{/if *}]

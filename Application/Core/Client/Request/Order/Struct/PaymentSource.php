@@ -18,6 +18,8 @@ class PaymentSource extends RequestObject
     public const SOFORT = 'SOFORT';
     public const TRUSTLY = 'TRUSTLY';
     public const PAY_UPON_INVOICE = 'PAY_UPON_INVOICE';
+    public const SEPA = 'SEPA';
+    public const PAY_LATER = 'PAY_LATER';
 
     /**
      * @var object

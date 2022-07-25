@@ -6,6 +6,7 @@
                 <img src="[{$paymentmethod->getPayPalPaymentIcon() }]" class="img-responsive paypal-payment-icon" alt="[{$paymentmethod->oxpayments__oxdesc->value}]" />
             [{/if}]
             <b>[{$paymentmethod->oxpayments__oxdesc->value}]</b>
+            <div class="paypal-mark-container" data-funding="[{$paymentmethod->oxpayments__agpaypalpaymentmethod->value}]"></div>
         </label>
     </dt>
     <dd class="payment-option[{if $oView->getCheckedPaymentId() == $paymentmethod->oxpayments__oxid->value}] activePayment[{/if}]">

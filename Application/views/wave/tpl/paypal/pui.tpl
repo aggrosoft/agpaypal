@@ -1,4 +1,4 @@
-<script type="text/javascript">
+[{capture assign=pageScript}]
   $("#payment").on("submit", (event) => {
     if ($('#payment input[name="paymentid"]:checked').val() === '[{$paymentmethod->getId()}]') {
       let allValid = true;
@@ -23,4 +23,5 @@
       }
     }
   });
-</script>
+[{/capture}]
+[{oxscript add=$pageScript}]

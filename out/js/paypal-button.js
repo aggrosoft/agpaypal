@@ -11,8 +11,10 @@ AggrosoftPayPalButton.prototype.setConfigValue = function(key, value) {
 AggrosoftPayPalButton.prototype.render = function() {
 
   let that = this;
+  const fundingSource = this.config.fundingSource || paypal.FUNDING.PAYPAL;
 
-  paypal.Buttons({
+  const button = paypal.Buttons({
+    fundingSource: fundingSource,
     style: Object.assign({
       layout: 'horizontal',
       shape:  'rect',
@@ -40,7 +42,17 @@ AggrosoftPayPalButton.prototype.render = function() {
         });
       })
     },
-    onShippingChange: function(data, actions) {
+    onApprove: function(data, actions) {
+      let href = that.config.redirectUrl + "&token=" + data.orderID + "&pptoken=" + that.returnToken;
+      if (that.shippingId) {
+        href += "&shippingId=" + that.shippingId;
+      }
+      document.location.href = href;
+    }
+  })
+
+  if (fundingSource === paypal.FUNDING.PAYPAL) {
+    button.onShippingChange = function(data, actions) {
       return new Promise(function(resolve, reject) {
         $.ajax({
           url: that.config.baseUrl,
@@ -62,9 +74,12 @@ AggrosoftPayPalButton.prototype.render = function() {
           }
         })
       })
-    },
-    onApprove: function(data, actions) {
-      document.location.href = that.config.redirectUrl + "&token=" + data.orderID + "&pptoken=" + that.returnToken + "&shippingid=" + that.shippingId;
     }
-  }).render(that.config.container);
+  }
+
+  if (button.isEligible()) {
+    button.render(that.config.container);
+  }else{
+    console.log('PayPal Button is not eligible');
+  }
 };

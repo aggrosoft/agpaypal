@@ -47,10 +47,12 @@ $aModule = array(
         'page/checkout/inc/paypal_express_button.tpl'    => 'agpaypal/Application/views/wave/tpl/page/checkout/inc/paypal_express_button.tpl',
         'page/checkout/inc/select_payment_paypal.tpl'    => 'agpaypal/Application/views/wave/tpl/page/checkout/inc/select_payment_paypal.tpl',
         'page/checkout/inc/payment_paypal.tpl'    => 'agpaypal/Application/views/wave/tpl/page/checkout/inc/payment_paypal.tpl',
+        'page/checkout/inc/paypal_message.tpl'    => 'agpaypal/Application/views/wave/tpl/page/checkout/inc/paypal_message.tpl',
         'paypal/components_script.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/components_script.tpl',
         'paypal/fraudnet_script.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/fraudnet_script.tpl',
         'paypal/hosted_fields.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/hosted_fields.tpl',
         'paypal/pui.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/pui.tpl',
+        'paypal/marks.tpl'    => 'agpaypal/Application/views/wave/tpl/paypal/marks.tpl',
     ],
     'blocks' => [
         [
@@ -72,6 +74,16 @@ $aModule = array(
             'template' => 'page/checkout/basket.tpl',
             'block' => 'basket_btn_next_bottom',
             'file' => '/Application/views/blocks/basket_btn_next_bottom.tpl',
+        ],
+        [
+            'template' => 'page/checkout/inc/basketcontents.tpl',
+            'block' => 'checkout_basketcontents_grandtotal',
+            'file' => '/Application/views/blocks/checkout_basketcontents_grandtotal.tpl',
+        ],
+        [
+            'template' => 'page/checkout/order.tpl',
+            'block' => 'checkout_order_btn_submit_bottom',
+            'file' => '/Application/views/blocks/checkout_order_btn_submit_bottom.tpl',
         ],
         [
             'template' => 'page/details/inc/productmain.tpl',
@@ -110,5 +122,6 @@ $aModule = array(
         ['group' => 'paypal_settings', 'name' => 'blPayPalExpressDetails', 'type' => 'bool', 'value' => false],
         ['group' => 'paypal_settings', 'name' => 'blPayPalExpressBasket', 'type' => 'bool', 'value' => false],
         ['group' => 'paypal_settings', 'name' => 'blPayPalMessagesDetails', 'type' => 'bool', 'value' => false],
+        ['group' => 'paypal_settings', 'name' => 'blPayPalMessagesBasket', 'type' => 'bool', 'value' => false],
     ],
 );

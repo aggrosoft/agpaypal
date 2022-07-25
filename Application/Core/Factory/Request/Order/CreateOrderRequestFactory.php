@@ -74,6 +74,7 @@ class CreateOrderRequestFactory
         $items = [];
         $itemTotal = 0;
         $taxTotal = 0;
+        $hasDecimals = false;
 
         foreach ($basket->getContents() as $basketItem) {
             $article = $basketItem->getArticle();
@@ -87,9 +88,14 @@ class CreateOrderRequestFactory
             $items[] = $item;
             $itemTotal += $item->quantity * $item->unit_amount->value;
             $taxTotal += $item->quantity * $item->tax->value;
+            if ($item->quantity != round($item->quantity)) {
+                $hasDecimals = true;
+            }
         }
 
-        $unit->setItems($items);
+        if (!$hasDecimals) {
+            $unit->setItems($items);
+        }
 
         $deliveryCosts = $basket->getDeliveryCost();
 
@@ -98,6 +104,14 @@ class CreateOrderRequestFactory
         $amountBreakDown->tax_total = new Money($currencyName, $taxTotal);
         $amountBreakDown->shipping = new Money($currencyName, $deliveryCosts->getBruttoPrice());
         $amountBreakDown->discount = new Money($currencyName, $basket->getTotalDiscountSum());
+
+        //If any module adds some sort of extra costs (pawn, d3oqm etc.) we will just put those in handling fees
+        $handling = $basket->getPrice()->getBruttoPrice() - $itemTotal - $deliveryCosts->getBruttoPrice() - $taxTotal + $basket->getTotalDiscountSum();
+
+        if ($handling > 0) {
+            $amountBreakDown->handling = new Money($currencyName, $handling);
+        }
+
         $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice(), $amountBreakDown));
 
         return $unit;

@@ -17,7 +17,9 @@ class ArticleDetailsController extends ArticleDetailsController_parent
     public function createpaypalorder()
     {
         $session = Registry::getSession();
-        $session->setVariable('paymentid', PayPalHelper::getPayPalPaymentId());
+        $paypalPaymentId = PayPalHelper::getPayPalPaymentId();
+        $session->setVariable('paymentid', $paypalPaymentId);
+        $session->getBasket()->setPayment($paypalPaymentId);
         $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=ppreturn');
         $paypal->setShippingPreference(ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE);
         $paypal->setRedirect(false);

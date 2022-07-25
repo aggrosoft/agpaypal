@@ -13,6 +13,8 @@ class PaymentMain extends PaymentMain_parent
             PaymentSource::PAY_UPON_INVOICE,
             PaymentSource::SOFORT,
             PaymentSource::CARD,
+            PaymentSource::SEPA,
+            PaymentSource::PAY_LATER,
             PaymentSource::BANCONTACT,
             PaymentSource::BLIK,
             PaymentSource::EPS,

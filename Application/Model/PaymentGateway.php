@@ -32,6 +32,8 @@ class PaymentGateway extends PaymentGateway_parent
                     \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($re);
                     return false;
                 } catch (\Exception $e) {
+                    Registry::getSession()->setVariable('ppexpresscomplete', 0);
+                    Registry::getSession()->setVariable('pptoken', '');
                     $this->_iLastErrorNo = 907;
                     $this->_sLastError = Registry::getLang()->translateString('ERR_PAYPAL_ORDER_CREATE_FAILED');
                     return false;
@@ -56,6 +58,8 @@ class PaymentGateway extends PaymentGateway_parent
                 try {
                     $client->execute($request);
                 } catch (\Exception $e) {
+                    Registry::getSession()->setVariable('ppexpresscomplete', 0);
+                    Registry::getSession()->setVariable('pptoken', '');
                     $this->_iLastErrorNo = 905;
                     $this->_sLastError = 'ERR_PAYPAL_ORDER_UPDATE_FAILED';
                     return false;
@@ -68,6 +72,8 @@ class PaymentGateway extends PaymentGateway_parent
                     try {
                         $response = $client->execute($request);
                     } catch (\Exception $e) {
+                        Registry::getSession()->setVariable('ppexpresscomplete', 0);
+                        Registry::getSession()->setVariable('pptoken', '');
                         $this->_iLastErrorNo = 902;
                         $this->_sLastError = 'ERR_PAYPAL_CAPTURE_FAILED';
                         return false;
@@ -76,6 +82,8 @@ class PaymentGateway extends PaymentGateway_parent
                     $capture = $response->purchase_units[0]->payments->captures[0];
 
                     if (!$capture || $capture->status === 'DENIED') {
+                        Registry::getSession()->setVariable('ppexpresscomplete', 0);
+                        Registry::getSession()->setVariable('pptoken', '');
                         $this->_iLastErrorNo = 903;
                         $this->_sLastError = 'ERR_PAYPAL_CAPTURE_DENIED';
                         return false;
@@ -94,6 +102,8 @@ class PaymentGateway extends PaymentGateway_parent
                 $this->_sLastError = null;
                 return true;
             } else {
+                Registry::getSession()->setVariable('ppexpresscomplete', 0);
+                Registry::getSession()->setVariable('pptoken', '');
                 $this->_iLastErrorNo = 901;
                 $this->_sLastError = 'ERR_PAYPAL_TOKEN_MISSING';
                 return false;

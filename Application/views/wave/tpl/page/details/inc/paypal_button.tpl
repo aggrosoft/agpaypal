@@ -11,7 +11,7 @@
             container: '#paypal-button-container-details',
             controller: 'details',
             style: {
-                layout: 'vertical'
+                layout: 'horizontal'
             },
             beforeCheckout: function(){
                 const formData = new FormData($('.js-oxProductForm').get(0));

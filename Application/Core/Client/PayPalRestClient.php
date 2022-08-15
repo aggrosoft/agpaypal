@@ -61,7 +61,8 @@ class PayPalRestClient
             'headers' => array_merge([
                 'Authorization' => 'Bearer ' . $this->getToken(),
                 'Content-Type' => 'application/json',
-                'PayPal-Request-Id' => \OxidEsales\Eshop\Core\Registry::getUtilsObject()->generateUID()
+                'PayPal-Request-Id' => \OxidEsales\Eshop\Core\Registry::getUtilsObject()->generateUID(),
+                'PayPal-Partner-Attribution-Id' => 'Oxid_Cart_Aggrosoft_PPCP'
             ], $request->getHeaders()),
             'http_errors' => false,
             'body' => $request->getBody(),
@@ -136,8 +137,8 @@ class PayPalRestClient
     {
         if ($this->logLevel === 'all' || $this->logLevel === 'error' && $code > 299) {
             $log = "#$code [" . date("d/M/Y H:i:s") . "]\n";
-            $log .= "Request: \n\n " . json_encode($request, JSON_PRETTY_PRINT) . "\n\n";
-            $log .= "Response: \n\n " . json_encode($result, JSON_PRETTY_PRINT) . "\n\n";
+            $log .= "Request: \n\n" . $request->getMethod().': '. $this->getApiUrl().$request->getEndpoint() . "\n\n" . json_encode($request, JSON_PRETTY_PRINT) . "\n\n";
+            $log .= "Response: \n\n" . json_encode($result, JSON_PRETTY_PRINT) . "\n\n";
             $log .= "########################################################################\n\n";
 
             file_put_contents(getShopBasePath().'/log/paypal.log', $log, FILE_APPEND);

@@ -15,6 +15,7 @@ use OxidEsales\Eshop\Core\Registry;
 
 class PaymentGateway extends PaymentGateway_parent
 {
+    /*
     public function executePayment($dAmount, &$oOrder)
     {
         $payment = oxNew(\OxidEsales\Eshop\Application\Model\Payment::class);
@@ -114,4 +115,5 @@ class PaymentGateway extends PaymentGateway_parent
             return parent::executePayment($dAmount, $oOrder);
         }
     }
+    */
 }

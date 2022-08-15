@@ -21,7 +21,7 @@ class ArticleDetailsController extends ArticleDetailsController_parent
         $session->setVariable('paymentid', $paypalPaymentId);
         $session->getBasket()->setPayment($paypalPaymentId);
         $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=ppreturn');
-        $paypal->setShippingPreference(ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE);
+        $paypal->setShippingPreference($this->getUser() ? ApplicationContext::SHIPPING_PREFERENCE_NO_SHIPPING : ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE);
         $paypal->setRedirect(false);
         $paypal->setProducts(json_decode(Registry::getRequest()->getRequestParameter('products'), true));
         $response = $paypal->initiate();
@@ -38,7 +38,7 @@ class ArticleDetailsController extends ArticleDetailsController_parent
         $user = $basket->getBasketUser();
 
         $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
-        $purchaseUnits = CreateOrderRequestFactory::createPurchaseUnitRequest($user, $basket, ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE, $country->getIdByCode(Registry::getRequest()->getRequestEscapedParameter('ppcountryid')));
+        $purchaseUnits = CreateOrderRequestFactory::createPurchaseUnitRequest($user, $basket, $this->getUser() ? ApplicationContext::SHIPPING_PREFERENCE_NO_SHIPPING : ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE,  $country->getIdByCode(Registry::getRequest()->getRequestEscapedParameter('ppcountryid')));
 
         if (count($purchaseUnits->shipping->options)) {
             $client = new PayPalRestClient();

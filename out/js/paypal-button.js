@@ -48,6 +48,12 @@ AggrosoftPayPalButton.prototype.render = function() {
         href += "&shippingId=" + that.shippingId;
       }
       document.location.href = href;
+    },
+    onCancel: function (data) {
+      console.log('OnCancel', data);
+    },
+    onError: function(err) {
+      console.log('OnError', err);
     }
   })
 

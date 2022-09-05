@@ -49,6 +49,12 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
             $client = new PayPalRestClient();
             $response = $client->execute(new GetOrderRequest($orderId));
 
+            $capture = $response->purchase_units[0]->payments->captures[0];
+            $order->oxorder__oxpaid = new \OxidEsales\Eshop\Core\Field(date("Y-m-d H:i:s"));
+            $order->oxorder__agpaypalcaptureid = new \OxidEsales\Eshop\Core\Field($capture->id);
+            $order->oxorder__agpaypaltransstatus = new \OxidEsales\Eshop\Core\Field($capture->status);
+            $order->save();
+
             if ($response->payment_source->pay_upon_invoice) {
                 $bankData = oxNew(\Aggrosoft\PayPal\Application\Model\PayPalBankData::class);
                 if ($bankData->assignPayPalPUIData($order->getId(), $response->payment_source->pay_upon_invoice)) {
@@ -56,12 +62,6 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
                     $order->sendOrderByEmailForPayPalPUI();
                 }
             }
-
-            $capture = $response->purchase_units[0]->payments->captures[0];
-            $order->oxorder__oxpaid = new \OxidEsales\Eshop\Core\Field(date("Y-m-d H:i:s"));
-            $order->oxorder__agpaypalcaptureid = new \OxidEsales\Eshop\Core\Field($capture->id);
-            $order->oxorder__agpaypaltransstatus = new \OxidEsales\Eshop\Core\Field($capture->status);
-            $order->save();
         }
     }
 

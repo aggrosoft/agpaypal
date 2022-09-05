@@ -222,7 +222,7 @@ class CreateOrderRequestFactory
 
             $source->pay_upon_invoice = $invoiceData;
             return $source;
-        } elseif ($method && $method !== PaymentSource::PAYPAL && $method !== PaymentSource::CARD) {
+        } elseif ($method && $method !== PaymentSource::PAYPAL && $method !== PaymentSource::CARD && $method !== PaymentSource::PAY_LATER && $method !== PaymentSource::SEPA) {
             $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
             $country->load($user->oxuser__oxcountryid->value);
 

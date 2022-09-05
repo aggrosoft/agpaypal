@@ -106,7 +106,12 @@ class Order extends Order_parent
         $iRet = parent::finalizeOrder($oBasket, $oUser, $blRecalculatingOrder);
 
         if (!$blRecalculatingOrder && ( $iRet === self::ORDER_STATE_OK || $iRet === self::ORDER_STATE_MAILINGERROR ) ) {
-            $iPayPalReturn = $this->finalizePayPalOrder($oBasket, $oUser);
+
+            try {
+                $iPayPalReturn = $this->finalizePayPalOrder($oBasket, $oUser);
+            }catch(\Exception $ex){
+                $iPayPalReturn = self::ORDER_STATE_PAYMENTERROR;
+            }
 
             if ($iPayPalReturn === self::ORDER_STATE_PAYMENTERROR) {
                 $iRet = $iPayPalReturn;

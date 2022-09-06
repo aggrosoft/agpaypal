@@ -10,7 +10,7 @@ $aModule = array(
         'en' => 'PayPal Commerce Platform payment methods integration',
     ],
     'thumbnail'    => '',
-    'version'      => '1.2.2',
+    'version'      => '1.3.0',
     'author'       => 'Aggrosoft GmbH',
     'controllers'  => [
         'aggrosoft_paypal_webhook' => \Aggrosoft\PayPal\Application\Controller\WebhookController::class,

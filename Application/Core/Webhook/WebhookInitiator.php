@@ -30,7 +30,7 @@ class WebhookInitiator
         ]
     ];
 
-    public function initiate($webhookId = null)
+    public function initiate()
     {
         $client = new PayPalRestClient();
         $request = new ListWebhooksRequest();

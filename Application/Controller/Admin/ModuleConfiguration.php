@@ -29,8 +29,8 @@ class ModuleConfiguration extends ModuleConfiguration_parent
             $client->invalidateToken();
 
             try {
-                if ($config->getConfigParam('sPayPalClientId', null, 'module:agpaypal') && $config->getConfigParam('sPayPalClientId', null, 'module:agpaypal')) {
-                    $webhookId = $initiator->initiate($config->getConfigParam('sPayPalWebhookId', null, 'module:agpaypal'));
+                if ($config->getConfigParam('sPayPalClientId', null, 'module:agpaypal') && $config->getConfigParam('sPayPalClientSecret', null, 'module:agpaypal')) {
+                    $webhookId = $initiator->initiate();
                 }
             } catch (AuthenticationException $e) {
                 \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('ERR_PAYPAL_AUTHENTICATION_FAILED');

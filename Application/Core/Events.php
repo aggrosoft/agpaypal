@@ -2,6 +2,10 @@
 
 namespace Aggrosoft\PayPal\Application\Core;
 
+use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
+use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface;
+
 class Events
 {
     public static function onActivate()
@@ -42,5 +46,6 @@ class Events
             } catch (\Exception $e) {
             }
         }
+
     }
 }

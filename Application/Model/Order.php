@@ -18,6 +18,8 @@ use OxidEsales\Eshop\Core\Registry;
 class Order extends Order_parent
 {
 
+    protected $_blValidateDeliveryAddress = true;
+
     public function cancelOrder()
     {
         parent::cancelOrder();
@@ -58,6 +60,8 @@ class Order extends Order_parent
         // add user, basket and payment to order
         $this->_oUser =  $this->getOrderUser();
         $this->_oBasket = $this->_getOrderBasket(false);
+        $this->_addOrderArticlesToBasket($this->_oBasket, $this->getOrderArticles(true));
+        $this->_oBasket->calculateBasket(true);
         $this->_oPayment = oxNew(\OxidEsales\Eshop\Application\Model\Payment::class);
         $this->_oPayment->load($this->_oBasket->getPaymentId());
 
@@ -128,9 +132,12 @@ class Order extends Order_parent
         $payment->load($this->oxorder__oxpaymenttype->value);
 
         if ($payment->oxpayments__agpaypalpaymentmethod->value) {
+
             if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::PAY_UPON_INVOICE) {
                 $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=execute');
+                $paypal->setBasket($oBasket);
                 $paypal->setRedirect(false);
+
                 try {
                     $paypal->initiate();
                 } catch (RestException $re) {
@@ -153,7 +160,7 @@ class Order extends Order_parent
                 $client = new PayPalRestClient();
 
                 // Send order number to paypal
-                $basket = Registry::getSession()->getBasket();
+                $basket = $oBasket;
                 $user = $basket->getBasketUser();
 
                 $purchaseUnits = CreateOrderRequestFactory::createPurchaseUnitRequest($user, $basket, ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE);
@@ -216,4 +223,31 @@ class Order extends Order_parent
         }
 
     }
+
+    public function validateDeliveryAddress($oUser)
+    {
+        if (!$this->getValidateDeliveryAddress()) {
+            return 0;
+        }else{
+            return parent::validateDeliveryAddress($oUser);
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function getValidateDeliveryAddress(): bool
+    {
+        return $this->_blValidateDeliveryAddress;
+    }
+
+    /**
+     * @param bool $blValidateDeliveryAddress
+     */
+    public function setValidateDeliveryAddress(bool $blValidateDeliveryAddress): void
+    {
+        $this->_blValidateDeliveryAddress = $blValidateDeliveryAddress;
+    }
+
+
 }

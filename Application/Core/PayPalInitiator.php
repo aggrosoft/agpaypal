@@ -15,6 +15,7 @@ class PayPalInitiator
     protected $shippingPreference = ApplicationContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS;
     protected $userAction = ApplicationContext::USER_ACTION_CONTINUE;
     protected $products;
+    protected $basket;
 
     public function __construct($returnUrl)
     {
@@ -29,8 +30,12 @@ class PayPalInitiator
         \Ecomponents\License\LicenseManager::getInstance()->validate('agpaypal');
 
         $returnToken = $this->generateReturnToken();
-        $savedBasket = PayPalBasketHandler::savePayPalBasket($returnToken, $this->products);
-        $basket = PayPalBasketHandler::restoreBasketFromUserBasket($savedBasket, Registry::getConfig()->getUser());
+        if ($this->getBasket()) {
+            $basket = $this->getBasket();
+        } else {
+            $savedBasket = PayPalBasketHandler::savePayPalBasket($returnToken, $this->products);
+            $basket = PayPalBasketHandler::restoreBasketFromUserBasket($savedBasket, Registry::getConfig()->getUser());
+        }
         $user = $basket->getBasketUser();
         $payment = $this->getPayment();
         $request = CreateOrderRequestFactory::create($user, $basket, $payment, $this->returnUrl . '&pptoken='.$returnToken, $this->shippingPreference, $this->userAction);
@@ -159,5 +164,21 @@ class PayPalInitiator
     public function setUserAction(string $userAction): void
     {
         $this->userAction = $userAction;
+    }
+
+    /**
+     * @return \OxidEsales\Eshop\Application\Model\Basket | null
+     */
+    public function getBasket(): ?\OxidEsales\Eshop\Application\Model\Basket
+    {
+        return $this->basket;
+    }
+
+    /**
+     * @param \OxidEsales\Eshop\Application\Model\Basket $basket
+     */
+    public function setBasket(\OxidEsales\Eshop\Application\Model\Basket $basket): void
+    {
+        $this->basket = $basket;
     }
 }

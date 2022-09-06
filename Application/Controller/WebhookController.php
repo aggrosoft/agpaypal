@@ -4,6 +4,8 @@ namespace Aggrosoft\PayPal\Application\Controller;
 
 use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\GetOrderRequest;
+use Aggrosoft\PayPal\Application\Core\Client\Request\Payments\Captures\RefundCapturedPaymentRequest;
+use Aggrosoft\PayPal\Application\Core\PayPalBasketHandler;
 use Aggrosoft\PayPal\Application\Core\Webhook\WebhookVerifier;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
@@ -22,6 +24,9 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
                 case 'PAYMENT.CAPTURE.COMPLETED':
                     $this->handlePaymentCaptureCompleted($data);
                     break;
+                case 'CHECKOUT.ORDER.APPROVED':
+                    $this->handleCheckoutOrderApproved($data);
+                    break;
                 case 'PAYMENT.CAPTURE.DENIED':
                     $this->handlePaymentCaptureDenied($data);
                     break;
@@ -35,15 +40,24 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
                     $this->handlePaymentCaptureRefunded($data);
                     break;
             }
-
-            \OxidEsales\Eshop\Core\Registry::getUtils()->showMessageAndExit('');
         }
+
+        \OxidEsales\Eshop\Core\Registry::getUtils()->showMessageAndExit('');
     }
 
     protected function handlePaymentCaptureCompleted($data)
     {
         $orderId = $data->resource->supplementary_data->related_ids->order_id;
         $order = $this->loadOrderByPayPalToken($orderId);
+
+        if (!$order) {
+            $order = $this->finalizePayPalOrder($orderId);
+        }
+
+        // Still no order and a capture? Refund it - there is no way to handle this without an order
+        if (!$order) {
+            $this->refundPayment($orderId);
+        }
 
         if ($order && !$order->oxorder__agpaypalcaptureid->value) {
             $client = new PayPalRestClient();
@@ -105,6 +119,7 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
         if ($orderId) {
             $order = oxNew(\OxidEsales\Eshop\Application\Model\Order::class);
             $order->load($orderId);
+            $order->recalculateOrder();
             return $order;
         }
     }
@@ -117,5 +132,41 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
     protected function handlePaymentCaptureRefunded($data)
     {
         //@TODO: Check if needed
+    }
+
+    protected function handleCheckoutOrderApproved($data)
+    {
+        $orderId = $data->resource->id;
+        $order = $this->loadOrderByPayPalToken($orderId);
+
+        if (!$order) {
+            $this->finalizePayPalOrder($orderId);
+        }
+    }
+
+    protected function finalizePayPalOrder($token) {
+        \OxidEsales\Eshop\Core\Registry::getSession()->setVariable('pptoken', $token);
+        $userBasket = PayPalBasketHandler::getUserBasketForToken($token);
+        if ($userBasket) {
+            $user = $userBasket->getBasketUser();
+            $basket = PayPalBasketHandler::restoreBasketFromUserBasket($userBasket, $user);
+            $order = oxNew(\OxidEsales\Eshop\Application\Model\Order::class);
+            $order->setValidateDeliveryAddress(false);
+            $iSuccess = $order->finalizeOrder($basket, $basket->getBasketUser());
+            // performing special actions after user finishes order (assignment to special user groups)
+            $user->onOrderExecute($basket, $iSuccess);
+            return $order;
+        }
+    }
+
+    protected function refundPayment($orderId) {
+        $client = new PayPalRestClient();
+        $response = $client->execute(new GetOrderRequest($orderId));
+        if ($response) {
+            $capture = $response->purchase_units[0]->payments->captures[0];
+            $request = new RefundCapturedPaymentRequest($capture->id);
+            $client->execute($request);
+        }
+
     }
 }

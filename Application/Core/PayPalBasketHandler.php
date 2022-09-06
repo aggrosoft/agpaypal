@@ -59,9 +59,12 @@ class PayPalBasketHandler
 
     public static function restoreBasketFromUserBasket($userBasket, $user)
     {
-        Registry::getSession()->getBasket()->setDisableArtStockInBasket(true);
+        // Registry::getSession()->getBasket()->setDisableArtStockInBasket(true);
+        // Registry::getSession()->delBasket();
 
         $basket = oxNew(\OxidEsales\Eshop\Application\Model\Basket::class);
+        Registry::getSession()->setBasket($basket);
+        //$basket->setDisableArtStockInBasket(true);
         $basket->setBasketUser($user);
         $basket->setPayment(Registry::getRequest()->getRequestEscapedParameter('paymentid') ?: $userBasket->oxuserbaskets__agpaypalpaymentid->value);
         $basket->setShipping(Registry::getRequest()->getRequestEscapedParameter('shippingid') ?: $userBasket->oxuserbaskets__agpaypalshippingid->value);
@@ -73,24 +76,21 @@ class PayPalBasketHandler
 
         $aSavedItems = $userBasket->getItems();
         foreach ($aSavedItems as $oItem) {
-            try {
-                $oSelList = $oItem->getSelList();
+            $oSelList = $oItem->getSelList();
 
-                $basketItem = $basket->addToBasket($oItem->oxuserbasketitems__oxartid->value, $oItem->oxuserbasketitems__oxamount->value, $oSelList, $oItem->getPersParams(), true);
-                $basketItem->setWrapping($oItem->oxuserbasketitems__agpaypalwrapid->value);
-            } catch (\OxidEsales\Eshop\Core\Exception\ArticleException $oEx) {
-                // caught and ignored
-            }
+            $basketItem = $basket->addToBasket($oItem->oxuserbasketitems__oxartid->value, $oItem->oxuserbasketitems__oxamount->value, $oSelList, $oItem->getPersParams(), true);
+            $basketItem->setWrapping($oItem->oxuserbasketitems__agpaypalwrapid->value);
+
         }
 
         $basket->calculateBasket();
 
-        Registry::getSession()->getBasket()->setDisableArtStockInBasket(false);
+        //$basket->setDisableArtStockInBasket(false);
 
         return $basket;
     }
 
-    public static function getUserBasketForToken($token, $pptoken)
+    public static function getUserBasketForTokenPair($token, $pptoken)
     {
         if (class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')) {
             $container = ContainerFactory::getInstance()->getContainer();
@@ -108,6 +108,33 @@ class PayPalBasketHandler
             $basketId = $data->fetchColumn();
         } else {
             $rs = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->select('SELECT oxid FROM oxuserbaskets WHERE oxuserbaskets.agpaypaltoken = :token AND oxuserbaskets.agpaypalreturntoken = :pptoken', ['token' => $token, 'pptoken' => $pptoken]);
+            $basketId = current($rs->getFields());
+        }
+
+        if ($basketId) {
+            $basket = oxNew(\OxidEsales\Eshop\Application\Model\UserBasket::class);
+            $basket->load($basketId);
+            return $basket;
+        }
+    }
+
+
+    public static function getUserBasketForToken($token)
+    {
+        if (class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')) {
+            $container = ContainerFactory::getInstance()->getContainer();
+            $queryBuilderFactory = $container->get(QueryBuilderFactoryInterface::class);
+            $queryBuilder = $queryBuilderFactory->create();
+
+            $data = $queryBuilder->select('oxid')
+                ->from('oxuserbaskets')
+                ->where('oxuserbaskets.agpaypaltoken = :token')
+                ->setParameter('token', $token)
+                ->execute();
+
+            $basketId = $data->fetchColumn();
+        } else {
+            $rs = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->select('SELECT oxid FROM oxuserbaskets WHERE oxuserbaskets.agpaypaltoken = :token', ['token' => $token]);
             $basketId = current($rs->getFields());
         }
 

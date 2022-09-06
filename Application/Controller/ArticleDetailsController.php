@@ -33,7 +33,7 @@ class ArticleDetailsController extends ArticleDetailsController_parent
     // Called when user changes shipping address in paypal frame
     public function updatepaypalpurchaseunits()
     {
-        $userBasket = PayPalBasketHandler::getUserBasketForToken(Registry::getRequest()->getRequestEscapedParameter('token'), Registry::getRequest()->getRequestEscapedParameter('pptoken'));
+        $userBasket = PayPalBasketHandler::getUserBasketForTokenPair(Registry::getRequest()->getRequestEscapedParameter('token'), Registry::getRequest()->getRequestEscapedParameter('pptoken'));
         $basket = PayPalBasketHandler::restoreBasketFromUserBasket($userBasket, $this->getUser());
         $user = $basket->getBasketUser();
 

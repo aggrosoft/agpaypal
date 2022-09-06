@@ -132,7 +132,7 @@
 
           cardFields
             .submit({
-              [{if !$oViewConf->isPayPalSandbox()}]contingencies: ['3D_SECURE'],[{/if}]
+              [{*if !$oViewConf->isPayPalSandbox()*}]contingencies: ['3D_SECURE'],[{*/if*}]
               // Cardholder's first and last name
               cardholderName: document.getElementById("card-holder-name").value,
               // Billing Address

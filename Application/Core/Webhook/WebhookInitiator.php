@@ -24,6 +24,9 @@ class WebhookInitiator
         ],
         [
             'name' => 'PAYMENT.CAPTURE.REFUNDED'
+        ],
+        [
+            'name' => 'CHECKOUT.ORDER.APPROVED'
         ]
     ];
 

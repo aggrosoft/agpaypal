@@ -49,4 +49,11 @@ class UserBasket extends UserBasket_parent
             return $dAmount;
         }
     }
+
+    public function getBasketUser () {
+        $user = oxNew(\OxidEsales\Eshop\Application\Model\User::class);
+        if ($user->load($this->oxuserbaskets__oxuserid->value)) {
+            return $user;
+        }
+    }
 }

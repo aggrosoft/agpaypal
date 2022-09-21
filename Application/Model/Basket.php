@@ -44,4 +44,30 @@ class Basket extends Basket_parent
             return parent::getArtStockInBasket($sArtId, $sExpiredArtId);
         }
     }
+
+    // Let method throw errors
+    public function addRestoredVoucherForPayPal($sVoucherId)
+    {
+        $dPrice = 0;
+        if ($this->_oDiscountProductsPriceList) {
+            $dPrice = $this->_oDiscountProductsPriceList->getSum($this->isCalculationModeNetto());
+        }
+
+        $oVoucher = oxNew(\OxidEsales\Eshop\Application\Model\Voucher::class);
+
+        if (!$this->_blSkipVouchersAvailabilityChecking) {
+            $oVoucher->getVoucherByNr($sVoucherId, $this->_aVouchers, true);
+            $oVoucher->checkVoucherAvailability($this->_aVouchers, $dPrice);
+            $oVoucher->checkUserAvailability($this->getBasketUser());
+            $oVoucher->markAsReserved();
+        } else {
+            $oVoucher->load($sVoucherId);
+        }
+
+        // saving voucher info
+        $this->_aVouchers[$oVoucher->oxvouchers__oxid->value] = $oVoucher->getSimpleVoucher();
+
+
+        $this->onUpdate();
+    }
 }

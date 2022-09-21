@@ -35,16 +35,16 @@ class PayPalUserHandler
         $user->oxuser__oxlname = new \OxidEsales\Eshop\Core\Field($lastName);
 
         //@TODO: this really needs to be properly checked with test data
-        $adminArea1 = $shipping->address->admin_area_1 === 'N/A' ? '' : $shipping->address->admin_area_1;
-        try{
+
+        try {
             $address = \VIISON\AddressSplitter\AddressSplitter::splitAddress($shipping->address->address_line_1 . ' ' . $shipping->address->address_line_2);
-            $user->oxuser__oxcity = new \OxidEsales\Eshop\Core\Field($adminArea1 . ($adminArea1 ? ' ' : '') . $shipping->address->admin_area_2);
+            $user->oxuser__oxcity = new \OxidEsales\Eshop\Core\Field($shipping->address->admin_area_2);
             $user->oxuser__oxzip = new \OxidEsales\Eshop\Core\Field($shipping->address->postal_code);
             $user->oxuser__oxstreet = new \OxidEsales\Eshop\Core\Field($address['additionToAddress1'] . $address['streetName']);
             $user->oxuser__oxstreetnr = new \OxidEsales\Eshop\Core\Field($address['houseNumber']);
             $user->oxuser__oxaddinfo = new \OxidEsales\Eshop\Core\Field($address['additionToAddress2'] . $shipping->address->address_line_3);
-        }catch(\Exception $e){
-            $user->oxuser__oxcity = new \OxidEsales\Eshop\Core\Field($adminArea1 . ($adminArea1 ? ' ' : '') . $shipping->address->admin_area_2);
+        } catch (\Exception $e) {
+            $user->oxuser__oxcity = new \OxidEsales\Eshop\Core\Field($shipping->address->admin_area_2);
             $user->oxuser__oxzip = new \OxidEsales\Eshop\Core\Field($shipping->address->postal_code);
             $user->oxuser__oxstreet = new \OxidEsales\Eshop\Core\Field($shipping->address->address_line_1);
             $user->oxuser__oxstreetnr = new \OxidEsales\Eshop\Core\Field($shipping->address->address_line_2);
@@ -54,6 +54,14 @@ class PayPalUserHandler
         $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
         $countryId = $country->getIdByCode($shipping->address->country_code);
         $user->oxuser__oxcountryid = new \OxidEsales\Eshop\Core\Field($countryId);
+
+        $adminArea1 = $shipping->address->admin_area_1 === 'N/A' ? '' : $shipping->address->admin_area_1;
+
+        if ($adminArea1) {
+            $state = oxNew(\OxidEsales\Eshop\Application\Model\State::class);
+            $stateId = $state->getIdByCode($adminArea1, $countryId);
+            $user->oxuser__oxstateid = new \OxidEsales\Eshop\Core\Field($stateId);
+        }
 
         if ($payer->phone) {
             $user->oxuser__oxfon = new \OxidEsales\Eshop\Core\Field($payer->phone->phone_number);
@@ -66,6 +74,72 @@ class PayPalUserHandler
 
         $user->save();
         return $user->getId();
+    }
+
+    public static function getUserAddressFromPayPalToken($token, $userId)
+    {
+        $client = new PayPalRestClient();
+        $request = new GetOrderRequest($token);
+        $response = $client->execute($request);
+        $payer = $response->payer;
+        $shipping = $response->purchase_units[0]->shipping;
+
+        $user = oxNew(\OxidEsales\Eshop\Application\Model\User::class);
+
+        if ($user->load($userId)) {
+            $userAddress = oxNew(\OxidEsales\Eshop\Application\Model\Address::class);
+            $userAddress->oxaddress__oxuserid = new \OxidEsales\Eshop\Core\Field($userId);
+
+            $name = explode(" ", $shipping->name->full_name);
+            $firstName = array_shift($name);
+            $lastName = implode(" ", $name);
+
+            $userAddress->oxaddress__oxfname = new \OxidEsales\Eshop\Core\Field($firstName);
+            $userAddress->oxaddress__oxlname = new \OxidEsales\Eshop\Core\Field($lastName);
+
+            if ($payer->phone) {
+                $userAddress->oxaddress__oxfon = new \OxidEsales\Eshop\Core\Field($payer->phone->phone_number);
+            }
+
+            try {
+                $address = \VIISON\AddressSplitter\AddressSplitter::splitAddress($shipping->address->address_line_1 . ' ' . $shipping->address->address_line_2);
+                $userAddress->oxaddress__oxcity = new \OxidEsales\Eshop\Core\Field($shipping->address->admin_area_2);
+                $userAddress->oxaddress__oxzip = new \OxidEsales\Eshop\Core\Field($shipping->address->postal_code);
+                $userAddress->oxaddress__oxstreet = new \OxidEsales\Eshop\Core\Field($address['additionToAddress1'] . $address['streetName']);
+                $userAddress->oxaddress__oxstreetnr = new \OxidEsales\Eshop\Core\Field($address['houseNumber']);
+                $userAddress->oxaddress__oxaddinfo = new \OxidEsales\Eshop\Core\Field($address['additionToAddress2'] . $shipping->address->address_line_3);
+            } catch (\Exception $e) {
+                $userAddress->oxaddress__oxcity = new \OxidEsales\Eshop\Core\Field($shipping->address->admin_area_2);
+                $userAddress->oxaddress__oxzip = new \OxidEsales\Eshop\Core\Field($shipping->address->postal_code);
+                $userAddress->oxaddress__oxstreet = new \OxidEsales\Eshop\Core\Field($shipping->address->address_line_1);
+                $userAddress->oxaddress__oxstreetnr = new \OxidEsales\Eshop\Core\Field($shipping->address->address_line_2);
+                $userAddress->oxaddress__oxaddinfo = new \OxidEsales\Eshop\Core\Field($shipping->address->address_line_3);
+            }
+
+            $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
+            $countryId = $country->getIdByCode($shipping->address->country_code);
+            $userAddress->oxaddress__oxcountryid = new \OxidEsales\Eshop\Core\Field($countryId);
+
+            $adminArea1 = $shipping->address->admin_area_1 === 'N/A' ? '' : $shipping->address->admin_area_1;
+
+            if ($adminArea1) {
+                $state = oxNew(\OxidEsales\Eshop\Application\Model\State::class);
+                $stateId = $state->getIdByCode($adminArea1, $countryId);
+                $userAddress->oxaddress__oxstateid = new \OxidEsales\Eshop\Core\Field($stateId);
+            }
+
+            $existingAddressId = $userAddress->getExistingAddressId();
+
+            if ($existingAddressId) {
+                return $existingAddressId;
+            } else {
+                $userAddress->oxaddress__agpaypalhash = new \OxidEsales\Eshop\Core\Field($userAddress->getPayPalAddressHash());
+                $userAddress->save();
+                return $userAddress->getId();
+            }
+        } else {
+            throw new \OxidEsales\Eshop\Core\Exception\UserException('PAYPAL_ERROR_USER_NOT_FOUND');
+        }
     }
 
     public static function getUserIdByPayPalPayerId($payerId)

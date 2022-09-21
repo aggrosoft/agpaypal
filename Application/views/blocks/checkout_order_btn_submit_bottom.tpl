@@ -13,7 +13,10 @@
         style: {
             label: 'pay',
             tagline: false
-        }
+        },
+        onCancel: function (order) {
+            console.log(order);
+        },
     })
 
     PayPalButton.render();

@@ -4,6 +4,7 @@ namespace Aggrosoft\PayPal\Application\Controller;
 
 use Aggrosoft\PayPal\Application\Core\Client\Exception\RestException;
 use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
+use Aggrosoft\PayPal\Application\Core\Client\Request\Order\GetOrderRequest;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\UpdateOrderPurchaseUnitsRequest;
@@ -55,6 +56,17 @@ class OrderController extends OrderController_parent
         exit();
     }
 
+    // Called when user changes shipping address in paypal frame
+    public function getpaypalorder()
+    {
+        $client = new PayPalRestClient();
+        $response = $client->execute(new GetOrderRequest(Registry::getRequest()->getRequestEscapedParameter('orderid')));
+
+        header('$response-Type: application/json');
+        echo json_encode($response);
+        exit();
+    }
+
     public function ppreturn()
     {
         $token = Registry::getRequest()->getRequestEscapedParameter('token');
@@ -72,8 +84,10 @@ class OrderController extends OrderController_parent
             // auth user
             if (!$userBasket->oxuserbaskets__oxuserid->value) {
                 $userId = PayPalUserHandler::getUserFromPayPalToken($token);
+                $shippingId = null;
             } else {
                 $userId = $userBasket->oxuserbaskets__oxuserid->value;
+                $shippingId = PayPalUserHandler::getUserAddressFromPayPalToken($token, $userBasket->oxuserbaskets__oxuserid->value);
             }
 
             Registry::getSession()->setVariable('usr', $userId);
@@ -83,8 +97,24 @@ class OrderController extends OrderController_parent
             self::$_oActUser = $user;
 
             // load basket
-            $basket = PayPalBasketHandler::restoreBasketFromUserBasket($userBasket, $user);
+            try {
+                $basket = PayPalBasketHandler::restoreBasketFromUserBasket($userBasket, $user);
+            } catch (\OxidEsales\Eshop\Core\Exception\ArticleException $e) {
+                Registry::getUtilsView()->addErrorToDisplay('PAYPAL_ERROR_NOT_ALL_ARTICLES_BUYABLE');
+                Registry::getUtils()->redirect(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=basket');
+            } catch (\OxidEsales\Eshop\Core\Exception\VoucherException $oEx) {
+                // problems adding voucher
+                \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($oEx, false, true);
+                Registry::getUtils()->redirect(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=basket');
+            } catch (\Exception $e) {
+                Registry::getUtilsView()->addErrorToDisplay($e);
+                Registry::getUtils()->redirect(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=start');
+            }
+
             $this->_oShipSet = $this->_oBasket = $this->_oPayment = null;
+            if ($shippingId) {
+                Registry::getSession()->setVariable('deladrid', $shippingId);
+            }
             Registry::getSession()->setBasket($basket);
             $userBasket->delete();
 
@@ -140,7 +170,7 @@ class OrderController extends OrderController_parent
         return parent::getExecuteFnc();
     }
 
-    public function getPayPalFunding ()
+    public function getPayPalFunding()
     {
         $payment = $this->getPayment();
         if ($payment && $payment->oxpayments__agpaypalpaymentmethod->value) {

@@ -26,4 +26,6 @@ $aLang = array(
     'PAYPAL_ERROR_MODAL_TITLE'         => "Es ist ein Fehler aufgetreten",
     'PAYPAL_ERROR_MODAL_CONFIRM'         => "Ok",
     'PAYPAL_ERROR_CANNOT_BE_ZERO_OR_NEGATIVE'         => "Die Kommunikation mit PayPal ist fehlgeschlagen, bitte verwenden Sie eine andere Zahlungsart oder probieren Sie es später erneut.",
+    'PAYPAL_ERROR_USER_NOT_FOUND'         => "Das Kundenkonto für diesen Warenkorb konnte nicht ermittelt werden, bitte verwenden Sie eine andere Zahlungsart oder probieren Sie es später erneut.",
+    'PAYPAL_ERROR_NOT_ALL_ARTICLES_BUYABLE'         => "Der Bestellprozess konnte nicht abgeschlossen werden, leider sind nicht alle Artikel in Ihrem Warenkorb verfügbar. Bitte prüfen Sie Ihren Warenkorb und versuchen Sie es erneut.",
 );

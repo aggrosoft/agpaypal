@@ -38,7 +38,7 @@ class ArticleDetailsController extends ArticleDetailsController_parent
         $user = $basket->getBasketUser();
 
         $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
-        $purchaseUnits = CreateOrderRequestFactory::createPurchaseUnitRequest($user, $basket, $this->getUser() ? ApplicationContext::SHIPPING_PREFERENCE_NO_SHIPPING : ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE,  $country->getIdByCode(Registry::getRequest()->getRequestEscapedParameter('ppcountryid')));
+        $purchaseUnits = CreateOrderRequestFactory::createPurchaseUnitRequest($user, $basket, $this->getUser() ? ApplicationContext::SHIPPING_PREFERENCE_NO_SHIPPING : ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE, $country->getIdByCode(Registry::getRequest()->getRequestEscapedParameter('ppcountryid')));
 
         if (count($purchaseUnits->shipping->options)) {
             $client = new PayPalRestClient();

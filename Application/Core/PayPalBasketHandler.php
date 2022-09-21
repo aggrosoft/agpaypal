@@ -39,6 +39,9 @@ class PayPalBasketHandler
         $savedBasket->oxuserbaskets__agpaypalremark = new Field(Registry::getSession()->getVariable('ordrem'), Field::T_RAW);
         $savedBasket->oxuserbaskets__agpaypalcardid = new Field($basket->getCardId());
         $savedBasket->oxuserbaskets__agpaypalcardtext = new Field($basket->getCardMessage());
+        $savedBasket->oxuserbaskets__agpaypalvouchers = new Field(json_encode(array_map(function ($voucher) {
+            return $voucher->sVoucherNr;
+        }, $basket->getVouchers())), Field::T_RAW);
 
         if ($products) {
             foreach ($products as $product) {
@@ -52,6 +55,10 @@ class PayPalBasketHandler
                     $savedBasket->addPayPalItemToBasket($basketItem->getProductId(), $basketItem->getAmount(), $basketItem->getSelList(), true, $basketItem->getPersParams(), $basketItem->getWrappingId());
                 }
             }
+        }
+
+        foreach($basket->getVouchers() as $voucherId => $voucher) {
+            $basket->removeVoucher($voucherId);
         }
 
         return $savedBasket;
@@ -80,8 +87,15 @@ class PayPalBasketHandler
 
             $basketItem = $basket->addToBasket($oItem->oxuserbasketitems__oxartid->value, $oItem->oxuserbasketitems__oxamount->value, $oSelList, $oItem->getPersParams(), true);
             $basketItem->setWrapping($oItem->oxuserbasketitems__agpaypalwrapid->value);
-
         }
+
+        $vouchers = $userBasket->oxuserbaskets__agpaypalvouchers->rawValue ? json_decode($userBasket->oxuserbaskets__agpaypalvouchers->rawValue) : [];
+
+        //$basket->setSkipVouchersChecking(true);
+        foreach ($vouchers as $voucher) {
+            $basket->addRestoredVoucherForPayPal($voucher);
+        }
+        //$basket->setSkipVouchersChecking(false);
 
         $basket->calculateBasket();
 
@@ -183,5 +197,4 @@ class PayPalBasketHandler
             $savedBasket->delete();
         }
     }
-
 }

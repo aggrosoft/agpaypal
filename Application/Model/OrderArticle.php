@@ -34,4 +34,9 @@ class OrderArticle extends OrderArticle_parent
             }
         }
     }
+
+    public function getLink()
+    {
+        return $this->getArticle()->getLink();
+    }
 }

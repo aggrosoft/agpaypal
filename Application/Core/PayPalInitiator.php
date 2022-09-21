@@ -36,6 +36,11 @@ class PayPalInitiator
             $savedBasket = PayPalBasketHandler::savePayPalBasket($returnToken, $this->products);
             $basket = PayPalBasketHandler::restoreBasketFromUserBasket($savedBasket, Registry::getConfig()->getUser());
         }
+
+        if (!count($basket->getContents())) {
+            throw new \OxidEsales\Eshop\Core\Exception\NoResultException();
+        }
+
         $user = $basket->getBasketUser();
         $payment = $this->getPayment();
         $request = CreateOrderRequestFactory::create($user, $basket, $payment, $this->returnUrl . '&pptoken='.$returnToken, $this->shippingPreference, $this->userAction);

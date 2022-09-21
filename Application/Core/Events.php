@@ -2,10 +2,6 @@
 
 namespace Aggrosoft\PayPal\Application\Core;
 
-use OxidEsales\Eshop\Core\Registry;
-use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
-use OxidEsales\EshopCommunity\Internal\Framework\Module\Configuration\Bridge\ModuleSettingBridgeInterface;
-
 class Events
 {
     public static function onActivate()
@@ -37,7 +33,9 @@ class Events
               `ACCOUNTHOLDER` varchar(255) NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;',
             'ALTER TABLE `agpaypalbankdata`
-              ADD PRIMARY KEY (`OXID`);'
+              ADD PRIMARY KEY (`OXID`);',
+            'ALTER TABLE oxaddress ADD COLUMN AGPAYPALHASH varchar(32) default NULL',
+            'ALTER TABLE oxuserbaskets ADD COLUMN AGPAYPALVOUCHERS text default NULL',
         ];
 
         foreach ($queries as $query) {
@@ -46,6 +44,5 @@ class Events
             } catch (\Exception $e) {
             }
         }
-
     }
 }

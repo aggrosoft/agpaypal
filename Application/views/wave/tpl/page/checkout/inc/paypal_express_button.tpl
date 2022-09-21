@@ -1,5 +1,6 @@
-<div id="paypal-button-container-[{$sButtonPosition}]" class="float-left"></div>
-
+<tr>
+    <td colspan="2" id="paypalButtons">
+        <div id="paypal-button-container-[{$sButtonPosition}]"></div>
 [{oxscript include=$oViewConf->getModuleUrl('agpaypal', 'out/js/paypal-button.js')}]
 
 [{capture assign=pageScript}]
@@ -10,7 +11,6 @@
         controller: 'basket',
         style: {
             layout: 'vertical',
-            label: 'pay',
             shape: 'rect',
             color: 'gold'
         }
@@ -19,3 +19,6 @@
     [{$sButtonPosition}]PayPalButton.render();
 [{/capture}]
 [{oxscript add=$pageScript}]
+
+    </td>
+</tr>

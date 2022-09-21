@@ -9,7 +9,6 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\UpdateOrderDetailsRequest;
 use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CapturePaymentRequestFactory;
 use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CreateOrderRequestFactory;
-use Aggrosoft\PayPal\Application\Core\PayPalBasketHandler;
 use Aggrosoft\PayPal\Application\Core\PayPalInitiator;
 use OxidEsales\Eshop\Core\Registry;
 

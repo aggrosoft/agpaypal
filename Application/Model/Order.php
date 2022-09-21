@@ -17,7 +17,6 @@ use OxidEsales\Eshop\Core\Registry;
 
 class Order extends Order_parent
 {
-
     protected $_blValidateDeliveryAddress = true;
 
     public function cancelOrder()
@@ -109,11 +108,10 @@ class Order extends Order_parent
     {
         $iRet = parent::finalizeOrder($oBasket, $oUser, $blRecalculatingOrder);
 
-        if (!$blRecalculatingOrder && ( $iRet === self::ORDER_STATE_OK || $iRet === self::ORDER_STATE_MAILINGERROR ) ) {
-
+        if (!$blRecalculatingOrder && ($iRet === self::ORDER_STATE_OK || $iRet === self::ORDER_STATE_MAILINGERROR)) {
             try {
                 $iPayPalReturn = $this->finalizePayPalOrder($oBasket, $oUser);
-            }catch(\Exception $ex){
+            } catch (\Exception $ex) {
                 $iPayPalReturn = self::ORDER_STATE_PAYMENTERROR;
             }
 
@@ -126,13 +124,15 @@ class Order extends Order_parent
         return $iRet;
     }
 
-    protected function finalizePayPalOrder(\OxidEsales\Eshop\Application\Model\Basket $oBasket, $oUser) {
+    protected function finalizePayPalOrder(\OxidEsales\Eshop\Application\Model\Basket $oBasket, $oUser)
+    {
+        $oBasket->setSkipVouchersChecking(true);
+        $oBasket->setStockCheckMode(false);
 
         $payment = oxNew(\OxidEsales\Eshop\Application\Model\Payment::class);
         $payment->load($this->oxorder__oxpaymenttype->value);
 
         if ($payment->oxpayments__agpaypalpaymentmethod->value) {
-
             if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::PAY_UPON_INVOICE) {
                 $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=execute');
                 $paypal->setBasket($oBasket);
@@ -145,7 +145,6 @@ class Order extends Order_parent
                     Registry::getSession()->setVariable('pptoken', '');
                     \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($re);
                     return self::ORDER_STATE_PAYMENTERROR;
-
                 } catch (\Exception $e) {
                     Registry::getSession()->setVariable('ppexpresscomplete', 0);
                     Registry::getSession()->setVariable('pptoken', '');
@@ -176,7 +175,7 @@ class Order extends Order_parent
                         Registry::getSession()->setVariable('pptoken', '');
                         \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('ERR_PAYPAL_ORDER_UPDATE_FAILED');
                         return self::ORDER_STATE_PAYMENTERROR;
-                    }else{
+                    } else {
                         // @TODO: is it possible to have a discrepancy here? if yes,
                         // we need to cancel/refund the order here or in the webhook
                         // Need to double check that the order create before is 100% match with session maybe
@@ -213,7 +212,6 @@ class Order extends Order_parent
 
                 $this->oxorder__oxtransid = new \OxidEsales\Eshop\Core\Field($token);
                 $this->save();
-
             } else {
                 Registry::getSession()->setVariable('ppexpresscomplete', 0);
                 Registry::getSession()->setVariable('pptoken', '');
@@ -221,14 +219,13 @@ class Order extends Order_parent
                 return self::ORDER_STATE_PAYMENTERROR;
             }
         }
-
     }
 
     public function validateDeliveryAddress($oUser)
     {
         if (!$this->getValidateDeliveryAddress()) {
             return 0;
-        }else{
+        } else {
             return parent::validateDeliveryAddress($oUser);
         }
     }
@@ -248,6 +245,4 @@ class Order extends Order_parent
     {
         $this->_blValidateDeliveryAddress = $blValidateDeliveryAddress;
     }
-
-
 }

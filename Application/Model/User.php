@@ -2,8 +2,6 @@
 
 namespace Aggrosoft\PayPal\Application\Model;
 
-use OxidEsales\Eshop\Core\Registry;
-
 class User extends User_parent
 {
     protected $_blAnonymousPayPalUser = false;

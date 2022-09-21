@@ -8,7 +8,7 @@
         [{/if}]
     [{/if}]
 [{/if}]
-[{if $oViewConf->showPayPalButtonInDetails()}]
+[{if $oViewConf->showPayPalButtonInDetails() && !$oDetailsProduct->isNotBuyable() && $blCanBuy}]
     [{oxscript include=$oViewConf->getModuleUrl('agpaypal', 'out/js/paypal-button.js')}]
     [{if $blCanBuy}]
         [{include file="page/details/inc/paypal_button.tpl"}]

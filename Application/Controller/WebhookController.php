@@ -51,7 +51,11 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
         $order = $this->loadOrderByPayPalToken($orderId);
 
         if (!$order) {
-            $order = $this->finalizePayPalOrder($orderId);
+            try {
+                $order = $this->finalizePayPalOrder($orderId);
+            } catch (\Exception $e) {
+                $order = null;
+            }
         }
 
         // Still no order and a capture? Refund it - there is no way to handle this without an order
@@ -144,7 +148,8 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
         }
     }
 
-    protected function finalizePayPalOrder($token) {
+    protected function finalizePayPalOrder($token)
+    {
         \OxidEsales\Eshop\Core\Registry::getSession()->setVariable('pptoken', $token);
         $userBasket = PayPalBasketHandler::getUserBasketForToken($token);
         if ($userBasket) {
@@ -159,7 +164,8 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
         }
     }
 
-    protected function refundPayment($orderId) {
+    protected function refundPayment($orderId)
+    {
         $client = new PayPalRestClient();
         $response = $client->execute(new GetOrderRequest($orderId));
         if ($response) {
@@ -167,6 +173,5 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
             $request = new RefundCapturedPaymentRequest($capture->id);
             $client->execute($request);
         }
-
     }
 }

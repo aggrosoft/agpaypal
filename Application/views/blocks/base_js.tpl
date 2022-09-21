@@ -5,7 +5,10 @@
   [{assign var=puiPayment value=$oView->getPayPalPayUponInvoicePaymentMethod()}]
 [{/if}]
 
-[{include file="paypal/components_script.tpl" appendPayPalClientToken=$creditCardPayment}]
+[{if $oViewConf->getTopActiveClassName() == 'details' || $oViewConf->getTopActiveClassName() == 'basket' || $oViewConf->getTopActiveClassName() == 'payment' || $oViewConf->getTopActiveClassName() == 'order'}]
+  [{include file="paypal/components_script.tpl" appendPayPalClientToken=$creditCardPayment}]
+[{/if}]
+
 [{include file="paypal/fraudnet_script.tpl"}]
 
 [{$smarty.block.parent}]

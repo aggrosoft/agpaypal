@@ -17,7 +17,7 @@ use OxidEsales\Eshop\Core\Registry;
 
 class Order extends Order_parent
 {
-    protected $_blValidateDeliveryAddress = true;
+    protected $_blValidateDeliveryAddressMD5 = true;
 
     public function cancelOrder()
     {
@@ -106,6 +106,13 @@ class Order extends Order_parent
 
     public function finalizeOrder(\OxidEsales\Eshop\Application\Model\Basket $oBasket, $oUser, $blRecalculatingOrder = false)
     {
+        $payment = oxNew(\OxidEsales\Eshop\Application\Model\Payment::class);
+        $payment->load($oBasket->getPaymentId());
+
+        if ($payment->oxpayments__agpaypalpaymentmethod->value) {
+            $this->setValidateDeliveryAddressMD5(false);
+        }
+
         $iRet = parent::finalizeOrder($oBasket, $oUser, $blRecalculatingOrder);
 
         if (!$blRecalculatingOrder && ($iRet === self::ORDER_STATE_OK || $iRet === self::ORDER_STATE_MAILINGERROR)) {
@@ -133,6 +140,10 @@ class Order extends Order_parent
         $payment->load($this->oxorder__oxpaymenttype->value);
 
         if ($payment->oxpayments__agpaypalpaymentmethod->value) {
+
+            // Store if was express for later analytics
+            $this->oxorder__agpaypalisexpress = new \OxidEsales\Eshop\Core\Field(Registry::getSession()->getVariable('ppexpresscomplete'));
+
             if ($payment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::PAY_UPON_INVOICE) {
                 $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=execute');
                 $paypal->setBasket($oBasket);
@@ -162,14 +173,12 @@ class Order extends Order_parent
                 $basket = $oBasket;
                 $user = $basket->getBasketUser();
 
-                $purchaseUnits = CreateOrderRequestFactory::createPurchaseUnitRequest($user, $basket, ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE);
-                $purchaseUnits->getShipping()->resetOptions();
-                $request = new UpdateOrderDetailsRequest($token, $this->oxorder__oxordernr->value, $purchaseUnits);
+                $request = new UpdateOrderDetailsRequest($token, $this->oxorder__oxordernr->value);
 
                 try {
                     $client->execute($request);
                 } catch (\Exception $e) {
-                    if ($payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::PAY_UPON_INVOICE) {
+                    if (!PaymentSource::isAPM($payment->oxpayments__agpaypalpaymentmethod->value) && !PaymentSource::isPUI($payment->oxpayments__agpaypalpaymentmethod->value)) {
                         // PUI is automatically captured, we can not bail out anymore at this point
                         Registry::getSession()->setVariable('ppexpresscomplete', 0);
                         Registry::getSession()->setVariable('pptoken', '');
@@ -183,7 +192,7 @@ class Order extends Order_parent
                 }
 
                 // Now capture payment if needed
-                if ($payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::PAY_UPON_INVOICE) {
+                if (!PaymentSource::isAPM($payment->oxpayments__agpaypalpaymentmethod->value) && !PaymentSource::isPUI($payment->oxpayments__agpaypalpaymentmethod->value)) {
                     $request = CapturePaymentRequestFactory::create($token);
 
                     try {
@@ -223,26 +232,28 @@ class Order extends Order_parent
 
     public function validateDeliveryAddress($oUser)
     {
-        if (!$this->getValidateDeliveryAddress()) {
+        $state = parent::validateDeliveryAddress($oUser);
+
+        if ($state === self::ORDER_STATE_INVALIDDELADDRESSCHANGED && !$this->getValidateDeliveryAddressMD5()) {
             return 0;
         } else {
-            return parent::validateDeliveryAddress($oUser);
+            return $state;
         }
     }
 
     /**
      * @return bool
      */
-    public function getValidateDeliveryAddress(): bool
+    public function getValidateDeliveryAddressMD5(): bool
     {
-        return $this->_blValidateDeliveryAddress;
+        return $this->_blValidateDeliveryAddressMD5;
     }
 
     /**
-     * @param bool $blValidateDeliveryAddress
+     * @param bool $blValidateDeliveryAddressMD5
      */
-    public function setValidateDeliveryAddress(bool $blValidateDeliveryAddress): void
+    public function setValidateDeliveryAddressMD5(bool $blValidateDeliveryAddressMD5): void
     {
-        $this->_blValidateDeliveryAddress = $blValidateDeliveryAddress;
+        $this->_blValidateDeliveryAddressMD5 = $blValidateDeliveryAddressMD5;
     }
 }

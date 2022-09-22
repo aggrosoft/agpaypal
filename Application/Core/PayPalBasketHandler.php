@@ -91,6 +91,8 @@ class PayPalBasketHandler
 
         $vouchers = $userBasket->oxuserbaskets__agpaypalvouchers->rawValue ? json_decode($userBasket->oxuserbaskets__agpaypalvouchers->rawValue) : [];
 
+        $basket->calculateBasket();
+
         //$basket->setSkipVouchersChecking(true);
         foreach ($vouchers as $voucher) {
             $basket->addRestoredVoucherForPayPal($voucher);

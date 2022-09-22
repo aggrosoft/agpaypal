@@ -13,8 +13,10 @@ AggrosoftPayPalButton.prototype.render = function() {
 
   let that = this;
   const fundingSource = this.config.fundingSource;
+  const loadingOverlay = $('<div class="paypal-loading-overlay" style="position:fixed; top: 0; left: 0; z-index: 99999999; background-color: rgba(0,0,0,0.8); width: 100%; height: 100%;"><img src="/modules/agpaypal/out/image/loader.svg" width="60" class="paypal-loading-spinner" style="position: absolute; left: 50%; top: 50%; margin-left: -30px; margin-top: -30px;"/></div>');
 
   const onApprove = function(data, actions) {
+    loadingOverlay.appendTo('body');
     console.log('onApprove', data, actions);
     let href = that.config.redirectUrl + "&token=" + data.orderID + "&pptoken=" + that.returnToken;
     if (that.shippingId) {
@@ -58,7 +60,6 @@ AggrosoftPayPalButton.prototype.render = function() {
     onApprove: onApprove,
     onCancel: function (data) {
       if (that.config.onCancel && data.orderID) {
-        const loadingOverlay = $('<div class="paypal-loading-overlay" style="position:fixed; top: 0; left: 0; z-index: 99999999; background-color: rgba(0,0,0,0.8); width: 100%; height: 100%;"><img src="/modules/agpaypal/out/image/loader.svg" width="60" class="paypal-loading-spinner" style="position: absolute; left: 50%; top: 50%; margin-left: -30px; margin-top: -30px;"/></div>');
         loadingOverlay.appendTo('body');
         setTimeout(function() {
           $.ajax({
@@ -116,6 +117,14 @@ AggrosoftPayPalButton.prototype.render = function() {
   if (button.isEligible()) {
     button.render(that.config.container);
   }else{
-    console.log('PayPal Button is not eligible');
+    console.log('PayPal Button is not eligible for source: ', that.config.fundingSource);
+    paypal.getFundingSources().forEach(function(fundingSource) {
+      if (paypal.isFundingEligible(fundingSource)) {
+        console.log('ELIGIBLE: ' + fundingSource);
+      }else{
+        console.log('NOT ELIGIBLE: ' + fundingSource);
+      }
+    });
+
   }
 };

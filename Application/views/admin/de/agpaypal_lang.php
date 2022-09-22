@@ -48,6 +48,7 @@ $aLang = array(
     'PAYPAL_INVOICE_PDF_ADDITIONALINFO_2'    => "Ihrer Bestellung einschließlich etwaiger Nebenforderungen an die Ratepay GmbH abgetreten. Forderungsinhaber",
     'PAYPAL_INVOICE_PDF_ADDITIONALINFO_3'    => "ist damit Ratepay GmbH. Eine schuldbefreiende Leistung durch Zahlung ist gemäß § 407 Bürgerliches Gesetzbuch",
     'PAYPAL_INVOICE_PDF_ADDITIONALINFO_4'    => "durch Sie nur an die Ratepay GmbH möglich.",
+    'ORDER_MAIN_PAYPAL_IS_EXPRESS' => 'PayPal Express:',
     'ORDER_MAIN_PAYPAL_TRANSACTION_ID' => 'PayPal Transaktions ID:',
     'ORDER_MAIN_PAYPAL_CAPTURE_ID' => 'PayPal Zahlungs ID:',
     'ORDER_MAIN_PAYPAL_TRANSACTION_STATUS' => 'PayPal Transaktions Status:',

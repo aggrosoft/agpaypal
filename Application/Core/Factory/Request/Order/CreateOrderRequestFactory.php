@@ -43,7 +43,7 @@ class CreateOrderRequestFactory
 
         $request = new CreateOrderRequest();
         $request->setIntent(CreateOrderRequest::INTENT_CAPTURE);
-        $request->setProcessingInstruction(self::isPayUponInvoice($payment) ? CreateOrderRequest::PROCESSING_INSTRUCTION_ORDER_COMPLETE_ON_PAYMENT_APPROVAL : CreateOrderRequest::PROCESSING_INSTRUCTION_NO_INSTRUCTION);
+        $request->setProcessingInstruction(self::isPayUponInvoice($payment) || self::isAPM($payment) ? CreateOrderRequest::PROCESSING_INSTRUCTION_ORDER_COMPLETE_ON_PAYMENT_APPROVAL : CreateOrderRequest::PROCESSING_INSTRUCTION_NO_INSTRUCTION);
         if ($user) {
             $request->setPayer(self::createPayer($user));
         }
@@ -222,7 +222,7 @@ class CreateOrderRequestFactory
 
             $source->pay_upon_invoice = $invoiceData;
             return $source;
-        } elseif ($method && $method !== PaymentSource::PAYPAL && $method !== PaymentSource::CARD && $method !== PaymentSource::PAY_LATER && $method !== PaymentSource::SEPA) {
+        } elseif (self::isAPM($payment)) {
             $country = oxNew(\OxidEsales\Eshop\Application\Model\Country::class);
             $country->load($user->oxuser__oxcountryid->value);
 
@@ -277,7 +277,13 @@ class CreateOrderRequestFactory
     private static function isPayUponInvoice($payment)
     {
         $method = $payment->oxpayments__agpaypalpaymentmethod->value;
-        return $method === PaymentSource::PAY_UPON_INVOICE;
+        return PaymentSource::isPUI($method);
+    }
+
+    private static function isAPM($payment)
+    {
+        $method = $payment->oxpayments__agpaypalpaymentmethod->value;
+        return PaymentSource::isAPM($method);
     }
 
     private static function getShippingOptions($user, $basket, $countryId = null)

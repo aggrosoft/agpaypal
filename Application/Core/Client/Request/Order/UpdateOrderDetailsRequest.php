@@ -18,16 +18,10 @@ class UpdateOrderDetailsRequest extends RequestObject implements IPayPalRequest
      */
     protected $invoiceNumber;
 
-    /**
-     * @var PurchaseUnitRequest
-     */
-    protected $purchaseUnits;
-
-    public function __construct($orderId, $invoiceNumber, $purchaseUnits)
+    public function __construct($orderId, $invoiceNumber)
     {
         $this->orderId = $orderId;
         $this->invoiceNumber = $invoiceNumber;
-        $this->purchaseUnits = $purchaseUnits;
     }
 
     public function getEndpoint()
@@ -48,11 +42,6 @@ class UpdateOrderDetailsRequest extends RequestObject implements IPayPalRequest
     public function getBody()
     {
         return json_encode([
-            [
-                'op' => 'replace',
-                'path' => "/purchase_units/@reference_id=='default'",
-                'value' => $this->purchaseUnits
-            ],
             [
                 'op' => 'add',
                 'path' => "/purchase_units/@reference_id=='default'/invoice_id",

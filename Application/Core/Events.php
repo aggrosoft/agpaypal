@@ -36,6 +36,7 @@ class Events
               ADD PRIMARY KEY (`OXID`);',
             'ALTER TABLE oxaddress ADD COLUMN AGPAYPALHASH varchar(32) default NULL',
             'ALTER TABLE oxuserbaskets ADD COLUMN AGPAYPALVOUCHERS text default NULL',
+            'ALTER TABLE oxorder ADD COLUMN AGPAYPALISEXPRESS tinyint(1) default NULL',
         ];
 
         foreach ($queries as $query) {

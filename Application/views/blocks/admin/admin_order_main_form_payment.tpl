@@ -11,6 +11,14 @@
 [{if $paymentType->oxpayments__agpaypalpaymentmethod->value}]
     <tr>
         <td class="edittext">
+            [{oxmultilang ident="ORDER_MAIN_PAYPAL_IS_EXPRESS"}]
+        </td>
+        <td class="edittext">
+            [{if $edit->oxorder__agpaypalisexpress->value}]Ja[{else}]Nein[{/if}]
+        </td>
+    </tr>
+    <tr>
+        <td class="edittext">
             [{oxmultilang ident="ORDER_MAIN_PAYPAL_TRANSACTION_ID"}]
         </td>
         <td class="edittext">

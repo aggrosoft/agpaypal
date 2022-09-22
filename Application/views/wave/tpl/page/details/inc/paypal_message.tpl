@@ -2,6 +2,7 @@
 [{assign var="oPrice" value=$oDetailsProduct->getPrice()}]
 
 <div
+        class="pp-message-details"
         data-pp-message
         data-pp-placement="product"
         data-pp-style-layout="text"

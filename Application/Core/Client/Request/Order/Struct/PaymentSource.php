@@ -80,4 +80,14 @@ class PaymentSource extends RequestObject
      * @var object
      */
     public $pay_upon_invoice;
+
+    public static function isPUI($paymentId = null)
+    {
+        return $paymentId === self::PAY_UPON_INVOICE;
+    }
+
+    public static function isAPM($paymentId = null)
+    {
+        return $paymentId && $paymentId !== PaymentSource::PAYPAL && $paymentId !== PaymentSource::CARD && $paymentId !== PaymentSource::PAY_LATER && $paymentId !== PaymentSource::SEPA && $paymentId !== PaymentSource::PAY_UPON_INVOICE;
+    }
 }

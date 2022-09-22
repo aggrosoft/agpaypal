@@ -148,6 +148,7 @@ class Order extends Order_parent
                 $paypal = new PayPalInitiator(Registry::getConfig()->getCurrentShopUrl() . 'index.php?cl=order&fnc=execute');
                 $paypal->setBasket($oBasket);
                 $paypal->setRedirect(false);
+                $paypal->setOrderNumber($this->oxorder__oxordernr->value);
 
                 try {
                     $paypal->initiate();
@@ -169,30 +170,20 @@ class Order extends Order_parent
             if ($token) {
                 $client = new PayPalRestClient();
 
-                // Send order number to paypal
-                $basket = $oBasket;
-                $user = $basket->getBasketUser();
+                if (!PaymentSource::isPUI($payment->oxpayments__agpaypalpaymentmethod->value)) {
+                    // Send order number to PayPal
+                    $request = new UpdateOrderDetailsRequest($token, $this->oxorder__oxordernr->value);
 
-                $request = new UpdateOrderDetailsRequest($token, $this->oxorder__oxordernr->value);
-
-                try {
-                    $client->execute($request);
-                } catch (\Exception $e) {
-                    if (!PaymentSource::isAPM($payment->oxpayments__agpaypalpaymentmethod->value) && !PaymentSource::isPUI($payment->oxpayments__agpaypalpaymentmethod->value)) {
-                        // PUI is automatically captured, we can not bail out anymore at this point
+                    try {
+                        $client->execute($request);
+                    } catch (\Exception $e) {
                         Registry::getSession()->setVariable('ppexpresscomplete', 0);
                         Registry::getSession()->setVariable('pptoken', '');
                         \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('ERR_PAYPAL_ORDER_UPDATE_FAILED');
                         return self::ORDER_STATE_PAYMENTERROR;
-                    } else {
-                        // @TODO: is it possible to have a discrepancy here? if yes,
-                        // we need to cancel/refund the order here or in the webhook
-                        // Need to double check that the order create before is 100% match with session maybe
                     }
-                }
 
-                // Now capture payment if needed
-                if (!PaymentSource::isAPM($payment->oxpayments__agpaypalpaymentmethod->value) && !PaymentSource::isPUI($payment->oxpayments__agpaypalpaymentmethod->value)) {
+                    // Capture order
                     $request = CapturePaymentRequestFactory::create($token);
 
                     try {
@@ -217,6 +208,7 @@ class Order extends Order_parent
 
                     $this->oxorder__agpaypalcaptureid = new \OxidEsales\Eshop\Core\Field($capture->id);
                     $this->oxorder__agpaypaltransstatus = new \OxidEsales\Eshop\Core\Field($capture->status);
+
                 }
 
                 $this->oxorder__oxtransid = new \OxidEsales\Eshop\Core\Field($token);

@@ -34,20 +34,21 @@ class CreateOrderRequestFactory
      * @param $basket
      * @param $payment
      * @param $returnUrl
+     * @param $orderNumber
      * @return CreateOrderRequest
      */
-    public static function create($user, $basket, $payment, $returnUrl, $shippingPreference = ApplicationContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS, $userAction = ApplicationContext::USER_ACTION_CONTINUE)
+    public static function create($user, $basket, $payment, $returnUrl, $orderNumber = null, $shippingPreference = ApplicationContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS, $userAction = ApplicationContext::USER_ACTION_CONTINUE)
     {
         //Cache this, used multiple times
         self::$shippingOptions = null;
 
         $request = new CreateOrderRequest();
         $request->setIntent(CreateOrderRequest::INTENT_CAPTURE);
-        $request->setProcessingInstruction(self::isPayUponInvoice($payment) || self::isAPM($payment) ? CreateOrderRequest::PROCESSING_INSTRUCTION_ORDER_COMPLETE_ON_PAYMENT_APPROVAL : CreateOrderRequest::PROCESSING_INSTRUCTION_NO_INSTRUCTION);
+        $request->setProcessingInstruction(self::isPayUponInvoice($payment) ? CreateOrderRequest::PROCESSING_INSTRUCTION_ORDER_COMPLETE_ON_PAYMENT_APPROVAL : CreateOrderRequest::PROCESSING_INSTRUCTION_NO_INSTRUCTION);
         if ($user) {
             $request->setPayer(self::createPayer($user));
         }
-        $request->addPurchaseUnit(self::createPurchaseUnitRequest($user, $basket, $shippingPreference));
+        $request->addPurchaseUnit(self::createPurchaseUnitRequest($user, $basket, $shippingPreference, null, $orderNumber));
         $request->setApplicationContext(self::createApplicationContext($returnUrl, $shippingPreference, $userAction, $payment->oxpayments__agpaypallandingpage->value));
         $request->setPaymentSource(self::createPaymentSource($user, $payment));
         if (self::isPayUponInvoice($payment)) {
@@ -57,7 +58,7 @@ class CreateOrderRequestFactory
         return $request;
     }
 
-    public static function createPurchaseUnitRequest($user, $basket, $shippingPreference, $countryId = null)
+    public static function createPurchaseUnitRequest($user, $basket, $shippingPreference, $countryId = null, $orderNumber = null)
     {
         $config = Registry::getConfig();
         $currencyName = $basket->getBasketCurrency()->name;
@@ -70,6 +71,9 @@ class CreateOrderRequestFactory
         $unit = new PurchaseUnitRequest();
         $unit->setPayee(new Payee($config->getShopConfVar("sPayPalEmailAddress", null, "module:agpaypal")));
         $unit->setShipping(self::createShipping($user, $basket, $shippingPreference, $countryId));
+        if ($orderNumber){
+            $unit->setInvoiceId($orderNumber);
+        }
 
         $items = [];
         $itemTotal = 0;

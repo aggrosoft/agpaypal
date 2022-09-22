@@ -16,6 +16,7 @@ class PayPalInitiator
     protected $userAction = ApplicationContext::USER_ACTION_CONTINUE;
     protected $products;
     protected $basket;
+    protected $orderNumber;
 
     public function __construct($returnUrl)
     {
@@ -43,7 +44,7 @@ class PayPalInitiator
 
         $user = $basket->getBasketUser();
         $payment = $this->getPayment();
-        $request = CreateOrderRequestFactory::create($user, $basket, $payment, $this->returnUrl . '&pptoken='.$returnToken, $this->shippingPreference, $this->userAction);
+        $request = CreateOrderRequestFactory::create($user, $basket, $payment,$this->returnUrl . '&pptoken=' . $returnToken, $this->orderNumber, $this->shippingPreference, $this->userAction);
         $client = $this->getPayPalClient();
 
         $response = $client->execute($request);
@@ -186,4 +187,22 @@ class PayPalInitiator
     {
         $this->basket = $basket;
     }
+
+    /**
+     * @return string
+     */
+    public function getOrderNumber(): string
+    {
+        return $this->orderNumber;
+    }
+
+    /**
+     * @param string $orderNumber
+     */
+    public function setOrderNumber(string $orderNumber): void
+    {
+        $this->orderNumber = $orderNumber;
+    }
+
+
 }

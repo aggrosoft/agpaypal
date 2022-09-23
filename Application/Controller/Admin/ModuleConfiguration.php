@@ -49,4 +49,28 @@ class ModuleConfiguration extends ModuleConfiguration_parent
             }
         }
     }
+
+    public function getPayPalPartnerClient()
+    {
+        return 'AaTsKBVHPEo1hBSH0gQlz-5mtQ-bHIYLu1DeDXnSQ4lQF2yEQY4mzvwQuQXuvKR61zUB0jv7FEdhFmd1';
+    }
+
+    public function getPayPalPartnerPayer()
+    {
+        return 'T9AVHNZL5M8QJ';
+    }
+
+    public function getPayPalSellerNonce()
+    {
+
+    }
+
+    private function makeRandomString($bits = 256) {
+        $bytes = ceil($bits / 8);
+        $return = '';
+        for ($i = 0; $i < $bytes; $i++) {
+            $return .= chr(mt_rand(0, 255));
+        }
+        return $return;
+    }
 }

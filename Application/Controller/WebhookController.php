@@ -156,7 +156,7 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
             $user = $userBasket->getBasketUser();
             $basket = PayPalBasketHandler::restoreBasketFromUserBasket($userBasket, $user);
             $order = oxNew(\OxidEsales\Eshop\Application\Model\Order::class);
-            $order->setValidateDeliveryAddress(false);
+            $order->setValidateDeliveryAddressMD5(false);
             $iSuccess = $order->finalizeOrder($basket, $basket->getBasketUser());
             // performing special actions after user finishes order (assignment to special user groups)
             $user->onOrderExecute($basket, $iSuccess);

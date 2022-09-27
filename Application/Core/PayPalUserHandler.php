@@ -16,10 +16,11 @@ class PayPalUserHandler
         $request = new GetOrderRequest($token);
         $response = $client->execute($request);
         $payer = $response->payer;
+        $paymentSource = $response->payment_source;
         $shipping = $response->purchase_units[0]->shipping;
 
-        $userId = self::getUserIdByPayPalPayerId($payer->payer_id);
         $user = oxNew(\OxidEsales\Eshop\Application\Model\User::class);
+        $userId = $user->getIdByUserName($paymentSource->paypal->email_address);
 
         if ($userId) {
             $user->load($userId);
@@ -29,8 +30,8 @@ class PayPalUserHandler
         $firstName = array_shift($name);
         $lastName = implode(" ", $name);
 
-        $user->oxuser__oxusername = new \OxidEsales\Eshop\Core\Field($payer->email_address);
-        $user->oxuser__agpaypalpayerid = new \OxidEsales\Eshop\Core\Field($payer->payer_id);
+        $user->oxuser__oxusername = new \OxidEsales\Eshop\Core\Field($paymentSource->paypal->email_address);
+        $user->oxuser__agpaypalpayerid = new \OxidEsales\Eshop\Core\Field($paymentSource->paypal->account_id);
         $user->oxuser__oxfname = new \OxidEsales\Eshop\Core\Field($firstName);
         $user->oxuser__oxlname = new \OxidEsales\Eshop\Core\Field($lastName);
 
@@ -63,7 +64,7 @@ class PayPalUserHandler
             $user->oxuser__oxstateid = new \OxidEsales\Eshop\Core\Field($stateId);
         }
 
-        if ($payer->phone) {
+        if ($payer && $payer->phone) {
             $user->oxuser__oxfon = new \OxidEsales\Eshop\Core\Field($payer->phone->phone_number);
         }
 
@@ -97,7 +98,7 @@ class PayPalUserHandler
             $userAddress->oxaddress__oxfname = new \OxidEsales\Eshop\Core\Field($firstName);
             $userAddress->oxaddress__oxlname = new \OxidEsales\Eshop\Core\Field($lastName);
 
-            if ($payer->phone) {
+            if ($payer && $payer->phone) {
                 $userAddress->oxaddress__oxfon = new \OxidEsales\Eshop\Core\Field($payer->phone->phone_number);
             }
 
@@ -142,6 +143,11 @@ class PayPalUserHandler
         }
     }
 
+    /**
+     * @param $payerId
+     * @return false|mixed
+     * @deprecated must load by email address, oxid does not allow to have multiple users with same email
+     */
     public static function getUserIdByPayPalPayerId($payerId)
     {
         if (class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')) {

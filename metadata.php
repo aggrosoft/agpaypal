@@ -110,6 +110,11 @@ $aModule = array(
             'template' => 'order_main.tpl',
             'block' => 'admin_order_main_form_payment',
             'file' => '/Application/views/blocks/admin/admin_order_main_form_payment.tpl',
+        ],
+        [
+            'template' => 'module_config.tpl',
+            'block' => 'admin_module_config_form',
+            'file' => '/Application/views/blocks/admin/admin_module_config_form.tpl',
         ]
     ],
     'settings' => [

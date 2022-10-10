@@ -70,7 +70,8 @@ class ModuleConfiguration extends ModuleConfiguration_parent
         return hash('sha512', $this->getPayPalRandomSeed());
     }
 
-    private function getPayPalRandomSeed($bits = 256) {
+    private function getPayPalRandomSeed($bits = 256)
+    {
         $bytes = ceil($bits / 8);
         $return = '';
         for ($i = 0; $i < $bytes; $i++) {

@@ -57,11 +57,17 @@ class PayPalBasketHandler
             }
         }
 
-        foreach($basket->getVouchers() as $voucherId => $voucher) {
+        foreach ($basket->getVouchers() as $voucherId => $voucher) {
             $basket->removeVoucher($voucherId);
         }
 
         return $savedBasket;
+    }
+
+    public static function updateUserBasketShipping($userBasket, $shippingId)
+    {
+        $userBasket->oxuserbaskets__agpaypalshippingid = new Field($shippingId);
+        $userBasket->save();
     }
 
     public static function restoreBasketFromUserBasket($userBasket, $user)

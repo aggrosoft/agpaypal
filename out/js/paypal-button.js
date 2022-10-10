@@ -17,12 +17,40 @@ AggrosoftPayPalButton.prototype.render = function() {
 
   const onApprove = function(data, actions) {
     loadingOverlay.appendTo('body');
-    console.log('onApprove', data, actions);
     let href = that.config.redirectUrl + "&token=" + data.orderID + "&pptoken=" + that.returnToken;
     if (that.shippingId) {
       href += "&shippingId=" + that.shippingId;
     }
     document.location.href = href;
+  }
+
+  let onShippingChange = undefined;
+
+  if (fundingSource === undefined || fundingSource === paypal.FUNDING.PAYPAL) {
+    onShippingChange = function(data, actions) {
+      return new Promise(function(resolve, reject) {
+        $.ajax({
+          url: that.config.baseUrl,
+          method: 'POST',
+          data: {
+            cl: that.config.controller,
+            fnc: 'updatepaypalpurchaseunits',
+            ppcountryid: data.shipping_address.country_code,
+            sShipSet: data.selected_shipping_option.id,
+            shippingid: data.selected_shipping_option.id,
+            token: data.orderID,
+            pptoken: that.returnToken
+          }
+        }).then(function(result){
+          if (result) {
+            that.shippingId = data.selected_shipping_option.id;
+            return resolve();
+          }else{
+            return reject();
+          }
+        })
+      })
+    }
   }
 
   const button = paypal.Buttons({
@@ -58,6 +86,7 @@ AggrosoftPayPalButton.prototype.render = function() {
       })
     },
     onApprove: onApprove,
+    onShippingChange: onShippingChange,
     onCancel: function (data) {
       if (that.config.onCancel && data.orderID) {
         loadingOverlay.appendTo('body');
@@ -87,32 +116,6 @@ AggrosoftPayPalButton.prototype.render = function() {
       console.log('OnError', err);
     }
   })
-
-  if (fundingSource === paypal.FUNDING.PAYPAL) {
-    button.onShippingChange = function(data, actions) {
-      return new Promise(function(resolve, reject) {
-        $.ajax({
-          url: that.config.baseUrl,
-          method: 'POST',
-          data: {
-            cl: that.config.controller,
-            fnc: 'updatepaypalpurchaseunits',
-            ppcountryid: data.shipping_address.country_code,
-            sShipSet: data.selected_shipping_option.id,
-            token: data.orderID,
-            pptoken: that.returnToken
-          }
-        }).then(function(result){
-          if (result) {
-            that.shippingId = data.selected_shipping_option.id;
-            return resolve();
-          }else{
-            return reject();
-          }
-        })
-      })
-    }
-  }
 
   if (button.isEligible()) {
     button.render(that.config.container);

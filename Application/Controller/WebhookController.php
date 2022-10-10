@@ -154,6 +154,7 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
         $userBasket = PayPalBasketHandler::getUserBasketForToken($token);
         if ($userBasket) {
             $user = $userBasket->getBasketUser();
+            Registry::getSession()->setVariable('usr', $user->getId());
             $basket = PayPalBasketHandler::restoreBasketFromUserBasket($userBasket, $user);
             $order = oxNew(\OxidEsales\Eshop\Application\Model\Order::class);
             $order->setValidateDeliveryAddressMD5(false);

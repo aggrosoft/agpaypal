@@ -71,7 +71,7 @@ class CreateOrderRequestFactory
         $unit = new PurchaseUnitRequest();
         $unit->setPayee(new Payee($config->getShopConfVar("sPayPalEmailAddress", null, "module:agpaypal")));
         $unit->setShipping(self::createShipping($user, $basket, $shippingPreference, $countryId));
-        if ($orderNumber){
+        if ($orderNumber) {
             $unit->setInvoiceId($orderNumber);
         }
 
@@ -161,10 +161,12 @@ class CreateOrderRequestFactory
         }
         if ($soxAddressId) {
             $oDelAdress = oxNew(\OxidEsales\Eshop\Application\Model\Address::class);
-            $oDelAdress->load($soxAddressId);
+            if ($oDelAdress->load($soxAddressId)) {
+                return $oDelAdress;
+            } else {
+                return null;
+            }
         }
-
-        return $oDelAdress;
     }
 
     public static function createApplicationContext($returnUrl, $shippingPreference, $userAction, $landingPage)

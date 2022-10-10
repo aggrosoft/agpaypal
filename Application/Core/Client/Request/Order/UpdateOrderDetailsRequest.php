@@ -3,7 +3,6 @@
 namespace Aggrosoft\PayPal\Application\Core\Client\Request\Order;
 
 use Aggrosoft\PayPal\Application\Core\Client\Request\IPayPalRequest;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PurchaseUnitRequest;
 use Aggrosoft\PayPal\Application\Core\Client\Request\RequestObject;
 
 class UpdateOrderDetailsRequest extends RequestObject implements IPayPalRequest

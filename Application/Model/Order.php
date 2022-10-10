@@ -4,12 +4,10 @@ namespace Aggrosoft\PayPal\Application\Model;
 
 use Aggrosoft\PayPal\Application\Core\Client\Exception\RestException;
 use Aggrosoft\PayPal\Application\Core\Client\PayPalRestClient;
-use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\ApplicationContext;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\Struct\PaymentSource;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Order\UpdateOrderDetailsRequest;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Payments\Captures\RefundCapturedPaymentRequest;
 use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CapturePaymentRequestFactory;
-use Aggrosoft\PayPal\Application\Core\Factory\Request\Order\CreateOrderRequestFactory;
 use Aggrosoft\PayPal\Application\Core\PayPalInitiator;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
@@ -208,7 +206,6 @@ class Order extends Order_parent
 
                     $this->oxorder__agpaypalcaptureid = new \OxidEsales\Eshop\Core\Field($capture->id);
                     $this->oxorder__agpaypaltransstatus = new \OxidEsales\Eshop\Core\Field($capture->status);
-
                 }
 
                 $this->oxorder__oxtransid = new \OxidEsales\Eshop\Core\Field($token);

@@ -28,5 +28,4 @@ class User extends User_parent
             return parent::getUserGroups($sOXID);
         }
     }
-
 }

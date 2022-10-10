@@ -44,7 +44,7 @@ class PayPalInitiator
 
         $user = $basket->getBasketUser();
         $payment = $this->getPayment();
-        $request = CreateOrderRequestFactory::create($user, $basket, $payment,$this->returnUrl . '&pptoken=' . $returnToken, $this->orderNumber, $this->shippingPreference, $this->userAction);
+        $request = CreateOrderRequestFactory::create($user, $basket, $payment, $this->returnUrl . '&pptoken=' . $returnToken, $this->orderNumber, $this->shippingPreference, $this->userAction);
         $client = $this->getPayPalClient();
 
         $response = $client->execute($request);
@@ -203,6 +203,4 @@ class PayPalInitiator
     {
         $this->orderNumber = $orderNumber;
     }
-
-
 }

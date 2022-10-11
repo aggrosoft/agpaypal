@@ -188,6 +188,7 @@ class OrderController extends OrderController_parent
     {
         $payment = $this->getPayment();
         if (
+            !\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blPayPalRedirectOnCheckout', null, 'module:agpaypal') &&
             !$this->isPayPalExpressCheckout() &&
             $payment &&
             $payment->oxpayments__agpaypalpaymentmethod->value &&

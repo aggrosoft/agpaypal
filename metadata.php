@@ -129,5 +129,6 @@ $aModule = array(
         ['group' => 'paypal_settings', 'name' => 'blPayPalExpressBasket', 'type' => 'bool', 'value' => false],
         ['group' => 'paypal_settings', 'name' => 'blPayPalMessagesDetails', 'type' => 'bool', 'value' => false],
         ['group' => 'paypal_settings', 'name' => 'blPayPalMessagesBasket', 'type' => 'bool', 'value' => false],
+        ['group' => 'paypal_settings', 'name' => 'blPayPalRedirectOnCheckout', 'type' => 'bool', 'value' => false],
     ],
 );

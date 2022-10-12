@@ -96,7 +96,7 @@ class PayPalRestClient
             if ($cachedToken) {
                 $this->token = $cachedToken;
             } else {
-                $response = $this->client->request('POST', $this->getTokenUrl(), [
+                $request = [
                     'headers' => [
                         'Accept' => 'application/json',
                         'Content-Type' => 'application/x-www-form-urlencoded',
@@ -109,8 +109,12 @@ class PayPalRestClient
                         'grant_type' => 'client_credentials'
                     ],
                     'http_errors' => false
-                ]);
+                ];
+
+                $response = $this->client->request('POST', $this->getTokenUrl(), $request);
                 $result = json_decode($response->getBody()->getContents());
+
+                $this->log($request, $result, $response->getStatusCode());
 
                 if ($result->error) {
                     throw new AuthenticationException($result->error_description);
@@ -137,7 +141,11 @@ class PayPalRestClient
     {
         if ($this->logLevel === 'all' || $this->logLevel === 'error' && $code > 299) {
             $log = "#$code [" . date("d/M/Y H:i:s") . "]\n";
-            $log .= "Request: \n\n" . $request->getMethod().': '. $this->getApiUrl().$request->getEndpoint() . "\n\n" . json_encode($request, JSON_PRETTY_PRINT) . "\n\n";
+            if ($request instanceof IPayPalRequest) {
+                $log .= "Request: \n\n" . $request->getMethod().': '. $this->getApiUrl().$request->getEndpoint() . "\n\n" . json_encode($request, JSON_PRETTY_PRINT) . "\n\n";
+            } else {
+                $log .= "Request: \n\n" . json_encode($request, JSON_PRETTY_PRINT) . "\n\n";
+            }
             $log .= "Response: \n\n" . json_encode($result, JSON_PRETTY_PRINT) . "\n\n";
             $log .= "########################################################################\n\n";
 

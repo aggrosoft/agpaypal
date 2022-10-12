@@ -12,15 +12,17 @@
     <dd class="payment-option[{if $oView->getCheckedPaymentId() == $paymentmethod->oxpayments__oxid->value}] activePayment[{/if}]">
         [{if $paymentmethod->getPrice()}]
             [{assign var="oPaymentPrice" value=$paymentmethod->getPrice() }]
-            [{if $oViewConf->isFunctionalityEnabled('blShowVATForPayCharge') }]
-                [{strip}]
-                    ([{oxprice price=$oPaymentPrice->getNettoPrice() currency=$currency}]
-                    [{if $oPaymentPrice->getVatValue() > 0}]
-                        [{oxmultilang ident="PLUS_VAT"}] [{oxprice price=$oPaymentPrice->getVatValue() currency=$currency}]
-                    [{/if}])
-                [{/strip}]
-            [{else}]
-                ([{oxprice price=$oPaymentPrice->getBruttoPrice() currency=$currency}])
+            [{if $oPaymentPrice->getBruttoPrice() > 0}]
+                [{if $oViewConf->isFunctionalityEnabled('blShowVATForPayCharge') }]
+                    [{strip}]
+                        ([{oxprice price=$oPaymentPrice->getNettoPrice() currency=$currency}]
+                        [{if $oPaymentPrice->getVatValue() > 0}]
+                            [{oxmultilang ident="PLUS_VAT"}] [{oxprice price=$oPaymentPrice->getVatValue() currency=$currency}]
+                        [{/if}])
+                    [{/strip}]
+                [{else}]
+                    ([{oxprice price=$oPaymentPrice->getBruttoPrice() currency=$currency}])
+                [{/if}]
             [{/if}]
         [{/if}]
 

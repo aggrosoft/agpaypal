@@ -37,7 +37,12 @@ class Payment extends Payment_parent
             case PaymentSource::PAY_UPON_INVOICE:
                 $viewConfig = oxNew(\OxidEsales\Eshop\Core\ViewConfig::class);
                 return $viewConfig->getModuleUrl('agpaypal', 'out/image/ratepay_logo_open-invoice_whitelabel_with_logo_de_black.svg');
-
+            case PaymentSource::SEPA:
+                $viewConfig = oxNew(\OxidEsales\Eshop\Core\ViewConfig::class);
+                return $viewConfig->getModuleUrl('agpaypal', 'out/image/bank-logo.png');
+            case PaymentSource::PAY_LATER:
+                $viewConfig = oxNew(\OxidEsales\Eshop\Core\ViewConfig::class);
+                return $viewConfig->getModuleUrl('agpaypal', 'out/image/CardArt_PayIn4_2021.svg');
         }
     }
 }

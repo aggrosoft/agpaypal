@@ -30,7 +30,8 @@ class User extends User_parent
         }
     }
 
-    public function forceActiveCountry($sCountryId) {
+    public function forceActiveCountry($sCountryId)
+    {
         $this->_sForceActiveCountry = $sCountryId;
     }
 

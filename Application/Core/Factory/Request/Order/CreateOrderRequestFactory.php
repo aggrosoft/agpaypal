@@ -98,7 +98,7 @@ class CreateOrderRequestFactory
         }
 
         if (!$hasDecimals) {
-        //    $unit->setItems($items);
+            //    $unit->setItems($items);
         }
 
         $deliveryCosts = $basket->getDeliveryCost();

@@ -6,6 +6,9 @@ function AggrosoftPayPalButton(config) {
 }
 
 AggrosoftPayPalButton.prototype.setConfigValue = function(key, value) {
+  if (JSON.stringify(this.config[key]) !== JSON.stringify(value)) {
+    this.orderId = undefined;
+  }
   this.config[key] = value;
 }
 

@@ -43,7 +43,7 @@
       "url": "https://packages.aggrosoft.de"
     }
   ],
-  "version": "1.4.8",
+  "version": "1.4.9",
   "require-dev": {
     "laravel/pint": "^0.2.1"
   }

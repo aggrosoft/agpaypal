@@ -115,8 +115,7 @@ class CreateOrderRequestFactory
         if ($handling > 0) {
             $amountBreakDown->handling = new Money($currencyName, $handling);
         }
-
-        $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice() - $deliveryCosts->getBruttoPrice()));
+        $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice()));
 
         return $unit;
     }
@@ -315,6 +314,8 @@ class CreateOrderRequestFactory
 
             if ($countryId) {
                 $user->oxuser__oxcountryid = new \OxidEsales\Eshop\Core\Field($countryId);
+                $user->forceActiveCountry($countryId);
+                Registry::getConfig()->setGlobalParameter('delcountryid', $countryId);
             }
 
             $sActShipSet = Registry::getConfig()->getRequestParameter('sShipSet');

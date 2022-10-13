@@ -5,6 +5,7 @@ namespace Aggrosoft\PayPal\Application\Model;
 class User extends User_parent
 {
     protected $_blAnonymousPayPalUser = false;
+    protected $_sForceActiveCountry;
 
     public function setIsAnonymousPayPalUser($blAnonymousPayPalUser)
     {
@@ -26,6 +27,19 @@ class User extends User_parent
             return $groups;
         } else {
             return parent::getUserGroups($sOXID);
+        }
+    }
+
+    public function forceActiveCountry($sCountryId) {
+        $this->_sForceActiveCountry = $sCountryId;
+    }
+
+    public function getActiveCountry()
+    {
+        if ($this->_sForceActiveCountry) {
+            return $this->_sForceActiveCountry;
+        } else {
+            return parent::getActiveCountry();
         }
     }
 }

@@ -85,27 +85,27 @@ class CreateOrderRequestFactory
             $item = new Item();
             $item->category = $article->oxarticles__oxnonmaterial->value ? 'DIGITAL_GOODS' : 'PHYSICAL_GOODS';
             $item->name = $basketItem->getTitle();
-            $item->quantity = $basketItem->getAmount();
-            $item->unit_amount = new Money($currencyName, $basketItem->getUnitPrice()->getNettoPrice());
-            $item->tax = new Money($currencyName, $basketItem->getUnitPrice()->getVatValue());
-            $item->tax_rate = $basketItem->getUnitPrice()->getVat();
+            // $item->quantity = $basketItem->getAmount();
+            $item->unit_amount = new Money($currencyName, $basketItem->getPrice()->getBruttoPrice());
+            //$item->tax = new Money($currencyName, $basketItem->getUnitPrice()->getVatValue());
+            //$item->tax_rate = $basketItem->getUnitPrice()->getVat();
             $items[] = $item;
-            $itemTotal += $item->quantity * $item->unit_amount->value;
-            $taxTotal += $item->quantity * $item->tax->value;
-            if ($item->quantity != round($item->quantity)) {
-                $hasDecimals = true;
-            }
+            $itemTotal += $basketItem->getPrice()->getBruttoPrice();
+            //$taxTotal += $item->quantity * $item->tax->value;
+            //if ($item->quantity != round($item->quantity)) {
+            //    $hasDecimals = true;
+            //}
         }
 
         if (!$hasDecimals) {
-            $unit->setItems($items);
+        //    $unit->setItems($items);
         }
 
         $deliveryCosts = $basket->getDeliveryCost();
 
         $amountBreakDown = new AmountBreakdown();
         $amountBreakDown->item_total = new Money($currencyName, $itemTotal);
-        $amountBreakDown->tax_total = new Money($currencyName, $taxTotal);
+        //$amountBreakDown->tax_total = new Money($currencyName, $taxTotal);
         $amountBreakDown->shipping = new Money($currencyName, $deliveryCosts->getBruttoPrice());
         $amountBreakDown->discount = new Money($currencyName, $basket->getTotalDiscountSum());
 
@@ -116,7 +116,7 @@ class CreateOrderRequestFactory
             $amountBreakDown->handling = new Money($currencyName, $handling);
         }
 
-        $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice(), $amountBreakDown));
+        $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice() - $deliveryCosts->getBruttoPrice()));
 
         return $unit;
     }

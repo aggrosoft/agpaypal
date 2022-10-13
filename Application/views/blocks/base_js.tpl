@@ -5,7 +5,7 @@
   [{assign var=puiPayment value=$oView->getPayPalPayUponInvoicePaymentMethod()}]
 [{/if}]
 
-[{if $oViewConf->getTopActiveClassName() == 'details' || $oViewConf->getTopActiveClassName() == 'basket' || $oViewConf->getTopActiveClassName() == 'payment' || $oViewConf->getTopActiveClassName() == 'order'}]
+[{if $oViewConf->getTopActiveClassName() == 'details' && $oViewConf->showPayPalButtonInDetails() || $oViewConf->getTopActiveClassName() == 'basket' && $oViewConf->showPayPalButtonInBasket() || $oViewConf->getTopActiveClassName() == 'payment' || $oViewConf->getTopActiveClassName() == 'order'}]
   [{include file="paypal/components_script.tpl" appendPayPalClientToken=$creditCardPayment}]
 [{/if}]
 

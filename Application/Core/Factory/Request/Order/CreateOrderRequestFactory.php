@@ -71,6 +71,7 @@ class CreateOrderRequestFactory
         $unit = new PurchaseUnitRequest();
         $unit->setPayee(new Payee($config->getShopConfVar("sPayPalEmailAddress", null, "module:agpaypal")));
         $unit->setShipping(self::createShipping($user, $basket, $shippingPreference, $countryId));
+
         if ($orderNumber) {
             $unit->setInvoiceId($orderNumber);
         }
@@ -115,11 +116,11 @@ class CreateOrderRequestFactory
         if ($handling > 0) {
             $amountBreakDown->handling = new Money($currencyName, $handling);
         }
-        if ($shippingPreference === ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE) {
-            $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice() - $deliveryCosts->getBruttoPrice()));
-        }else{
+        //if ($countryId !== null || $shippingPreference !== ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE) {
+        //    $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice() - $deliveryCosts->getBruttoPrice()));
+        //}else{
             $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice()));
-        }
+        //}
 
 
         return $unit;
@@ -300,6 +301,7 @@ class CreateOrderRequestFactory
     {
         if (!self::$shippingOptions) {
             $options = [];
+            $initialCountryId = $countryId;
 
             $currencyName = $basket->getBasketCurrency()->name;
 
@@ -333,7 +335,9 @@ class CreateOrderRequestFactory
             foreach ($aAllSets as $deliverySet) {
                 $costs = $basket->getDeliveryCostForShipset($deliverySet->getId());
                 $option = new ShippingDetailOption();
-                $option->setAmount(new Money($currencyName, $costs->getBruttoPrice()));
+                if ($initialCountryId)
+                    $option->setAmount(new Money($currencyName, $costs->getBruttoPrice()));
+
                 $option->setId($deliverySet->getId());
                 $option->setLabel($deliverySet->oxdeliveryset__oxtitle->value);
                 $option->setType('SHIPPING');

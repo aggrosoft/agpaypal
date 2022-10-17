@@ -39,8 +39,8 @@ AggrosoftPayPalButton.prototype.render = function() {
             cl: that.config.controller,
             fnc: 'updatepaypalpurchaseunits',
             ppcountryid: data.shipping_address.country_code,
-            sShipSet: data.selected_shipping_option.id,
-            shippingid: data.selected_shipping_option.id,
+            sShipSet: data.selected_shipping_option ? data.selected_shipping_option.id : undefined,
+            shippingid: data.selected_shipping_option ? data.selected_shipping_option.id : undefined,
             token: data.orderID,
             pptoken: that.returnToken
           }

@@ -78,6 +78,47 @@ class PayPalRestClient
         return $result;
     }
 
+    public function exchangeAuthCode ($authCode, $nonce, $sharedId, $sellerId) {
+        $request = [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/x-www-form-urlencoded',
+                'Authorization' => 'Basic '.base64_encode($sharedId.':')
+            ],
+            'body' => 'grant_type=authorization_code&code=' . $authCode . '&code_verifier=' . $nonce,
+            'http_errors' => false
+        ];
+
+        $response = $this->client->request('POST',$this->getTokenUrl(), $request);
+        $result = json_decode($response->getBody()->getContents());
+        $this->log($request, $result, $response->getStatusCode());
+
+        if ($result->error) {
+            throw new AuthenticationException($result->error_description);
+        }
+
+        $request = [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $result->access_token,
+                'Content-Type' => 'application/json',
+                'PayPal-Request-Id' => \OxidEsales\Eshop\Core\Registry::getUtilsObject()->generateUID(),
+                'PayPal-Partner-Attribution-Id' => 'Oxid_Cart_Aggrosoft_PPCP'
+            ],
+            'http_errors' => false
+        ];
+
+        $response = $this->client->request('GET',$this->getApiUrl().'v1/customer/partners/'.$sellerId.'/merchant-integrations', $request);
+        $result = json_decode($response->getBody()->getContents());
+        $this->log($request, $result, $response->getStatusCode());
+
+        if ($result->error) {
+            throw new AuthenticationException($result->error_description);
+        }
+
+        return $result;
+
+    }
+
     public function invalidateToken()
     {
         $cacheKey = 'pptoken_'.intval($this->sandbox).'_'.\OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();

@@ -21,43 +21,61 @@ class ModuleConfiguration extends ModuleConfiguration_parent
             ?? Registry::getSession()->getVariable('saved_oxid');
 
         if ($moduleId === 'agpaypal') {
-            $config = Registry::getConfig();
-            $initiator = new WebhookInitiator();
-            $webhookId = '';
+            $this->updateWebhook();
+        }
+    }
 
+    public function paypalonboarding()
+    {
+        $authCode = Registry::getRequest()->getRequestEscapedParameter('ppauthcode');
+        $nonce = Registry::getRequest()->getRequestEscapedParameter('ppnonce');
+        $sharedId = Registry::getRequest()->getRequestEscapedParameter('ppsharedid');
+
+        if ($authCode && $nonce) {
             $client = new PayPalRestClient();
-            $client->invalidateToken();
 
             try {
-                if ($config->getConfigParam('sPayPalClientId', null, 'module:agpaypal') && $config->getConfigParam('sPayPalClientSecret', null, 'module:agpaypal')) {
-                    $webhookId = $initiator->initiate();
-                }
+                $credentials = $client->exchangeAuthCode($authCode, $nonce, $sharedId, $this->getPayPalPartnerId());
             } catch (AuthenticationException $e) {
                 \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('ERR_PAYPAL_AUTHENTICATION_FAILED');
-            } catch (RestException $e) {
-                \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($e);
             }
 
-            if (class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')) {
-                $moduleSettingBridge = ContainerFactory::getInstance()
-                    ->getContainer()
-                    ->get(ModuleSettingBridgeInterface::class);
+            if ($credentials) {
+                $config = Registry::getConfig();
+                if (class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')) {
+                    $moduleSettingBridge = ContainerFactory::getInstance()
+                        ->getContainer()
+                        ->get(ModuleSettingBridgeInterface::class);
 
-                $moduleSettingBridge->save('sPayPalWebhookId', $webhookId, 'agpaypal');
-            } else {
-                $config->saveShopConfVar('str', 'sPayPalWebhookId', $webhookId, null, 'module:agpaypal');
+                    $moduleSettingBridge->save('sPayPalClientId', $credentials->client_id, 'agpaypal');
+                    $moduleSettingBridge->save('sPayPalClientSecret', $credentials->client_secret, 'agpaypal');
+                } else {
+                    $config->saveShopConfVar('str', 'sPayPalClientId',  $credentials->client_id, null, 'module:agpaypal');
+                    $config->saveShopConfVar('str', 'sPayPalClientSecret',  $credentials->client_secret, null, 'module:agpaypal');
+                }
             }
+
         }
     }
 
     public function getPayPalPartnerClientId()
     {
-        return 'AaTsKBVHPEo1hBSH0gQlz-5mtQ-bHIYLu1DeDXnSQ4lQF2yEQY4mzvwQuQXuvKR61zUB0jv7FEdhFmd1';
+        if ($this->isPayPalSandbox()){
+            return 'AaTsKBVHPEo1hBSH0gQlz-5mtQ-bHIYLu1DeDXnSQ4lQF2yEQY4mzvwQuQXuvKR61zUB0jv7FEdhFmd1';
+        }else{
+            return 'AZYk93O-O5el3VkmM1T20qvu0KaqiZTJHV_Y34xn6AQObL9B7CE3LS72zlI_HyKamf5FQebuK8L41Big';
+        }
+
     }
 
     public function getPayPalPartnerId()
     {
-        return 'T9AVHNZL5M8QJ';
+        if ($this->isPayPalSandbox()){
+            return 'T9AVHNZL5M8QJ';
+        }else{
+            return 'NZ8NAQYGGFZ84';
+        }
+
     }
 
     public function getPayPalPartnerLogoUrl()
@@ -68,6 +86,41 @@ class ModuleConfiguration extends ModuleConfiguration_parent
     public function getPayPalSellerNonce()
     {
         return hash('sha512', $this->getPayPalRandomSeed());
+    }
+
+    public function isPayPalSandbox()
+    {
+        return Registry::getConfig()->getConfigParam('blPayPalSandboxMode', null, 'module:agpaypal');
+    }
+
+    private function updateWebhook()
+    {
+        $config = Registry::getConfig();
+        $initiator = new WebhookInitiator();
+        $webhookId = '';
+
+        $client = new PayPalRestClient();
+        $client->invalidateToken();
+
+        try {
+            if ($config->getConfigParam('sPayPalClientId', null, 'module:agpaypal') && $config->getConfigParam('sPayPalClientSecret', null, 'module:agpaypal')) {
+                $webhookId = $initiator->initiate();
+            }
+        } catch (AuthenticationException $e) {
+            \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('ERR_PAYPAL_AUTHENTICATION_FAILED');
+        } catch (RestException $e) {
+            \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($e);
+        }
+
+        if (class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')) {
+            $moduleSettingBridge = ContainerFactory::getInstance()
+                ->getContainer()
+                ->get(ModuleSettingBridgeInterface::class);
+
+            $moduleSettingBridge->save('sPayPalWebhookId', $webhookId, 'agpaypal');
+        } else {
+            $config->saveShopConfVar('str', 'sPayPalWebhookId', $webhookId, null, 'module:agpaypal');
+        }
     }
 
     private function getPayPalRandomSeed($bits = 256)

@@ -115,7 +115,12 @@ class CreateOrderRequestFactory
         if ($handling > 0) {
             $amountBreakDown->handling = new Money($currencyName, $handling);
         }
-        $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice() - $deliveryCosts->getBruttoPrice()));
+        if ($shippingPreference === ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE) {
+            $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice() - $deliveryCosts->getBruttoPrice()));
+        }else{
+            $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice()));
+        }
+
 
         return $unit;
     }

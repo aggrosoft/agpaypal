@@ -86,8 +86,14 @@ class CreateOrderRequestFactory
             $item = new Item();
             $item->category = $article->oxarticles__oxnonmaterial->value ? 'DIGITAL_GOODS' : 'PHYSICAL_GOODS';
             $item->name = $basketItem->getTitle();
-            // $item->quantity = $basketItem->getAmount();
-            $item->unit_amount = new Money($currencyName, $basketItem->getPrice()->getBruttoPrice());
+            if ($basketItem->getAmount() != round($basketItem->getAmount())) {
+                $item->quantity = 1;
+                $item->unit_amount = new Money($currencyName, $basketItem->getPrice()->getBruttoPrice());
+            }else{
+                $item->quantity = $basketItem->getAmount();
+                $item->unit_amount = new Money($currencyName, $basketItem->getUnitPrice()->getBruttoPrice());
+            }
+
             //$item->tax = new Money($currencyName, $basketItem->getUnitPrice()->getVatValue());
             //$item->tax_rate = $basketItem->getUnitPrice()->getVat();
             $items[] = $item;
@@ -98,9 +104,7 @@ class CreateOrderRequestFactory
             //}
         }
 
-        if (!$hasDecimals) {
-            //    $unit->setItems($items);
-        }
+        $unit->setItems($items);
 
         $deliveryCosts = $basket->getDeliveryCost();
 
@@ -119,7 +123,7 @@ class CreateOrderRequestFactory
         //if ($countryId !== null || $shippingPreference !== ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE) {
         //    $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice() - $deliveryCosts->getBruttoPrice()));
         //}else{
-            $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice()));
+            $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice(), $amountBreakDown));
         //}
 
 

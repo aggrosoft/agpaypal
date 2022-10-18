@@ -302,6 +302,7 @@ class CreateOrderRequestFactory
         if (!self::$shippingOptions) {
             $options = [];
             $initialCountryId = $countryId;
+            $oCurrency = Registry::getConfig()->getActShopCurrencyObject();
 
             $currencyName = $basket->getBasketCurrency()->name;
 
@@ -335,11 +336,11 @@ class CreateOrderRequestFactory
             foreach ($aAllSets as $deliverySet) {
                 $costs = $basket->getDeliveryCostForShipset($deliverySet->getId());
                 $option = new ShippingDetailOption();
-                if ($initialCountryId)
-                    $option->setAmount(new Money($currencyName, $costs->getBruttoPrice()));
+                //if ($initialCountryId)
+                //    $option->setAmount(new Money($currencyName, $costs->getBruttoPrice()));
 
                 $option->setId($deliverySet->getId());
-                $option->setLabel($deliverySet->oxdeliveryset__oxtitle->value);
+                $option->setLabel($deliverySet->oxdeliveryset__oxtitle->value . ' - ' . Registry::getLang()->formatCurrency($costs->getBruttoPrice()) . ' ' . $oCurrency->sign);
                 $option->setType('SHIPPING');
                 $option->setSelected($deliverySet->getId() === $sActShipSet);
                 $options[] = $option;

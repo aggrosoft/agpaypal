@@ -88,17 +88,17 @@ class CreateOrderRequestFactory
             $item->name = $basketItem->getTitle();
             if ($basketItem->getAmount() != round($basketItem->getAmount())) {
                 $item->quantity = 1;
-                $item->unit_amount = new Money($currencyName, $basketItem->getPrice()->getBruttoPrice());
+                $item->unit_amount = new Money($currencyName, $basketItem->getPrice()->getNettoPrice());
             }else{
                 $item->quantity = $basketItem->getAmount();
-                $item->unit_amount = new Money($currencyName, $basketItem->getUnitPrice()->getBruttoPrice());
+                $item->unit_amount = new Money($currencyName, $basketItem->getUnitPrice()->getNettoPrice());
             }
 
-            //$item->tax = new Money($currencyName, $basketItem->getUnitPrice()->getVatValue());
-            //$item->tax_rate = $basketItem->getUnitPrice()->getVat();
+            $item->tax = new Money($currencyName, $basketItem->getUnitPrice()->getVatValue());
+            $item->tax_rate = $basketItem->getUnitPrice()->getVat();
             $items[] = $item;
-            $itemTotal += $basketItem->getPrice()->getBruttoPrice();
-            //$taxTotal += $item->quantity * $item->tax->value;
+            $itemTotal += round($basketItem->getUnitPrice()->getNettoPrice(),2) * $item->quantity;
+            $taxTotal += round($basketItem->getUnitPrice()->getVatValue(), 2) * $item->quantity;
             //if ($item->quantity != round($item->quantity)) {
             //    $hasDecimals = true;
             //}
@@ -110,7 +110,7 @@ class CreateOrderRequestFactory
 
         $amountBreakDown = new AmountBreakdown();
         $amountBreakDown->item_total = new Money($currencyName, $itemTotal);
-        //$amountBreakDown->tax_total = new Money($currencyName, $taxTotal);
+        $amountBreakDown->tax_total = new Money($currencyName, $taxTotal);
         $amountBreakDown->shipping = new Money($currencyName, $deliveryCosts->getBruttoPrice());
         $amountBreakDown->discount = new Money($currencyName, $basket->getTotalDiscountSum());
 

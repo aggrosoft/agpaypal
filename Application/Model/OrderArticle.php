@@ -35,6 +35,11 @@ class OrderArticle extends OrderArticle_parent
         }
     }
 
+    public function getIconUrl($iIndex = 0)
+    {
+        return $this->getArticle()->getIconUrl($iIndex);
+    }
+
     public function getLink()
     {
         return $this->getArticle()->getLink();

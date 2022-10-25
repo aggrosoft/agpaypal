@@ -48,7 +48,7 @@ class CreateOrderRequestFactory
         if ($user) {
             $request->setPayer(self::createPayer($user));
         }
-        $request->addPurchaseUnit(self::createPurchaseUnitRequest($user, $basket, $shippingPreference, null, $orderNumber));
+        $request->addPurchaseUnit(self::createPurchaseUnitRequest($user, $basket, $shippingPreference, null, $orderNumber, self::isPayUponInvoice($payment)));
         $request->setApplicationContext(self::createApplicationContext($returnUrl, $shippingPreference, $userAction, $payment->oxpayments__agpaypallandingpage->value));
         $request->setPaymentSource(self::createPaymentSource($user, $payment));
         if (self::isPayUponInvoice($payment)) {
@@ -58,7 +58,7 @@ class CreateOrderRequestFactory
         return $request;
     }
 
-    public static function createPurchaseUnitRequest($user, $basket, $shippingPreference, $countryId = null, $orderNumber = null)
+    public static function createPurchaseUnitRequest($user, $basket, $shippingPreference, $countryId = null, $orderNumber = null, $separateTax = false)
     {
         $config = Registry::getConfig();
         $currencyName = $basket->getBasketCurrency()->name;
@@ -88,16 +88,19 @@ class CreateOrderRequestFactory
             $item->name = $basketItem->getTitle();
             if ($basketItem->getAmount() != round($basketItem->getAmount())) {
                 $item->quantity = 1;
-                $item->unit_amount = new Money($currencyName, $basketItem->getPrice()->getNettoPrice());
+                $item->unit_amount = new Money($currencyName, $separateTax ? $basketItem->getPrice()->getNettoPrice() : $basketItem->getPrice()->getBruttoPrice());
             }else{
                 $item->quantity = $basketItem->getAmount();
-                $item->unit_amount = new Money($currencyName, $basketItem->getUnitPrice()->getNettoPrice());
+                $item->unit_amount = new Money($currencyName, $separateTax ? $basketItem->getUnitPrice()->getNettoPrice() : $basketItem->getUnitPrice()->getBruttoPrice());
             }
 
-            $item->tax = new Money($currencyName, $basketItem->getUnitPrice()->getVatValue());
-            $item->tax_rate = $basketItem->getUnitPrice()->getVat();
+            if ($separateTax) {
+                $item->tax = new Money($currencyName, $basketItem->getUnitPrice()->getVatValue());
+                $item->tax_rate = $basketItem->getUnitPrice()->getVat();
+            }
+
             $items[] = $item;
-            $itemTotal += round($basketItem->getUnitPrice()->getNettoPrice(),2) * $item->quantity;
+            $itemTotal += round($separateTax ? $basketItem->getUnitPrice()->getNettoPrice() : $basketItem->getUnitPrice()->getBruttoPrice(),2) * $item->quantity;
             $taxTotal += round($basketItem->getUnitPrice()->getVatValue(), 2) * $item->quantity;
             //if ($item->quantity != round($item->quantity)) {
             //    $hasDecimals = true;
@@ -110,7 +113,10 @@ class CreateOrderRequestFactory
 
         $amountBreakDown = new AmountBreakdown();
         $amountBreakDown->item_total = new Money($currencyName, $itemTotal);
-        $amountBreakDown->tax_total = new Money($currencyName, $taxTotal);
+        if ($separateTax) {
+            $amountBreakDown->tax_total = new Money($currencyName, $taxTotal);
+        }
+
         $amountBreakDown->shipping = new Money($currencyName, $deliveryCosts->getBruttoPrice());
         $amountBreakDown->discount = new Money($currencyName, $basket->getTotalDiscountSum());
 

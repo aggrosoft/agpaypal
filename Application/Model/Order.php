@@ -16,6 +16,7 @@ use OxidEsales\Eshop\Core\Registry;
 class Order extends Order_parent
 {
     protected $_blValidateDeliveryAddressMD5 = true;
+    protected $_blSkipOrderMails = false;
 
     public function cancelOrder()
     {
@@ -40,7 +41,7 @@ class Order extends Order_parent
         $oPayment = oxNew(\OxidEsales\Eshop\Application\Model\Payment::class);
         $oPayment->load($oUserPayment->oxuserpayments__oxpaymentsid->value);
 
-        if ($oPayment && $oPayment->oxpayments__agpaypalpaymentmethod->value === PaymentSource::PAY_UPON_INVOICE) {
+        if ($this->_blSkipOrderMails) {
             // Mail will be sent in capture webhook as we need bank data and capturing state
             $this->_oUser = $oUser;
             $this->_oBasket = $oBasket;
@@ -107,13 +108,15 @@ class Order extends Order_parent
         $payment = oxNew(\OxidEsales\Eshop\Application\Model\Payment::class);
         $payment->load($oBasket->getPaymentId());
 
-        if ($payment->oxpayments__agpaypalpaymentmethod->value) {
+        if ($payment && $payment->oxpayments__agpaypalpaymentmethod->value) {
+            $this->_blSkipOrderMails = true;
             $this->setValidateDeliveryAddressMD5(false);
+            \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->startTransaction();
         }
 
         $iRet = parent::finalizeOrder($oBasket, $oUser, $blRecalculatingOrder);
 
-        if (!$blRecalculatingOrder && ($iRet === self::ORDER_STATE_OK || $iRet === self::ORDER_STATE_MAILINGERROR)) {
+        if (!$blRecalculatingOrder && $payment && $payment->oxpayments__agpaypalpaymentmethod->value && ($iRet === self::ORDER_STATE_OK || $iRet === self::ORDER_STATE_MAILINGERROR)) {
             try {
                 $iPayPalReturn = $this->finalizePayPalOrder($oBasket, $oUser);
             } catch (\Exception $ex) {
@@ -122,7 +125,13 @@ class Order extends Order_parent
 
             if ($iPayPalReturn === self::ORDER_STATE_PAYMENTERROR) {
                 $iRet = $iPayPalReturn;
-                $this->delete();
+                \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->rollbackTransaction();
+            }else{
+                \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->commitTransaction();
+                if ($payment->oxpayments__agpaypalpaymentmethod->value !== PaymentSource::PAY_UPON_INVOICE) {
+                    $this->_blSkipOrderMails = false;
+                    $iRet = $this->_sendOrderByEmail($oUser, $oBasket, $this->getPaymentType());
+                }
             }
         }
 
@@ -195,7 +204,7 @@ class Order extends Order_parent
 
                     $capture = $response->purchase_units[0]->payments->captures[0];
 
-                    if (!$capture || $capture->status === 'DENIED') {
+                    if (!$capture || $capture->status === 'DENIED' || true) {
                         Registry::getSession()->setVariable('ppexpresscomplete', 0);
                         Registry::getSession()->setVariable('pptoken', '');
                         \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('ERR_PAYPAL_CAPTURE_DENIED');
@@ -245,4 +254,6 @@ class Order extends Order_parent
     {
         $this->_blValidateDeliveryAddressMD5 = $blValidateDeliveryAddressMD5;
     }
+
+
 }

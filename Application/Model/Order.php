@@ -204,7 +204,7 @@ class Order extends Order_parent
 
                     $capture = $response->purchase_units[0]->payments->captures[0];
 
-                    if (!$capture || $capture->status === 'DENIED' || true) {
+                    if (!$capture || $capture->status === 'DENIED') {
                         Registry::getSession()->setVariable('ppexpresscomplete', 0);
                         Registry::getSession()->setVariable('pptoken', '');
                         \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('ERR_PAYPAL_CAPTURE_DENIED');

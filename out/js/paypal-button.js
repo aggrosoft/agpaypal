@@ -3,6 +3,7 @@ function AggrosoftPayPalButton(config) {
   this.returnToken = undefined;
   this.shippingId = undefined;
   this.orderId = undefined;
+  this.lastShippingPayload = undefined;
 }
 
 AggrosoftPayPalButton.prototype.setConfigValue = function(key, value) {
@@ -32,26 +33,34 @@ AggrosoftPayPalButton.prototype.render = function() {
   if (fundingSource === undefined || fundingSource === paypal.FUNDING.PAYPAL) {
     onShippingChange = function(data, actions) {
       return new Promise(function(resolve, reject) {
-        $.ajax({
-          url: that.config.baseUrl,
-          method: 'POST',
-          data: {
-            cl: that.config.controller,
-            fnc: 'updatepaypalpurchaseunits',
-            ppcountryid: data.shipping_address.country_code,
-            sShipSet: data.selected_shipping_option ? data.selected_shipping_option.id : undefined,
-            shippingid: data.selected_shipping_option ? data.selected_shipping_option.id : undefined,
-            token: data.orderID,
-            pptoken: that.returnToken
-          }
-        }).then(function(result){
-          if (result) {
-            that.shippingId = data.selected_shipping_option.id;
-            return resolve();
-          }else{
-            return reject();
-          }
-        })
+        const shippingPayload = {
+          cl: that.config.controller,
+          fnc: 'updatepaypalpurchaseunits',
+          ppcountryid: data.shipping_address.country_code,
+          sShipSet: data.selected_shipping_option ? data.selected_shipping_option.id : undefined,
+          shippingid: data.selected_shipping_option ? data.selected_shipping_option.id : undefined,
+          token: data.orderID,
+          pptoken: that.returnToken
+        }
+        if (!that.lastShippingPayload || JSON.stringify(that.lastShippingPayload) !== JSON.stringify(shippingPayload)) {
+          $.ajax({
+            url: that.config.baseUrl,
+            method: 'POST',
+            data: shippingPayload
+          }).then(function(result){
+            if (result) {
+              that.shippingId = data.selected_shipping_option.id;
+              that.lastShippingPayload = shippingPayload;
+              return resolve();
+            }else{
+              that.shippingId = undefined;
+              that.lastShippingPayload = undefined;
+              return reject();
+            }
+          })
+        }else{
+          return resolve();
+        }
       })
     }
   }

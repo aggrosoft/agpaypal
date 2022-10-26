@@ -29,6 +29,12 @@ class ViewConfig extends ViewConfig_parent
         return PayPalHelper::getPayPalPaymentId();
     }
 
+    public function getPayPalLocale()
+    {
+        $abbr = $this->getActLanguageAbbr();
+        return PayPalCountryMap::mapIsoCodeToLocale(strtoupper($abbr));
+    }
+
     public function showPayPalButtonInDetails()
     {
         return PayPalHelper::showPayPalButtonInDetails();

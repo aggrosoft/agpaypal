@@ -30,6 +30,7 @@ $aModule = array(
         \OxidEsales\Eshop\Application\Model\OrderArticle::class => \Aggrosoft\PayPal\Application\Model\OrderArticle::class,
         \OxidEsales\Eshop\Application\Model\Basket::class => \Aggrosoft\PayPal\Application\Model\Basket::class,
         \OxidEsales\Eshop\Application\Model\Payment::class => \Aggrosoft\PayPal\Application\Model\Payment::class,
+        \OxidEsales\Eshop\Application\Model\PaymentList::class => \Aggrosoft\PayPal\Application\Model\PaymentList::class,
         \OxidEsales\Eshop\Application\Model\User::class => \Aggrosoft\PayPal\Application\Model\User::class,
         \OxidEsales\Eshop\Application\Model\Address::class => \Aggrosoft\PayPal\Application\Model\Address::class,
         \OxidEsales\Eshop\Application\Model\DeliveryList::class => \Aggrosoft\PayPal\Application\Model\DeliveryList::class,

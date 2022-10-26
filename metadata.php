@@ -33,6 +33,7 @@ $aModule = array(
         \OxidEsales\Eshop\Application\Model\User::class => \Aggrosoft\PayPal\Application\Model\User::class,
         \OxidEsales\Eshop\Application\Model\Address::class => \Aggrosoft\PayPal\Application\Model\Address::class,
         \OxidEsales\Eshop\Application\Model\DeliveryList::class => \Aggrosoft\PayPal\Application\Model\DeliveryList::class,
+        \OxidEsales\Eshop\Application\Model\VatSelector::class => \Aggrosoft\PayPal\Application\Model\VatSelector::class,
         \OxidEsales\Eshop\Application\Component\BasketComponent::class => \Aggrosoft\PayPal\Application\Component\BasketComponent::class,
         \InvoicepdfArticleSummary::class => \Aggrosoft\PayPal\Application\Model\InvoicepdfArticleSummary::class,
     ],
@@ -60,6 +61,11 @@ $aModule = array(
             'template' => 'page/checkout/payment.tpl',
             'block' => 'select_payment',
             'file' => '/Application/views/blocks/select_payment.tpl',
+        ],
+        [
+            'template' => 'page/checkout/payment.tpl',
+            'block' => 'checkout_payment_errors',
+            'file' => '/Application/views/blocks/checkout_payment_errors.tpl',
         ],
         [
             'template' => 'layout/base.tpl',

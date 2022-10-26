@@ -157,4 +157,15 @@ class PaymentController extends PaymentController_parent
         }
         return $this->payment;
     }
+
+    protected function _unsetPaymentErrors()
+    {
+        parent::_unsetPaymentErrors();
+
+        $sPayErrorText = Registry::getSession()->getVariable('pperrortext');
+        if ($sPayErrorText) {
+            Registry::getSession()->deleteVariable('pperrortext');
+            $this->_sPaymentErrorText = $sPayErrorText;
+        }
+    }
 }

@@ -64,7 +64,7 @@ class CreateOrderRequestFactory
         $currencyName = $basket->getBasketCurrency()->name;
 
         $shippingOption = self::getSelectedShippingOption($user, $basket, $countryId);
-
+        \OxidEsales\Eshop\Core\Registry::get(\OxidEsales\Eshop\Application\Model\VatSelector::class)->setForceVatCountry($countryId);
         $basket->setShipping($shippingOption->id);
         $basket->calculateBasket(true);
 

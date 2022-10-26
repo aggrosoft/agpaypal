@@ -15,7 +15,7 @@
             tagline: false
         },
         onCancel: function (order) {
-            console.log(order);
+            window.location.href = '[{$oViewConf->getSelfActionLink()|html_entity_decode}]&cl=payment&payerror=69&payerrortext=[{oxmultilang ident="PAYPAL_PAYMENT_CANCELED"}]';
         },
     })
 

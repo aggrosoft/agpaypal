@@ -28,4 +28,6 @@ $aLang = array(
     'PAYPAL_ERROR_CANNOT_BE_ZERO_OR_NEGATIVE'         => "Die Kommunikation mit PayPal ist fehlgeschlagen, bitte verwenden Sie eine andere Zahlungsart oder probieren Sie es später erneut.",
     'PAYPAL_ERROR_USER_NOT_FOUND'         => "Das Kundenkonto für diesen Warenkorb konnte nicht ermittelt werden, bitte verwenden Sie eine andere Zahlungsart oder probieren Sie es später erneut.",
     'PAYPAL_ERROR_NOT_ALL_ARTICLES_BUYABLE'         => "Der Bestellprozess konnte nicht abgeschlossen werden, leider sind nicht alle Artikel in Ihrem Warenkorb verfügbar. Bitte prüfen Sie Ihren Warenkorb und versuchen Sie es erneut.",
+    'PAYPAL_ERROR_DEVICE_DATA_NOT_AVAILABLE'         => "Aus technischen Gründen können wir im Moment leider keinen Rechnungskauf anbieten, bitte wählen Sie eine andere Zahlungsart. (PUI_DEVICE_DATA_NOT_AVAILABLE)",
+    'PAYPAL_PAYMENT_CANCELED' => "Der Zahlungsvorgang wurde nicht abgeschlossen, wählen Sie bitte eine andere Zahlungsart oder versuchen Sie es erneut.",
 );

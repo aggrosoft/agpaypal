@@ -18,6 +18,8 @@ class Order extends Order_parent
     protected $_blValidateDeliveryAddressMD5 = true;
     protected $_blSkipOrderMails = false;
 
+    const ORDER_STATE_PAYPAL_ERROR = 69;
+
     public function cancelOrder()
     {
         parent::cancelOrder();
@@ -120,10 +122,10 @@ class Order extends Order_parent
             try {
                 $iPayPalReturn = $this->finalizePayPalOrder($oBasket, $oUser);
             } catch (\Exception $ex) {
-                $iPayPalReturn = self::ORDER_STATE_PAYMENTERROR;
+                $iPayPalReturn = self::ORDER_STATE_PAYPAL_ERROR;
             }
 
-            if ($iPayPalReturn === self::ORDER_STATE_PAYMENTERROR) {
+            if ($iPayPalReturn === self::ORDER_STATE_PAYPAL_ERROR) {
                 $iRet = $iPayPalReturn;
                 \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->rollbackTransaction();
             }else{
@@ -162,13 +164,14 @@ class Order extends Order_parent
                 } catch (RestException $re) {
                     Registry::getSession()->setVariable('ppexpresscomplete', 0);
                     Registry::getSession()->setVariable('pptoken', '');
-                    \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($re);
-                    return self::ORDER_STATE_PAYMENTERROR;
+                    Registry::getSession()->setVariable('pperrortext', Registry::getLang()->translateString($re->getMessage()));
+                    //\OxidEsales\Eshop\Core\Registry::getSession()->addErrorToDisplay($re);
+                    return self::ORDER_STATE_PAYPAL_ERROR;
                 } catch (\Exception $e) {
                     Registry::getSession()->setVariable('ppexpresscomplete', 0);
                     Registry::getSession()->setVariable('pptoken', '');
                     \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('ERR_PAYPAL_ORDER_CREATE_FAILED');
-                    return self::ORDER_STATE_PAYMENTERROR;
+                    return self::ORDER_STATE_PAYPAL_ERROR;
                 }
             }
 
@@ -187,7 +190,7 @@ class Order extends Order_parent
                         Registry::getSession()->setVariable('ppexpresscomplete', 0);
                         Registry::getSession()->setVariable('pptoken', '');
                         \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('ERR_PAYPAL_ORDER_UPDATE_FAILED');
-                        return self::ORDER_STATE_PAYMENTERROR;
+                        return self::ORDER_STATE_PAYPAL_ERROR;
                     }
 
                     // Capture order
@@ -199,7 +202,7 @@ class Order extends Order_parent
                         Registry::getSession()->setVariable('ppexpresscomplete', 0);
                         Registry::getSession()->setVariable('pptoken', '');
                         \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('ERR_PAYPAL_CAPTURE_FAILED');
-                        return self::ORDER_STATE_PAYMENTERROR;
+                        return self::ORDER_STATE_PAYPAL_ERROR;
                     }
 
                     $capture = $response->purchase_units[0]->payments->captures[0];
@@ -208,7 +211,7 @@ class Order extends Order_parent
                         Registry::getSession()->setVariable('ppexpresscomplete', 0);
                         Registry::getSession()->setVariable('pptoken', '');
                         \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('ERR_PAYPAL_CAPTURE_DENIED');
-                        return self::ORDER_STATE_PAYMENTERROR;
+                        return self::ORDER_STATE_PAYPAL_ERROR;
                     } elseif ($capture->status === 'COMPLETED') {
                         $this->oxorder__oxpaid = new \OxidEsales\Eshop\Core\Field(date("Y-m-d H:i:s"));
                     }
@@ -223,7 +226,7 @@ class Order extends Order_parent
                 Registry::getSession()->setVariable('ppexpresscomplete', 0);
                 Registry::getSession()->setVariable('pptoken', '');
                 \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('ERR_PAYPAL_TOKEN_MISSING');
-                return self::ORDER_STATE_PAYMENTERROR;
+                return self::ORDER_STATE_PAYPAL_ERROR;
             }
         }
     }

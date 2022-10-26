@@ -44,13 +44,8 @@ class UpdateOrderPurchaseUnitsRequest extends RequestObject implements IPayPalRe
         return json_encode([
             [
                 'op' => 'replace',
-                'path' => "/purchase_units/@reference_id=='default'/amount",
-                'value' => $this->purchaseUnits->amount
-            ],
-            [
-                'op' => 'replace',
-                'path' => "/purchase_units/@reference_id=='default'/shipping/options",
-                'value' => $this->purchaseUnits->shipping->options
+                'path' => "/purchase_units/@reference_id=='default'",
+                'value' => $this->purchaseUnits
             ]
         ]);
     }

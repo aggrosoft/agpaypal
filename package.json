@@ -1,6 +1,6 @@
 {
   "name": "oxid-agpaypal",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "private": true,
   "scripts": {
     "release": "release-it",

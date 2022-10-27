@@ -186,4 +186,8 @@ class PurchaseUnitRequest extends RequestObject
     {
         $this->shipping = $shipping;
     }
+
+    public function unsetShipping() {
+        $this->shipping = null;
+    }
 }

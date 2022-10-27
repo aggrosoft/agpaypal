@@ -43,6 +43,9 @@ class OrderController extends OrderController_parent
         $purchaseUnits = CreateOrderRequestFactory::createPurchaseUnitRequest($user, $basket, ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE, $country->getIdByCode(Registry::getRequest()->getRequestEscapedParameter('ppcountryid')));
 
         if (count($purchaseUnits->shipping->options)) {
+            if (count($purchaseUnits->shipping->options) === 1) {
+                $purchaseUnits->unsetShipping();
+            }
             PayPalBasketHandler::updateUserBasketShipping($userBasket, Registry::getRequest()->getRequestEscapedParameter('shippingid'));
             $client = new PayPalRestClient();
             $request = new UpdateOrderPurchaseUnitsRequest(Registry::getRequest()->getRequestEscapedParameter('token'), $purchaseUnits);

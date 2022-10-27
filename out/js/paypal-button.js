@@ -49,7 +49,7 @@ AggrosoftPayPalButton.prototype.render = function() {
             data: shippingPayload
           }).then(function(result){
             if (result) {
-              that.shippingId = data.selected_shipping_option.id;
+              that.shippingId = data.selected_shipping_option ? data.selected_shipping_option.id : undefined;
               that.lastShippingPayload = shippingPayload;
               return resolve();
             }else{

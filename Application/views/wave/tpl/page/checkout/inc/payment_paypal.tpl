@@ -44,12 +44,11 @@
                 [{include file="page/checkout/inc/payment_description_paypal_pui.tpl"}]
             [{elseif $paymentmethod->oxpayments__agpaypalpaymentmethod->value == 'CARD'}]
                 [{include file="page/checkout/inc/payment_description_paypal_card.tpl"}]
-            [{else}]
-                [{if $paymentmethod->oxpayments__oxlongdesc->value|strip_tags|trim}]
-                    <div class="desc">
-                        [{$paymentmethod->oxpayments__oxlongdesc->getRawValue()}]
-                    </div>
-                [{/if}]
+            [{/if}]
+            [{if $paymentmethod->oxpayments__oxlongdesc->value|strip_tags|trim}]
+            <div class="desc">
+                [{$paymentmethod->oxpayments__oxlongdesc->getRawValue()}]
+            </div>
             [{/if}]
         [{/block}]
     </dd>

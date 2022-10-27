@@ -1,5 +1,8 @@
 [{if $paymentmethod->oxpayments__agpaypalpaymentmethod->value}]
     [{include file="page/checkout/inc/select_payment_paypal.tpl"}]
+    [{if $oViewConf->loadPayPalPaymentCSS() }]
+    [{oxstyle include=$oViewConf->getModuleUrl('agpaypal', 'out/css/payment.css')}]
+    [{/if}]
 [{else}]
     [{$smarty.block.parent}]
 [{/if}]

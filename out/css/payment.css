@@ -1,0 +1,44 @@
+
+#payment > .card > .card-body > .well {
+    border-bottom: 1px solid #dfdfdf;
+}
+#payment > .card > .card-body > .well:last-child {
+    border-bottom: none;
+}
+#payment > .card > .card-body > .well > dl {
+    margin-bottom: 0;
+}
+
+#payment > .card > .card-body > .well > dl > dt > label {
+    padding: 1.5em;
+    width: 100%;
+    cursor: pointer;
+    margin-bottom: 0;
+    position: relative;
+    display: flex;
+}
+#payment > .card > .card-body > .well > dl > dt > label > img {
+    height: 40px;
+    margin-right: 1.5em;
+    object-fit: scale-down;
+    width: 100px;
+}
+#payment > .card > .card-body > .well > dl > dt > input:checked + label, #payment > .card > .card-body > .well:hover > dl > dt > label {
+    background: #f9f9f9;
+}
+
+#payment > .card > .card-body > .well > dl > dt > input:checked + label:after {
+    content: "\2713";
+    position: absolute;
+    right: 1.5em;
+    top: 1rem;
+    font-size: 2rem;
+}
+#payment > .card > .card-body > .well > dl > dd {
+    margin: 0;
+    padding: 1em;
+    background: #f9f9f9;
+}
+#payment input[name="paymentid"] {
+    display: none;
+}

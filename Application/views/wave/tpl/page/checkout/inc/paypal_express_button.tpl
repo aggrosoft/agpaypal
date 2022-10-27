@@ -9,11 +9,7 @@
         redirectUrl: '[{$oViewConf->getSelfActionLink()|html_entity_decode}]&cl=order&fnc=ppreturn',
         container: '#paypal-button-container-[{$sButtonPosition}]',
         controller: 'basket',
-        style: {
-            layout: 'vertical',
-            shape: 'rect',
-            color: 'gold'
-        }
+        style: [{$oViewConf->getPayPalButtonStyleBasket()}],
     })
 
     [{$sButtonPosition}]PayPalButton.render();

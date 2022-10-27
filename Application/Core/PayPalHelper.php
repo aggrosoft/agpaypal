@@ -49,6 +49,36 @@ class PayPalHelper
         return Registry::getConfig()->getConfigParam('blPayPalMessagesBasket', null, 'module:agpaypal');
     }
 
+    public static function loadPayPalPaymentCSS()
+    {
+        return Registry::getConfig()->getConfigParam('blLoadPaymentCSS', null, 'module:agpaypal');
+    }
+
+    public static function getPayPalButtonStyleDetails()
+    {
+        return Registry::getConfig()->getConfigParam('aPayPalButtonStyleDetails', null, 'module:agpaypal');
+    }
+
+    public static function getPayPalButtonStyleBasket()
+    {
+        return Registry::getConfig()->getConfigParam('aPayPalButtonStyleBasket', null, 'module:agpaypal');
+    }
+
+    public static function getPayPalButtonStyleOrder()
+    {
+        return Registry::getConfig()->getConfigParam('aPayPalButtonStyleOrder', null, 'module:agpaypal');
+    }
+
+    public static function getPayPalDisabledFundings()
+    {
+        return Registry::getConfig()->getConfigParam('sPayPalDisabledFundings', null, 'module:agpaypal');
+    }
+
+    public static function getPayPalEnabledFundings()
+    {
+        return Registry::getConfig()->getConfigParam('sPayPalEnabledFundings', null, 'module:agpaypal');
+    }
+
     public static function getPayPalPaymentId()
     {
         if (class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')) {

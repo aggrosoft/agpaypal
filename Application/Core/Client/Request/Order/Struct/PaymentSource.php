@@ -90,4 +90,23 @@ class PaymentSource extends RequestObject
     {
         return $paymentId && $paymentId !== PaymentSource::PAYPAL && $paymentId !== PaymentSource::CARD && $paymentId !== PaymentSource::PAY_LATER && $paymentId !== PaymentSource::SEPA && $paymentId !== PaymentSource::PAY_UPON_INVOICE;
     }
+
+    public static function isValidFunding($paymentId) {
+        return in_array($paymentId, [
+            'card',
+            'credit',
+            'paylater',
+            'bancontact',
+            'blik',
+            'eps',
+            'giropay',
+            'ideal',
+            'mecadopago',
+            'mybank',
+            'p24',
+            'sepa',
+            'sofort',
+            'venmo'
+        ]);
+    }
 }

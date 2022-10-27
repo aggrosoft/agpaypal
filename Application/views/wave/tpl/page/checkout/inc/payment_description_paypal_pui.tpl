@@ -9,7 +9,7 @@
     [{/if}]
     <hr/>
     <div class="form-row">
-        <div class="col">
+        <div class="col-12 col-md">
             <label>Telefonnummer</label>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -22,7 +22,7 @@
                 <input type="tel" class="form-control" id="pp_phone_number" name="pp_phone_number" required value="[{$pp_phone_number}]" pattern="[0-9]{1,14}?">
             </div>
         </div>
-        <div class="col">
+        <div class="col-12 col-md">
             <label>Geburtsdatum</label>
             <input type="date" class="form-control" id="pp_birth_date" name="pp_birth_date" required value="[{$pp_birth_date}]">
         </div>

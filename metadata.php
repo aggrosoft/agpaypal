@@ -138,5 +138,11 @@ $aModule = array(
         ['group' => 'paypal_settings', 'name' => 'blPayPalMessagesDetails', 'type' => 'bool', 'value' => false],
         ['group' => 'paypal_settings', 'name' => 'blPayPalMessagesBasket', 'type' => 'bool', 'value' => false],
         ['group' => 'paypal_settings', 'name' => 'blPayPalRedirectOnCheckout', 'type' => 'bool', 'value' => false],
+        ['group' => 'paypal_styling', 'name' => 'blLoadPaymentCSS', 'type' => 'bool', 'value' => false],
+        ['group' => 'paypal_styling', 'name' => 'sPayPalEnabledFundings', 'type' => 'arr', 'value' => ['paylater','card','giropay','eps','ideal']],
+        ['group' => 'paypal_styling', 'name' => 'sPayPalDisabledFundings', 'type' => 'arr', 'value' => ['sepa']],
+        ['group' => 'paypal_styling', 'name' => 'aPayPalButtonStyleDetails', 'type' => 'aarr', 'value' => ['layout' => 'horizontal', 'tagline' => 'true', 'color' => 'gold']],
+        ['group' => 'paypal_styling', 'name' => 'aPayPalButtonStyleBasket', 'type' => 'aarr', 'value' => ['layout' => 'vertical', 'tagline' => 'false', 'color' => 'gold']],
+        ['group' => 'paypal_styling', 'name' => 'aPayPalButtonStyleOrder', 'type' => 'aarr', 'value' => ['label' => 'pay', 'tagline' => 'false', 'height' => 55]],
     ],
 );

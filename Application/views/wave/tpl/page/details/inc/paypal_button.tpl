@@ -10,9 +10,7 @@
             redirectUrl: '[{$oViewConf->getSelfActionLink()|html_entity_decode}]&cl=order&fnc=ppreturn',
             container: '#paypal-button-container-details',
             controller: 'details',
-            style: {
-                layout: 'horizontal'
-            },
+            style: [{$oViewConf->getPayPalButtonStyleDetails()}],
             beforeCheckout: function(){
                 const formData = new FormData($('.js-oxProductForm').get(0));
                 let amount = 1;

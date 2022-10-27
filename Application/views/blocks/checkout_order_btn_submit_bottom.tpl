@@ -10,10 +10,7 @@
         redirectUrl: '[{$oViewConf->getSelfActionLink()|html_entity_decode}]&cl=order&fnc=ppreturn&execute=1&sDeliveryAddressMD5=[{$oView->getDeliveryAddressMD5()}]',
         container: '#paypal-button-container',
         controller: 'order',
-        style: {
-            label: 'pay',
-            tagline: false
-        },
+        style: [{$oViewConf->getPayPalButtonStyleOrder()}],
         onCancel: function (order) {
             window.location.href = '[{$oViewConf->getSelfActionLink()|html_entity_decode}]&cl=payment&payerror=69&payerrortext=[{oxmultilang ident="PAYPAL_PAYMENT_CANCELED"}]';
         },

@@ -27,8 +27,8 @@ class PayPalUserHandler
         }
 
         $name = explode(" ", $shipping->name->full_name);
-        $firstName = array_shift($name);
-        $lastName = implode(" ", $name);
+        $firstName = trim(array_shift($name));
+        $lastName = trim(implode(" ", $name));
 
         $user->oxuser__oxusername = new \OxidEsales\Eshop\Core\Field($paymentSource->paypal->email_address);
         $user->oxuser__agpaypalpayerid = new \OxidEsales\Eshop\Core\Field($paymentSource->paypal->account_id);
@@ -92,8 +92,8 @@ class PayPalUserHandler
             $userAddress->oxaddress__oxuserid = new \OxidEsales\Eshop\Core\Field($userId);
 
             $name = explode(" ", $shipping->name->full_name);
-            $firstName = array_shift($name);
-            $lastName = implode(" ", $name);
+            $firstName = trim(array_shift($name));
+            $lastName = trim(implode(" ", $name));
 
             $userAddress->oxaddress__oxfname = new \OxidEsales\Eshop\Core\Field($firstName);
             $userAddress->oxaddress__oxlname = new \OxidEsales\Eshop\Core\Field($lastName);

@@ -72,6 +72,7 @@ class OrderController extends OrderController_parent
     {
         $token = Registry::getRequest()->getRequestEscapedParameter('token');
         $pptoken = Registry::getRequest()->getRequestEscapedParameter('pptoken');
+        $isExpressCheckout = Registry::getSession()->getVariable('ppexpresscomplete');
         Registry::getSession()->setVariable('ppexpresscomplete', 0);
 
         if (!$pptoken) {
@@ -88,7 +89,9 @@ class OrderController extends OrderController_parent
                 $shippingId = null;
             } else {
                 $userId = $userBasket->oxuserbaskets__oxuserid->value;
-                $shippingId = PayPalUserHandler::getUserAddressFromPayPalToken($token, $userBasket->oxuserbaskets__oxuserid->value);
+                if ($isExpressCheckout) {
+                    $shippingId = PayPalUserHandler::getUserAddressFromPayPalToken($token, $userBasket->oxuserbaskets__oxuserid->value);
+                }
             }
 
             Registry::getSession()->setVariable('usr', $userId);

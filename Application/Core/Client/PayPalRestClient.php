@@ -193,4 +193,13 @@ class PayPalRestClient
             file_put_contents(getShopBasePath().'/log/paypal.log', $log, FILE_APPEND);
         }
     }
+
+    public function logExternal($message) {
+        if ($this->logLevel === 'all'){
+            $log = "#EXTERNAL [" . date("d/M/Y H:i:s") . "]\n";
+            $log .= "Message: \n\n" . $message . "\n\n";
+            $log .= "########################################################################\n\n";
+            file_put_contents(getShopBasePath().'/log/paypal.log', $log, FILE_APPEND);
+        }
+    }
 }

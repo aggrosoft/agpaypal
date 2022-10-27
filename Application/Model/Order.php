@@ -110,7 +110,7 @@ class Order extends Order_parent
         $payment = oxNew(\OxidEsales\Eshop\Application\Model\Payment::class);
         $payment->load($oBasket->getPaymentId());
 
-        if ($payment && $payment->oxpayments__agpaypalpaymentmethod->value) {
+        if (!$blRecalculatingOrder && $payment && $payment->oxpayments__agpaypalpaymentmethod->value) {
             $this->_blSkipOrderMails = true;
             $this->setValidateDeliveryAddressMD5(false);
             \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->startTransaction();

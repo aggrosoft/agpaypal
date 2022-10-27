@@ -47,10 +47,13 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
     protected function handlePaymentCaptureCompleted($data)
     {
+        $client = new PayPalRestClient();
+
         $orderId = $data->resource->supplementary_data->related_ids->order_id;
         $order = $this->loadOrderByPayPalToken($orderId);
-
+        $client->logExternal('Handling payment capture completed webhook for order id ' . $orderId);
         if (!$order) {
+            $client->logExternal('Order not found, trying to finalize');
             try {
                 $order = $this->finalizePayPalOrder($orderId);
             } catch (\Exception $e) {
@@ -60,20 +63,28 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
         // Still no order and a capture? Refund it - there is no way to handle this without an order
         if (!$order) {
+            $client->logExternal('Order not found or created, refund if needed');
             $this->refundPayment($orderId);
+            return;
         }
 
         if ($order && !$order->oxorder__agpaypalcaptureid->value) {
-            $client = new PayPalRestClient();
+            $client->logExternal('Order needs to be updated, saving data');
             $response = $client->execute(new GetOrderRequest($orderId));
 
             $capture = $response->purchase_units[0]->payments->captures[0];
             $order->oxorder__oxpaid = new \OxidEsales\Eshop\Core\Field(date("Y-m-d H:i:s"));
             $order->oxorder__agpaypalcaptureid = new \OxidEsales\Eshop\Core\Field($capture->id);
             $order->oxorder__agpaypaltransstatus = new \OxidEsales\Eshop\Core\Field($capture->status);
-            $order->save();
+            if (!$order->save()){
+                $client->logExternal('Order could not be saved');
+            }
+
+            $client->logExternal('Capture ID ' . $capture->id . ' saved to order ' . $order->getId());
+            $client->logExternal('Order status ' . $capture->status . ' saved to order ' . $order->getId());
 
             if ($response->payment_source->pay_upon_invoice) {
+                $client->logExternal('Order is PUI, save bank data');
                 $bankData = oxNew(\Aggrosoft\PayPal\Application\Model\PayPalBankData::class);
                 if ($bankData->assignPayPalPUIData($order->getId(), $response->payment_source->pay_upon_invoice)) {
                     $bankData->save();
@@ -140,10 +151,13 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
     protected function handleCheckoutOrderApproved($data)
     {
+        $client = new PayPalRestClient();
+        $client->logExternal('Handling checkout order approved webhook for order id ' . $data->resource->id);
         $orderId = $data->resource->id;
         $order = $this->loadOrderByPayPalToken($orderId);
 
         if (!$order) {
+            $client->logExternal('Order does not exist, try to finalize');
             $this->finalizePayPalOrder($orderId);
         }
     }

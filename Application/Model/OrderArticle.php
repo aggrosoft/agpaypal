@@ -8,6 +8,15 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\Payments\Captures\RefundCap
 
 class OrderArticle extends OrderArticle_parent
 {
+    public function __call($method, $arguments)
+    {
+        if(method_exists($this, $method)) {
+            return call_user_func_array([$this, $method], $arguments);
+        }elseif($this->getArticle() && method_exists($this->getArticle(), $method)) {
+            return call_user_func_array([$this->getArticle(), $method], $arguments);
+        }
+    }
+
     public function cancelOrderArticle()
     {
         parent::cancelOrderArticle();

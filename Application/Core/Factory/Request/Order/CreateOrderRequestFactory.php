@@ -121,7 +121,7 @@ class CreateOrderRequestFactory
         $amountBreakDown->discount = new Money($currencyName, $basket->getTotalDiscountSum());
 
         //If any module adds some sort of extra costs (pawn, d3oqm etc.) we will just put those in handling fees
-        $handling = $basket->getPrice()->getBruttoPrice() - $itemTotal - $deliveryCosts->getBruttoPrice() - $taxTotal + $basket->getTotalDiscountSum();
+        $handling = $basket->getPrice()->getBruttoPrice() - $itemTotal - $deliveryCosts->getBruttoPrice() - ($separateTax ? $taxTotal : 0) + $basket->getTotalDiscountSum();
 
         if ($handling > 0) {
             $amountBreakDown->handling = new Money($currencyName, $handling);

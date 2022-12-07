@@ -7,6 +7,7 @@ use Aggrosoft\PayPal\Application\Core\Client\Request\Order\GetOrderRequest;
 use Aggrosoft\PayPal\Application\Core\Client\Request\Payments\Captures\RefundCapturedPaymentRequest;
 use Aggrosoft\PayPal\Application\Core\PayPalBasketHandler;
 use Aggrosoft\PayPal\Application\Core\Webhook\WebhookVerifier;
+use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Internal\Container\ContainerFactory;
 use OxidEsales\EshopCommunity\Internal\Framework\Database\QueryBuilderFactoryInterface;
 
@@ -42,7 +43,7 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
             }
         }
 
-        \OxidEsales\Eshop\Core\Registry::getUtils()->showMessageAndExit('');
+        Registry::getUtils()->showMessageAndExit('');
     }
 
     protected function handlePaymentCaptureCompleted($data)
@@ -96,7 +97,7 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
     protected function handlePaymentCaptureDenied($data)
     {
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blAutoCancelOrders', null, 'module:agpaypal')) {
+        if (Registry::getConfig()->getConfigParam('blAutoCancelOrders', null, 'module:agpaypal')) {
             $orderId = $data->resource->supplementary_data->related_ids->order_id;
             $order = $this->loadOrderByPayPalToken($orderId);
 
@@ -164,7 +165,7 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
     protected function finalizePayPalOrder($token)
     {
-        \OxidEsales\Eshop\Core\Registry::getSession()->setVariable('pptoken', $token);
+        Registry::getSession()->setVariable('pptoken', $token);
         $userBasket = PayPalBasketHandler::getUserBasketForToken($token);
         if ($userBasket) {
             $user = $userBasket->getBasketUser();

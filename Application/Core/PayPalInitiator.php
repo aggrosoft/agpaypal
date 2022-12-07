@@ -39,7 +39,7 @@ class PayPalInitiator
         }
 
         if (!count($basket->getContents())) {
-            throw new \OxidEsales\Eshop\Core\Exception\NoResultException();
+            throw new \OxidEsales\Eshop\Core\Exception\NoResultException('BASKET_EMPTY');
         }
 
         $user = $basket->getBasketUser();

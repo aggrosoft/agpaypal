@@ -83,7 +83,9 @@ class PayPalBasketHandler
         $basket->setShipping(Registry::getRequest()->getRequestEscapedParameter('shippingid') ?: $userBasket->oxuserbaskets__agpaypalshippingid->value);
         $basket->setCardId($userBasket->oxuserbaskets__agpaypalcardid->value);
         $basket->setCardMessage($userBasket->oxuserbaskets__agpaypalcardtext->value);
-        $user->setSelectedAddressId($userBasket->oxuserbaskets__agpaypaldeladrid->value);
+        if ($user) {
+            $user->setSelectedAddressId($userBasket->oxuserbaskets__agpaypaldeladrid->value);
+        }
         Registry::getSession()->setVariable('deladrid', $userBasket->oxuserbaskets__agpaypaldeladrid->value);
         Registry::getSession()->setVariable('ordrem', $userBasket->oxuserbaskets__agpaypalremark->value);
         Registry::getSession()->setVariable('sShipSet', $basket->getShippingId());

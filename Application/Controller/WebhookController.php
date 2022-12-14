@@ -48,11 +48,14 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
     protected function handlePaymentCaptureCompleted($data)
     {
+
         $client = new PayPalRestClient();
 
         $orderId = $data->resource->supplementary_data->related_ids->order_id;
-        $order = $this->loadOrderByPayPalToken($orderId);
         $client->logExternal('Handling payment capture completed webhook for order id ' . $orderId);
+
+        $order = $this->loadOrderByPayPalToken($orderId);
+
         if (!$order) {
             $client->logExternal('Order not found, trying to finalize');
             try {
@@ -109,10 +112,15 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
 
     protected function handlePaymentApprovalReversed($data)
     {
+        $client = new PayPalRestClient();
+
+        $orderId = $data->resource->supplementary_data->related_ids->order_id;
+        $client->logExternal('Handling payment approval reversed webhook for order id ' . $orderId);
+
         // this should never happen, keep for later reference
     }
 
-    protected function loadOrderByPayPalToken($token)
+    protected function loadOrderByPayPalToken($token, $blRecalculate = true)
     {
         if (class_exists('\OxidEsales\EshopCommunity\Internal\Container\ContainerFactory')) {
             $container = ContainerFactory::getInstance()->getContainer();
@@ -135,19 +143,27 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
         if ($orderId) {
             $order = oxNew(\OxidEsales\Eshop\Application\Model\Order::class);
             $order->load($orderId);
-            $order->recalculateOrder();
+            if ($blRecalculate) {
+                $order->recalculateOrder();
+            }
             return $order;
         }
     }
 
     protected function handlePaymentCaptureReversed($data)
     {
-        //@TODO: Check if needed
+        $client = new PayPalRestClient();
+
+        $orderId = $data->resource->supplementary_data->related_ids->order_id;
+        $client->logExternal('Handling payment capture reversed webhook for order id ' . $orderId);
     }
 
     protected function handlePaymentCaptureRefunded($data)
     {
-        //@TODO: Check if needed
+        $client = new PayPalRestClient();
+
+        $orderId = $data->resource->supplementary_data->related_ids->order_id;
+        $client->logExternal('Handling payment capture refunded webhook for order id ' . $orderId);
     }
 
     protected function handleCheckoutOrderApproved($data)
@@ -155,7 +171,7 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
         $client = new PayPalRestClient();
         $client->logExternal('Handling checkout order approved webhook for order id ' . $data->resource->id);
         $orderId = $data->resource->id;
-        $order = $this->loadOrderByPayPalToken($orderId);
+        $order = $this->loadOrderByPayPalToken($orderId, false);
 
         if (!$order) {
             $client->logExternal('Order does not exist, try to finalize');

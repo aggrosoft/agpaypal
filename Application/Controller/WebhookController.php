@@ -144,7 +144,7 @@ class WebhookController extends \OxidEsales\Eshop\Application\Controller\Fronten
             $order = oxNew(\OxidEsales\Eshop\Application\Model\Order::class);
             $order->load($orderId);
             if ($blRecalculate) {
-                $order->recalculateOrder();
+                $order->calculateOrderBasket();
             }
             return $order;
         }

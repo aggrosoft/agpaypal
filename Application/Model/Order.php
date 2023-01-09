@@ -258,5 +258,16 @@ class Order extends Order_parent
         $this->_blValidateDeliveryAddressMD5 = $blValidateDeliveryAddressMD5;
     }
 
+    public function calculateOrderBasket()
+    {
+        $oBasket = $this->_getOrderBasket();
+
+        // add this order articles to virtual basket and recalculates basket
+        $this->_addOrderArticlesToBasket($oBasket, $this->getOrderArticles(true));
+
+        // recalculating basket
+        $oBasket->calculateBasket(true);
+    }
+
 
 }

@@ -85,6 +85,7 @@ class PayPalBasketHandler
         $basket->setCardMessage($userBasket->oxuserbaskets__agpaypalcardtext->value);
         if ($user) {
             $user->setSelectedAddressId($userBasket->oxuserbaskets__agpaypaldeladrid->value);
+            Registry::get(\OxidEsales\Eshop\Application\Model\VatSelector::class)->getUserVat($user, true);
         }
         Registry::getSession()->setVariable('deladrid', $userBasket->oxuserbaskets__agpaypaldeladrid->value);
         Registry::getSession()->setVariable('ordrem', $userBasket->oxuserbaskets__agpaypalremark->value);

@@ -121,10 +121,12 @@ class CreateOrderRequestFactory
         $amountBreakDown->discount = new Money($currencyName, $basket->getTotalDiscountSum());
 
         //If any module adds some sort of extra costs (pawn, d3oqm etc.) we will just put those in handling fees
-        $handling = $basket->getPrice()->getBruttoPrice() - $itemTotal - $deliveryCosts->getBruttoPrice() - ($separateTax ? $taxTotal : 0) + $basket->getTotalDiscountSum();
+        $priceDifference = $basket->getPrice()->getBruttoPrice() - $itemTotal - $deliveryCosts->getBruttoPrice() - ($separateTax ? $taxTotal : 0) + $basket->getTotalDiscountSum();
 
-        if ($handling > 0) {
-            $amountBreakDown->handling = new Money($currencyName, $handling);
+        if ($priceDifference > 0) {
+            $amountBreakDown->handling = new Money($currencyName, $priceDifference);
+        }elseif($priceDifference < 0){
+            $amountBreakDown->discount = new Money($currencyName, $basket->getTotalDiscountSum() + $priceDifference * -1);
         }
         //if ($countryId !== null || $shippingPreference !== ApplicationContext::SHIPPING_PREFERENCE_GET_FROM_FILE) {
         //    $unit->setAmount(new AmountWithBreakdown($currencyName, $basket->getPrice()->getBruttoPrice() - $deliveryCosts->getBruttoPrice()));

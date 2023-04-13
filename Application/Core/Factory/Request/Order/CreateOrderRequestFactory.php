@@ -349,10 +349,10 @@ class CreateOrderRequestFactory
                 $costs = $basket->getDeliveryCostForShipset($deliverySet->getId());
                 $option = new ShippingDetailOption();
                 //if ($initialCountryId)
-                //    $option->setAmount(new Money($currencyName, $costs->getBruttoPrice()));
+                    $option->setAmount(new Money($currencyName, $costs->getBruttoPrice()));
 
                 $option->setId($deliverySet->getId());
-                $option->setLabel($deliverySet->oxdeliveryset__oxtitle->value . ' - ' . Registry::getLang()->formatCurrency($costs->getBruttoPrice()) . ' ' . $oCurrency->sign);
+                $option->setLabel($deliverySet->oxdeliveryset__oxtitle->value); // . ' - ' . Registry::getLang()->formatCurrency($costs->getBruttoPrice()) . ' ' . $oCurrency->sign);
                 $option->setType('SHIPPING');
                 $option->setSelected($deliverySet->getId() === $sActShipSet);
                 $options[] = $option;

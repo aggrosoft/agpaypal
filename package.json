@@ -1,7 +1,7 @@
 {
   "name": "oxid-agpaypal",
   "version": "1.6.1",
-  "private": true,
+  "license": "MIT",
   "scripts": {
     "release": "release-it",
     "test-release": "release-it --dry-run",

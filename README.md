@@ -11,22 +11,21 @@ If you're interested in becoming a maintainer, please reach out to us through Gi
 
 Your contributions and support will be greatly appreciated as we strive to make this module better for the Oxid eShop community.
 
-
 ## Installation
 
-To install the PayPal Checkout module in your Oxid eShop, please follow these steps:
+To install the PayPal Checkout module in your Oxid eShop, you can use Composer. Run the following command in your project's root directory:
 
-1. **Download the Module:** Download the module from this [GitHub repository](https://github.com/aggrosoft/agpaypal).
+```bash
+composer require aggrosoft/oxid-agpaypal
+```
 
-2. **Extract the Module:** Unzip the downloaded archive.
+Then do this:
 
-3. **Copy to the Module Folder:** Copy the contents of the extracted folder into the appropriate module directory of your Oxid eShop (typically `modules/`).
+1. **Activate the Module:** Go to your Oxid eShop admin area and activate the PayPal Checkout module in the module management settings.
 
-4. **Activate the Module:** Go to your Oxid eShop admin area and activate the PayPal Checkout module in the module management settings.
+2. **Configuration:** Configure the module by setting your PayPal API credentials and other required settings in the module options.
 
-5. **Configuration:** Configure the module by setting your PayPal API credentials and other required settings in the module options.
-
-6. **Testing:** Conduct some test orders to ensure PayPal payments are functioning correctly.
+3. **Testing:** Conduct some test orders to ensure PayPal payments are functioning correctly.
 
 ## Usage
 

@@ -2,7 +2,7 @@
   "name": "aggrosoft/oxid-agpaypal",
   "type": "oxideshop-module",
   "description": "PayPal Commerce Platform payment module for Oxid eShop",
-  "license": "Commercial",
+  "license": "MIT",
   "authors": [
     {
       "name": "Alexander Kludt",
